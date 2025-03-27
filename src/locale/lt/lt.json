@@ -1,0 +1,15 @@
+{
+    "lng": "lt",
+    "homePage": {
+        "header": "Veterinarinių vaistų registras",
+        "title": "Lietuvos Respublikoje registruoti veterinariniai vaistai",
+        "subtitle": "Oficiali duomenų bazė, kurioje pateikiama išsami informacija apie Lietuvoje registruotus veterinarinius vaistus – jų sudėtį, paskirtį, gamintojus ir registracijos duomenis.",
+        "vmvt": "Valstybinė maisto ir veterinarijos tarnyba",
+        "inputSubtext": "Galite ieškoti pagal pavadinimą, veikliąją medžiagą, indikacijas, registracijos numerį ar ATCvet kodą.",
+        "inputPlaceholder": "Paieškos tekstas",
+        "search": "Ieškoti",
+        "searchLoading": "Ieškoma..",
+        "required": "Privalomas laukas"
+
+    }
+}
