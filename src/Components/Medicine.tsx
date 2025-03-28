@@ -41,6 +41,10 @@ const MedicineContainer = styled.div`
   padding: 16px;
   border-radius: 15px;
   margin-top: 16px;
+  &:hover{
+    background-color: ${({ theme }) => theme.colors.secondary};
+    cursor: pointer;
+  }
 `;
 
 const TopLeftContainer = styled.div`
@@ -93,4 +97,5 @@ const Tag = styled.div`
   border-radius: 15px;
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.grey};
+
 `;

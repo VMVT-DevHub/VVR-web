@@ -2,11 +2,11 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../Components/SearchSection";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-
 import { useLocation } from "../utils/hooks";
 import { useState } from "react";
 import { Medicine } from "../Components/Medicine";
 import styled from "styled-components";
+import { device } from "../styles";
 
 export const HomePage = () => {
   const { t } = useTranslation();
@@ -84,11 +84,20 @@ export const HomePage = () => {
 const ContentContainer = styled.div`
   display: flex;
   gap: 40px;
+  @media ${device.mobileL} {
+    gap: 0;
+  }
 `
 const LeftColumn = styled.div`
   width: 30%;
+  @media ${device.mobileL} {
+    width: 0;
+  }
 `
 const RightColumn = styled.div`
   width: 70%;
+  @media ${device.mobileL} {
+    width: 100%;
+  }
   
 `

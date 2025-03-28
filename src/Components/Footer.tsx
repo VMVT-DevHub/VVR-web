@@ -8,7 +8,7 @@ export const Footer = () => {
     const currentYear = new Date().getFullYear();
     return(
         <FooterContainer>
-            <Paragraph>© {t('homePage.header')}. 2005-{currentYear}</Paragraph>
+            <Paragraph>{t('homePage.header')}. 2025-{currentYear}</Paragraph>
             <Paragraph>{t('homePage.vmvt')}</Paragraph>
         </FooterContainer>
     )

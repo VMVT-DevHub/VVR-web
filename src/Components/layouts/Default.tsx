@@ -31,6 +31,8 @@ const MainContainer = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100vw;
+  overflow-y: scroll;
+
 `;
 const Container = styled.div`
   display: flex;

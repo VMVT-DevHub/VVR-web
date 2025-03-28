@@ -9,7 +9,7 @@ interface Get {
 
 class Api {
   private AuthApiAxios: AxiosInstance;
-  private readonly proxy: string = '/spor';
+  private readonly proxy: string = '/api/spor';
 
   constructor() {
     this.AuthApiAxios = axios.create();

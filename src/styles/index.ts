@@ -55,7 +55,7 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     min-height:100vh;
-
+    overflow:hidden;
   } 
 
   h1 {

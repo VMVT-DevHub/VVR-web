@@ -10,7 +10,7 @@ export default () => {
     plugins: [react()],
     server: {
       proxy: {
-        '/spor': {
+        '/api': {
           target: env.VITE_PROXY_URL,
           changeOrigin: true,
         },

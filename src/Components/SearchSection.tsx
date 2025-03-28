@@ -2,6 +2,7 @@ import styled from "styled-components";
 import stamp from "../styles/Images/patvirtintaLietuvojeStampas.svg";
 import texture from "../styles/Images/FonoRastas.svg";
 import { useTranslation } from "react-i18next";
+import { device } from "../styles";
 
 export interface SearchSectionProps {
   title: string;
@@ -26,6 +27,7 @@ export const SearchSection = ({
   showError = false
 }: SearchSectionProps) => {
   const { t } = useTranslation();
+  // let deviceSize =
 
   return (
     <SearchBarContainer>
@@ -34,7 +36,7 @@ export const SearchSection = ({
           <Title>{title}</Title>
           <Subtitle>{subtitle && subtitle}</Subtitle>
         </TextContainer>
-        <div>{subtitle && <img src={stamp} alt="Kokybės antspaudas" />}</div>
+        <Image >{subtitle && <img src={stamp} alt="Kokybės antspaudas" />}</Image>
       </TopRow>
       <BottomRow>
         <SearchBar $subtitle={!!subtitle}>
@@ -56,6 +58,11 @@ export const SearchSection = ({
   );
 };
 
+const Image = styled.div`
+  @media ${device.mobileL} {
+    display: none;
+  }
+`
 const ErrorMessage = styled.p`
   margin: 8px 0 0 8px;
   color: red;
@@ -82,6 +89,9 @@ const Button = styled.button<{ disabled: boolean }>`
   &:hover {
     background-color: ${({ theme }) => theme.colors.primary_light};
     cursor: pointer;
+  }
+  @media ${device.mobileL} {
+      padding: 18px 30px;
   }
 `;
 
@@ -128,6 +138,10 @@ const Title = styled.h1`
   font-size: 2.5rem;
   max-width: 640px;
   font-weight: 600;
+  @media ${device.mobileL} {
+    font-size: 2.2rem;
+    max-width: 100%;
+  }
 `;
 
 const Subtitle = styled.p`
