@@ -1,14 +1,20 @@
+import { Route, Routes } from "react-router-dom";
 import { Default } from "./Components/layouts/Default";
-import { HomePage } from "./Pages/HomePage";
+import { routes } from "./utils/routes";
 
 function App() {
  
   return (
     <>
-      <Default>
-        <HomePage />
-        
-      </Default>
+      <Routes>
+        {(routes || []).map((route, index) => (
+          <Route
+            key={`route-${index}`}
+            path={route.path}
+            element={<Default>{route.element}</Default>}
+          />
+        ))}
+      </Routes>
     </>
   );
 }

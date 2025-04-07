@@ -3,20 +3,28 @@ import { SearchSection } from "../Components/SearchSection";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useLocation } from "../utils/hooks";
-import { useState } from "react";
 import { Medicine } from "../Components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
+import { useNavigate } from "react-router-dom";
+import { slugs } from "../utils/routes";
+import { PageSelector } from "../Components/PageSelector";
+import { useState } from "react";
 
 export const HomePage = () => {
   const { t } = useTranslation();
-  const [ medicineQuery, setMedicineQuery] = useState('')
-  const temporaryTags = [{name: "Avims"}, {name: "Kiaulėms"},{name: "Galvijams"}]
+  const navigate = useNavigate();
+  const [medicineQuery, setMedicineQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const temporaryTags = [
+    { name: "Avims" },
+    { name: "Kiaulėms" },
+    { name: "Galvijams" },
+  ];
 
-  
-  const {data:medicine, isLoading } = useLocation(medicineQuery)
+  const { data: medicine, isLoading } = useLocation(medicineQuery, currentPage);
 
-  console.log(medicine)
+  // console.log(medicine)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().required(t("homePage.required")),
@@ -28,10 +36,8 @@ export const HomePage = () => {
     const params = {
       query: values.medicine,
     };
-    setMedicineQuery(params.query)
-    
+    setMedicineQuery(params.query);
   };
-
 
   return (
     <>
@@ -58,46 +64,59 @@ export const HomePage = () => {
         }}
       </Formik>
       <ContentContainer>
-        <LeftColumn>
-
-        </LeftColumn>
+        <LeftColumn></LeftColumn>
         <RightColumn>
-          {isLoading ? <p>Loading...</p> : ''}
-          { medicine?.items !== 0 ? medicine?.data.map((item) => {
-            return (
-              
-                <Medicine key={item.id} id={item.id} title={item.orgNameLt ? item.orgNameLt : item.orgNameEn} subtitle={item.orgID} isNew={true} tags={temporaryTags} />
-            );
-          }) :<><br></br> <p>Nieko nerasta</p></>}
+          {isLoading ? <p>Loading...</p> : ""}
+          {medicine?.items !== 0 ? (
+            medicine?.data.map((item) => {
+              return (
+                <Medicine
+                  key={item.id}
+                  id={item.id}
+                  title={item.orgNameLt ? item.orgNameLt : item.orgNameEn}
+                  subtitle={item.orgID}
+                  isNew={true}
+                  tags={temporaryTags}
+                  onClick={() => navigate(slugs.medicineDetail(item.id))}
+                />
+              );
+            })
+          ) : (
+              <NotFound>{t('medicines.notFound')}</NotFound>
+          )}
+          {medicine !== undefined && medicine?.items !== 0 && (
+            <PageSelector
+              currentPage={currentPage}
+              total={medicine.total}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
         </RightColumn>
       </ContentContainer>
-      
-      {/* <Medicine title={"Carprodyl Quadri, 50 mg"} subtitle={"Karprofenas"} isNew={true} tags={temporaryTags} />
-      <Medicine title={"Nanotrim, 464,2 mg/g + 100 mg/g"} subtitle={"Sulfachlorpiridazinas, Trimetoprimas"} isNew={false} tags={temporaryTags} />
-      <Medicine title={"Tulathromycon"} subtitle={"Tulatromicinas"} isNew={true} tags={temporaryTags} /> */}
-
     </>
   );
 };
 
-
+const NotFound = styled.p`
+  font-weight: 500;
+  margin-top: 40px;
+`
 const ContentContainer = styled.div`
   display: flex;
   gap: 40px;
   @media ${device.mobileL} {
     gap: 0;
   }
-`
+`;
 const LeftColumn = styled.div`
   width: 30%;
   @media ${device.mobileL} {
     width: 0;
   }
-`
+`;
 const RightColumn = styled.div`
   width: 70%;
   @media ${device.mobileL} {
     width: 100%;
   }
-  
-`
+`;

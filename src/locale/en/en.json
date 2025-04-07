@@ -4,11 +4,22 @@
         "header": "Register of veterinary medicines",
         "title": "Veterinary medicines registered in the Republic of Lithuania",
         "subtitle": "An official database that provides detailed information about veterinary medicines registered in Lithuania - their composition, purpose, manufacturers and registration data.",
-        "vmvt": "State Food and Veterinary Service",
         "inputSubtext": "You can search by name, active ingredient, indications, registration number or ATCvet code.",
         "inputPlaceholder": "Search text",
         "search": "Search",
         "searchLoading": "Searching..",
         "required": "Required field"
+    },
+    "footer":{
+        "vmvt": "State Food and Veterinary Service",
+        "meaning": "Meanings of pictograms",
+        "prescription": "Prescription medicine",
+        "nonprescription": "Non-prescription medicine",
+        "vetPrescription": "Prescription medicine for veterinary use only"
+    },
+    "medicines": {
+        "previous": "Prev.",
+        "next": "Next",
+        "notFound": "Nothing has been found. Please adjust the search field and try again."
     }
 }

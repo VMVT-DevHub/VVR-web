@@ -45,9 +45,9 @@ class Api {
     );
   }
 
-  async getLocations(countryCode: string): Promise<LocationResponse> {
+  async getLocations(countryCode: string, page: number): Promise<LocationResponse> {
     return this.get<LocationResponse>({
-      resource: `locations?country=${countryCode}`,
+      resource: `locations?country=${countryCode}&limit=7&page=${page}`,
     });
   }
 }

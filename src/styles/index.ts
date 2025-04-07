@@ -78,6 +78,7 @@ export const GlobalStyle = createGlobalStyle`
     display: block;
     border: none;
     background-color: transparent;
+    cursor: pointer;
   }
 `;
 
