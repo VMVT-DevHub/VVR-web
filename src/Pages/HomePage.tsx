@@ -2,50 +2,69 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../Components/SearchSection";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { useLocation } from "../utils/hooks";
+import { useLocations } from "../utils/hooks";
 import { Medicine } from "../Components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { slugs } from "../utils/routes";
 import { PageSelector } from "../Components/PageSelector";
-import { useState } from "react";
+import { Filters } from "../Components/Filters";
+import { useEffect } from "react";
 
 export const HomePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [medicineQuery, setMedicineQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const query = searchParams.get("query") || "";
+  const page = searchParams.get("page") || 1;
+
+  useEffect(() => {
+    if (isNaN(Number(page)) || Number(page) < 0) {
+      setSearchParams({
+        query,
+        page: "1",
+      });
+    }
+  }, [query, page, setSearchParams]);
+
   const temporaryTags = [
     { name: "Avims" },
     { name: "Kiaulėms" },
     { name: "Galvijams" },
   ];
 
-  const { data: medicine, isLoading } = useLocation(medicineQuery, currentPage);
-
-  // console.log(medicine)
+  const { data: medicine, isLoading } = useLocations(query, Number(page));
 
   const medicineSchema = Yup.object().shape({
-    medicine: Yup.string().required(t("homePage.required")),
+    medicine: Yup.string().required("homePage.required"),
   });
 
   const formValues = { medicine: "" };
 
   const handleSubmit = (values: typeof formValues) => {
-    const params = {
+    setSearchParams({
       query: values.medicine,
-    };
-    setMedicineQuery(params.query);
+      page: "1",
+    });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({
+      query,
+      page: newPage.toString(),
+    });
   };
 
   return (
-    <>
+    <div>
       <Formik
         initialValues={formValues}
         onSubmit={handleSubmit}
         validationSchema={medicineSchema}
         validateOnChange={true}
+        enableReinitialize={true}
       >
         {({ values, errors, setFieldValue }) => {
           return (
@@ -57,14 +76,16 @@ export const HomePage = () => {
                 name="medicine"
                 onChange={(el) => setFieldValue("medicine", el)}
                 error={errors.medicine}
-                showError={false}
+                showError={true}
               />
             </Form>
           );
         }}
       </Formik>
       <ContentContainer>
-        <LeftColumn></LeftColumn>
+        <LeftColumn>
+       {medicine !== undefined && medicine?.items !== 0 && <Filters />}
+        </LeftColumn>
         <RightColumn>
           {isLoading ? <p>Loading...</p> : ""}
           {medicine?.items !== 0 ? (
@@ -82,27 +103,28 @@ export const HomePage = () => {
               );
             })
           ) : (
-              <NotFound>{t('medicines.notFound')}</NotFound>
+            <NotFound>{t("medicines.notFound")}</NotFound>
           )}
           {medicine !== undefined && medicine?.items !== 0 && (
             <PageSelector
-              currentPage={currentPage}
+              currentPage={Number(page)}
               total={medicine.total}
-              setCurrentPage={setCurrentPage}
+              setCurrentPage={handlePageChange}
             />
           )}
         </RightColumn>
       </ContentContainer>
-    </>
+    </div>
   );
 };
 
 const NotFound = styled.p`
   font-weight: 500;
   margin-top: 40px;
-`
+`;
 const ContentContainer = styled.div`
   display: flex;
+  padding-top: 40px;
   gap: 40px;
   @media ${device.mobileL} {
     gap: 0;
@@ -112,6 +134,9 @@ const LeftColumn = styled.div`
   width: 30%;
   @media ${device.mobileL} {
     width: 0;
+  }
+  & > div:first-of-type{
+    padding-top: 0px 
   }
 `;
 const RightColumn = styled.div`

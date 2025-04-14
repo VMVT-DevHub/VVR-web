@@ -5,7 +5,16 @@ import { useTranslation } from "react-i18next";
 export const Header = () => {
   const { t, i18n } = useTranslation();
 
-  const [languages] = useState(i18n.languages);
+  //should be: const [languages] = useState(i18n.languages);
+  //but this array switches it's display order on whim
+  const [languages] = useState(['lt','en']); 
+
+  const handleLanguageChange = (lng:string) => {
+    i18n.changeLanguage(lng);
+    window.localStorage.setItem('locale', lng);
+   
+  }
+
 
   return (
     <HeaderContainer>
@@ -13,7 +22,7 @@ export const Header = () => {
       <LocaleContainer>
         {languages.map((lng) => (
           <LanguageOption
-            onClick={() => i18n.changeLanguage(lng)}
+            onClick={() => handleLanguageChange(lng)}
             key={lng}
             selected={i18n.language === lng}
           >

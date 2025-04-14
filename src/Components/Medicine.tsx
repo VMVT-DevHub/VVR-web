@@ -56,7 +56,7 @@ const MedicineContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   padding: 16px;
   border-radius: 15px;
-  margin-top: 16px;
+  margin-bottom: 16px;
   &:hover{
     background-color: ${({ theme }) => theme.colors.secondary};
     cursor: pointer;

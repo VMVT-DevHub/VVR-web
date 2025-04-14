@@ -2,22 +2,44 @@ import styled from "styled-components";
 import { Header } from "../Header";
 import { Footer } from "../Footer";
 import { ChildrenType } from "../../types";
+import { useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 
 export interface DefaultLayoutProps {
   children?: ChildrenType;
 }
 
 export const Default = ({ children }: DefaultLayoutProps) => {
+
+  const scrollDiv_Ref = useRef<HTMLDivElement>(null);
+  const scrollAmount_Ref = useRef<number>(0);
+  const location = useLocation();
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem(`scroll-${location.key}`);
+    if (scrollDiv_Ref.current && saved) {
+      scrollDiv_Ref.current.scrollTo(0, Number(saved));
+    }
+  }, [location.key]);
+
+  function handleScroll() {
+    if (scrollDiv_Ref.current) {
+      scrollAmount_Ref.current = scrollDiv_Ref.current.scrollTop;
+      sessionStorage.setItem(`scroll-${location.key}`, scrollAmount_Ref.current.toString());
+    }
+  }
+  
   return (
-    <MainContainer>
-      <Container>
-        <InnerContainer>
-          <Header />
-          {children}
-        </InnerContainer>
-        <Footer />
-      </Container>
-    </MainContainer>
+          <MainContainer ref={scrollDiv_Ref} onScroll={handleScroll}>
+              <Container>
+                  <InnerContainer>
+                    <Header />
+                    {children}
+                  </InnerContainer>
+                <Footer />
+              </Container>
+          </MainContainer>
+      
   );
 };
 

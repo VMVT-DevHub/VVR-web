@@ -12,6 +12,7 @@ export const PageSelector = ({
   currentPage,
   setCurrentPage,
 }: PageSelectorProps) => {
+  
   const [pageLayout, setPageLayout] = useState<number[]>([1, 2, 3, 4, 5]);
   const totalPages = Math.ceil(total / 7);
   const { t } = useTranslation();
@@ -76,6 +77,7 @@ const SideButton = styled.button<{ disabled: boolean }>`
   border-radius: 8px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
 `;
+
 const MiddleButton = styled.button<{ $currentlyActive: boolean }>`
   background-color: ${({ theme, $currentlyActive }) =>
     $currentlyActive ? theme.colors.primary_light : theme.colors.white};
@@ -95,7 +97,7 @@ const MiddleButton = styled.button<{ $currentlyActive: boolean }>`
 const PageContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  padding: 32px;
+  padding: 16px 32px  32px 32px;
   font-family: "Inter";
   font-weight: 500;
   color: ${({ theme }) => theme.colors.primary};

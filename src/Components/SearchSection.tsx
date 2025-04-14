@@ -51,7 +51,7 @@ export const SearchSection = ({
             {disabled ? t("homePage.searchLoading") : t("homePage.search")}
           </Button>
         </SearchBar>
-        {showError && <ErrorMessage>{error}</ErrorMessage>}
+        {showError && error && <ErrorMessage>{t(error)}</ErrorMessage>}
         <InputSubtitle>{t("homePage.inputSubtext")}</InputSubtitle>
       </BottomRow>
     </SearchBarContainer>

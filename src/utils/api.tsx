@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { LocationResponse } from '../types';
+import { sanitizeString } from './hooks';
 
 interface Get {
   resource: string;
@@ -46,8 +47,11 @@ class Api {
   }
 
   async getLocations(countryCode: string, page: number): Promise<LocationResponse> {
+
+    const validPage = Math.max(1, Number(page));
+    const validCountryCode = sanitizeString(countryCode);
     return this.get<LocationResponse>({
-      resource: `locations?country=${countryCode}&limit=7&page=${page}`,
+      resource: `locations?country=${validCountryCode}&limit=7&page=${validPage}`,
     });
   }
 }

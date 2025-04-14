@@ -2,7 +2,7 @@ export interface IconProps {
     name: string;
     className?: string;
   }
-  const Icon = ({ name }: IconProps) => {
+  const Icon = ({ name, className }: IconProps) => {
     switch (name) {
       case "heart":
         return (
@@ -552,6 +552,25 @@ export interface IconProps {
             />
             <path
               d="M14 3.33337V12.6667"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
+      case "arrow":
+        return (
+          <svg
+            className={className}
+            width="12"
+            height="8"
+            viewBox="0 0 12 8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 6.5L6 1.5L11 6.5"
               stroke="#619ACF"
               strokeWidth="1.5"
               strokeLinecap="round"
