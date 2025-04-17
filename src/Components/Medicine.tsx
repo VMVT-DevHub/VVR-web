@@ -26,7 +26,7 @@ export const Medicine = ({ title, subtitle, isNew, tags, onClick}: MedicineProps
 
         <TopLeftContainer>
           <ImageContainer>
-            <img src={Rx} />
+            <img src={Rx} alt="Rx" />
           </ImageContainer>
           <div>
             <Title>{title}</Title>

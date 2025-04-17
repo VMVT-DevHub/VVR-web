@@ -10,12 +10,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { slugs } from "../utils/routes";
 import { PageSelector } from "../Components/PageSelector";
 import { Filters } from "../Components/Filters";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { PopUp } from "../Components/layouts/PopUp";
 
 export const HomePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showFilters, setShowFilters] = useState(false)
 
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
@@ -84,7 +86,21 @@ export const HomePage = () => {
       </Formik>
       <ContentContainer>
         <LeftColumn>
-       {medicine !== undefined && medicine?.items !== 0 && <Filters />}
+          {medicine !== undefined && medicine?.items !== 0 && (
+            <>
+              <StyledFilters />
+              <ShowFilters onClick={() => setShowFilters(prev => !prev)}>Rodyti Filtrus</ShowFilters>
+              <PopUp
+                visible={showFilters}
+                title={"Filtrai"}
+                onClose={() => {
+                  setShowFilters(false);
+                }}
+              >
+                <Filters />
+              </PopUp>
+            </>
+          )}
         </LeftColumn>
         <RightColumn>
           {isLoading ? <p>Loading...</p> : ""}
@@ -117,6 +133,32 @@ export const HomePage = () => {
     </div>
   );
 };
+const StyledFilters = styled(Filters)`
+  display: block;
+
+  @media ${device.mobileL} {
+    display: none;
+  }
+`
+const ShowFilters = styled.button`
+
+  display: none;
+  padding: 14.5px 20px;
+  border-radius: 26px;
+  border: 1px solid ${({theme}) => theme.colors.grey_light};
+  color: ${({theme}) => theme.colors.primary};
+  font-weight: 500;
+  font-family: "Inter";
+  font-size: 1rem;
+  margin-bottom: 16px;
+
+  &:hover {
+    background-color: ${({theme}) => theme.colors.secondary};
+  }
+  @media ${device.mobileL} {
+    display: block;
+  }
+`
 
 const NotFound = styled.p`
   font-weight: 500;
@@ -128,16 +170,19 @@ const ContentContainer = styled.div`
   gap: 40px;
   @media ${device.mobileL} {
     gap: 0;
+    flex-direction: column;
   }
 `;
 const LeftColumn = styled.div`
   width: 30%;
   @media ${device.mobileL} {
-    width: 0;
+    width: 100%;
+    
   }
-  & > div:first-of-type{
+  & > div > div:first-of-type{
     padding-top: 0px 
   }
+
 `;
 const RightColumn = styled.div`
   width: 70%;
