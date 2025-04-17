@@ -1,17 +1,17 @@
 import { useTranslation } from "react-i18next";
-import { SearchSection } from "../Components/SearchSection";
+import { SearchSection } from "../components/SearchSection";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useLocations } from "../utils/hooks";
-import { Medicine } from "../Components/Medicine";
+import { Medicine } from "../components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { slugs } from "../utils/routes";
-import { PageSelector } from "../Components/PageSelector";
-import { Filters } from "../Components/Filters";
+import { PageSelector } from "../components/PageSelector";
+import { Filters } from "../components/Filters";
 import { useEffect, useState } from "react";
-import { PopUp } from "../Components/layouts/PopUp";
+import { PopUp } from "../components/layouts/PopUp";
 
 export const HomePage = () => {
   const { t } = useTranslation();

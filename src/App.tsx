@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Default } from "./Components/layouts/Default";
+import { Default } from "./components/layouts/Default";
 import { routes } from "./utils/routes";
 
 function App() {

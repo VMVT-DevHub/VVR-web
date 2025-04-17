@@ -1,5 +1,5 @@
-import { HomePage } from "../Pages/HomePage"
-import { MedicineDetail } from "../Pages/MedicineDetail"
+import { HomePage } from "../pages/HomePage"
+import { MedicineDetail } from "../pages/MedicineDetail"
 
 export const slugs = {
     medicineSearch: '/',

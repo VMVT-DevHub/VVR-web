@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import stamp from "../styles/Images/patvirtintaLietuvojeStampas.svg";
-import texture from "../styles/Images/FonoRastas.svg";
+import stamp from "../styles/images/patvirtintaLietuvojeStampas.svg";
+import texture from "../styles/images/FonoRastas.svg";
 import { useTranslation } from "react-i18next";
 import { device } from "../styles";
 

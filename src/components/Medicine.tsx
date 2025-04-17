@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Rx from "../styles/Images/Rx.svg";
+import Rx from "../styles/images/Rx.svg";
 import { device } from "../styles";
 
 export interface MedicineProps {

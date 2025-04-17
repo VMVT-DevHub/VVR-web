@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import rx from "../styles/Images/Rx.svg";
-import rxplus from "../styles/Images/Rxplus.svg";
-import otc from "../styles/Images/Otc.svg";
+import rx from "../styles/images/Rx.svg";
+import rxplus from "../styles/images/Rxplus.svg";
+import otc from "../styles/images/Otc.svg";
 import { device } from "../styles";
 
 export const Footer = () => {
