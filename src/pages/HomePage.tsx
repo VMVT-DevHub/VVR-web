@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { useLocations } from "../utils/hooks";
+import { useAllMedicines } from "../utils/hooks";
 import { Medicine } from "../components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
@@ -22,6 +22,10 @@ export const HomePage = () => {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
 
+  const [pageTEMPORARY, setPageTEMPORARY] = useState(1);
+
+
+
   useEffect(() => {
     if (isNaN(Number(page)) || Number(page) < 0) {
       setSearchParams({
@@ -37,7 +41,11 @@ export const HomePage = () => {
     { name: "Galvijams" },
   ];
 
-  const { data: medicine, isLoading } = useLocations(query, Number(page));
+  // const { data: medicine, isLoading } = useLocations(query, Number(page));
+
+  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY)); //temporary hard fetch
+
+  console.log(medicineTEMPORARY);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().required("homePage.required"),
@@ -53,20 +61,22 @@ export const HomePage = () => {
   };
 
   const handlePageChange = (newPage: number) => {
-    setSearchParams({
-      query,
-      page: newPage.toString(),
-    });
+    // setSearchParams({
+    //   query,
+    //   page: newPage.toString(),
+    // });
+    setPageTEMPORARY(newPage)
   };
 
+
   return (
-    <div>
+    <main>
       <Formik
         initialValues={formValues}
         onSubmit={handleSubmit}
         validationSchema={medicineSchema}
         validateOnChange={true}
-        enableReinitialize={true}
+        enableReinitialize={false}
       >
         {({ values, errors, setFieldValue }) => {
           return (
@@ -86,7 +96,8 @@ export const HomePage = () => {
       </Formik>
       <ContentContainer>
         <LeftColumn>
-          {medicine !== undefined && medicine?.items !== 0 && (
+          {/* dynamic filter display */}
+          {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
             <>
               <StyledFilters />
               <ShowFilters onClick={() => setShowFilters(prev => !prev)}>Rodyti Filtrus</ShowFilters>
@@ -100,18 +111,19 @@ export const HomePage = () => {
                 <Filters />
               </PopUp>
             </>
-          )}
+          {/* )} */}
         </LeftColumn>
         <RightColumn>
           {isLoading ? <p>Loading...</p> : ""}
-          {medicine?.items !== 0 ? (
-            medicine?.data.map((item) => {
+          {medicineTEMPORARY?.items !== 0 ? (
+            medicineTEMPORARY?.data.map((item) => {
               return (
                 <Medicine
                   key={item.id}
                   id={item.id}
-                  title={item.orgNameLt ? item.orgNameLt : item.orgNameEn}
-                  subtitle={item.orgID}
+                  subtitle={item.holder}
+                  code={item.code}
+                  title={item.name}
                   isNew={true}
                   tags={temporaryTags}
                   onClick={() => navigate(slugs.medicineDetail(item.id))}
@@ -121,16 +133,16 @@ export const HomePage = () => {
           ) : (
             <NotFound>{t("medicines.notFound")}</NotFound>
           )}
-          {medicine !== undefined && medicine?.items !== 0 && (
+          {medicineTEMPORARY !== undefined && medicineTEMPORARY?.items !== 0 && (
             <PageSelector
-              currentPage={Number(page)}
-              total={medicine.total}
+              currentPage={Number(pageTEMPORARY)}
+              total={medicineTEMPORARY.total}
               setCurrentPage={handlePageChange}
             />
           )}
         </RightColumn>
       </ContentContainer>
-    </div>
+    </main>
   );
 };
 const StyledFilters = styled(Filters)`

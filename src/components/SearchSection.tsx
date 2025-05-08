@@ -47,7 +47,7 @@ export const SearchSection = ({
             name={name}
             onChange={(e) => onChange && onChange(e?.target?.value || '')}
           />
-          <Button type="submit" disabled={disabled}>
+          <Button type="submit" disabled={true}>
             {disabled ? t("homePage.searchLoading") : t("homePage.search")}
           </Button>
         </SearchBar>
@@ -86,10 +86,11 @@ const Button = styled.button<{ disabled: boolean }>`
   height: 56px;
   opacity: ${({ disabled }) => (disabled ? "0.8" : "1")};
   transition: 0.3s;
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.primary_light};
-    cursor: pointer;
-  }
+  cursor: not-allowed;
+  //&:hover {
+   // background-color: ${({ theme }) => theme.colors.primary_light};
+   // cursor: pointer;
+  //}
   @media ${device.mobileL} {
       padding: 18px 30px;
   }

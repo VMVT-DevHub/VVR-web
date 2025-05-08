@@ -46,7 +46,7 @@ const LanguageOption = styled.span<{ selected: boolean }>`
   }
 `;
 
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   background-color: ${({ theme }) => theme.colors.white};

@@ -62,6 +62,11 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
   }
+  h2 {
+    margin: 40px 0 24px 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
   p {
     margin: 0;
     padding: 0;
