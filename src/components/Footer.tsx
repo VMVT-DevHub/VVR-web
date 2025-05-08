@@ -39,7 +39,7 @@ const StyledImg = styled.img`
   width: 24px;
 `;
 
-const FooterContainer = styled.div`
+const FooterContainer = styled.footer`
   margin-top: auto;
 `;
 const Explanation = styled.p`

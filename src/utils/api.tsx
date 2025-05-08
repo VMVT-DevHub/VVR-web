@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
-import { LocationResponse } from '../types';
+import { LocationResponse, MedicineDetail } from '../types';
 import { sanitizeString } from './hooks';
 
 interface Get {
@@ -10,7 +10,8 @@ interface Get {
 
 class Api {
   private AuthApiAxios: AxiosInstance;
-  private readonly proxy: string = '/api/spor';
+  // private readonly proxy: string = '/upd';
+  private readonly proxy: string = '/api';
 
   constructor() {
     this.AuthApiAxios = axios.create();
@@ -51,7 +52,20 @@ class Api {
     const validPage = Math.max(1, Number(page));
     const validCountryCode = sanitizeString(countryCode);
     return this.get<LocationResponse>({
-      resource: `locations?country=${validCountryCode}&limit=7&page=${validPage}`,
+      resource: `spor/locations?country=${validCountryCode}&limit=7&page=${validPage}`,
+    });
+  }
+
+  async getMedicine(id: string, language: string): Promise<MedicineDetail> {
+    const validID = sanitizeString(id);
+    return this.get<MedicineDetail>({
+      resource: `upd/med/${validID}?lang=${language}`,
+    });
+  }
+
+  async getAllMedicines(page:number): Promise<LocationResponse> {
+    return this.get<LocationResponse>({
+      resource: `upd/med?page=${page}&limit=7&lang=LT`,
     });
   }
 }

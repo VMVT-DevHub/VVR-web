@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import Icon from "../styles/icons";
 import { useState } from "react";
-import React from "react";
 
 interface isDisplayedProps {
   category: boolean;
@@ -37,25 +36,25 @@ export const Filters = ({ className }: { className?: string}) => {
         <CategoryTitle>Vaisto grupė</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.group} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.group ? <Categories>LALALALA</Categories> : ""}
+      {isDisplayed.group ? <Categories></Categories> : ""}
 
       <CategoryContainer onClick={() => toggleDisplay("form")}>
         <CategoryTitle>Farmacinė forma</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.form} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.form ? <Categories>LALALALA</Categories> : ""}
+      {isDisplayed.form ? <Categories></Categories> : ""}
 
       <CategoryContainer onClick={() => toggleDisplay("producer")}>
         <CategoryTitle>Gamintojas / Registruotojas</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.producer} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.producer ? <Categories>LALALALA</Categories> : ""}
+      {isDisplayed.producer ? <Categories></Categories> : ""}
 
       <CategoryContainer onClick={() => toggleDisplay("date")}>
         <CategoryTitle>Registravimo laikotarpis</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.date} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.date ? <Categories>LALALALA</Categories> : ""}
+      {isDisplayed.date ? <Categories></Categories> : ""}
     </div>
   );
 };

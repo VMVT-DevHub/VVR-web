@@ -5,23 +5,21 @@ import { device } from "../styles";
 export interface MedicineProps {
   id: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
+  code: string;
   isNew?: boolean;
   tags?: { name: string }[];
   onClick?: () => void;
 }
 
-export const Medicine = ({ title, subtitle, isNew, tags, onClick}: MedicineProps) => {
-  // needs language implementation
-  // actual data :)
-
+export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: MedicineProps) => {
 
   return (
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
-          {isNew && <Code> LT/2/22/0152/001-022</Code>}
-          {isNew && <NewSticker>Naujiena</NewSticker>}
+          {isNew && <Code> {code}</Code>}
+          {/* {isNew && <NewSticker>Naujiena</NewSticker>} */}
         </TopRightContainer>
 
         <TopLeftContainer>
@@ -30,7 +28,7 @@ export const Medicine = ({ title, subtitle, isNew, tags, onClick}: MedicineProps
           </ImageContainer>
           <div>
             <Title>{title}</Title>
-            <Subtitle>Veikliosios medžiagos: {subtitle}</Subtitle>
+            <Subtitle>{subtitle}</Subtitle>
           </div>
         </TopLeftContainer>
       </TopRow>
@@ -70,17 +68,20 @@ const TopLeftContainer = styled.div`
   @media ${device.mobileL} {
     order: 2;
   }
+
 `;
 
 const TopRightContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: start;
+  justify-content: end;
   gap: 8px;
   order: 2;
   @media ${device.mobileXL} {
     order: 1;
   }
+  width: 35%;
 `;
 
 const TopRow = styled.div`
@@ -113,14 +114,14 @@ const Subtitle = styled.div`
   font-size: 0.875rem;
 `;
 
-const NewSticker = styled.div`
-  background-color: ${({ theme }) => theme.colors.primary_light};
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 4px 8px;
-  border-radius: 15px;
-`;
+// const NewSticker = styled.div`
+//   background-color: ${({ theme }) => theme.colors.primary_light};
+//   color: ${({ theme }) => theme.colors.secondary};
+//   font-size: 0.75rem;
+//   font-weight: 500;
+//   padding: 4px 8px;
+//   border-radius: 15px;
+// `;
 
 const Tag = styled.div`
   display: flex;
@@ -142,5 +143,5 @@ const Code = styled.div`
   background-color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.primary_dark};
-  min-width: 160px;
-`;
+  
+  `;
