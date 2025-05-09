@@ -3,10 +3,12 @@ import texture from "../styles/images/FonoRastas.svg";
 import { device } from "../styles";
 import { useNavigate } from "react-router-dom";
 import Icon from "../styles/icons";
+import { Ingredients } from "../types";
+
 
 export interface SearchSectionProps {
-  title: string;
-  subtitle?: string; 
+  title: string | undefined;
+  subtitle: Ingredients[] | undefined;
   code?:string;
   tags?: { name: string }[];
 }
@@ -19,8 +21,6 @@ export const DetailTitle = ({
 }: SearchSectionProps) => {
 //   const { t } = useTranslation();
   const navigate = useNavigate();
-  // let deviceSize =
-
   return (
     <SearchBarContainer>
       <TopRow>
@@ -30,7 +30,16 @@ export const DetailTitle = ({
             Grįžti atgal
           </StyledButton>
           <Title>{title}</Title>
-          <Subtitle>Veikliosios medžiagos:{subtitle && subtitle}</Subtitle>
+          <Subtitle>
+            Veikliosios medžiagos:{" "}
+            {subtitle?.map((item, index) => {
+              if (index === subtitle.length - 1) {
+                return item.substance.name;
+              } else {
+                return item.substance.name + ", ";
+              }
+            })}
+          </Subtitle>
         </TextContainer>
         <Code>{code}</Code>
       </TopRow>
