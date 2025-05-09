@@ -637,7 +637,7 @@ const Icon = ({ name, className }: IconProps) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_386_814)">
+          <g clipPath="url(#clip0_386_814)">
             <path
               d="M1.66663 18.3333L2.49996 17.5H4.99996L12.5 10"
               stroke="#619ACF"
@@ -878,7 +878,7 @@ const Icon = ({ name, className }: IconProps) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_374_60)">
+          <g clipPath="url(#clip0_374_60)">
             <path
               d="M8 1.33337V14.6667"
               stroke="#619ACF"
@@ -938,7 +938,7 @@ const Icon = ({ name, className }: IconProps) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_374_38)">
+          <g clipPath="url(#clip0_374_38)">
             <path
               d="M14.36 10H11.3333C10.9797 10 10.6406 10.1405 10.3905 10.3905C10.1405 10.6406 10 10.9797 10 11.3333V14.36"
               stroke="#619ACF"
@@ -1000,6 +1000,18 @@ const Icon = ({ name, className }: IconProps) => {
           />
         </svg>
       );
+    case "dot":
+      return (
+        <svg
+          width="4"
+          height="5"
+          viewBox="0 0 4 5"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect y="0.5" width="4" height="4" rx="2" fill="#619ACF" />
+        </svg>
+      );
     case "pills":
       return (
         <svg
@@ -1009,7 +1021,7 @@ const Icon = ({ name, className }: IconProps) => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_374_32)">
+          <g clipPath="url(#clip0_374_32)">
             <path
               d="M4.66671 8.00004C6.50766 8.00004 8.00004 6.50766 8.00004 4.66671C8.00004 2.82576 6.50766 1.33337 4.66671 1.33337C2.82576 1.33337 1.33337 2.82576 1.33337 4.66671C1.33337 6.50766 2.82576 8.00004 4.66671 8.00004Z"
               stroke="#619ACF"
@@ -1071,6 +1083,80 @@ const Icon = ({ name, className }: IconProps) => {
           />
         </svg>
       );
+      case "filters":
+        return (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M17.5 3.33337H11.6667"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M8.33333 3.33337H2.5"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M17.5 10H10"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6.66667 10H2.5"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M17.5 16.6666H13.3333"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M10 16.6666H2.5"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M11.6667 1.66663V4.99996"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M6.66666 8.33337V11.6667"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M13.3333 15V18.3333"
+              stroke="#619ACF"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        );
     default:
       return null;
   }

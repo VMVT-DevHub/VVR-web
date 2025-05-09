@@ -12,6 +12,7 @@ import { PageSelector } from "../components/PageSelector";
 import { Filters } from "../components/Filters";
 import { useEffect, useState } from "react";
 import { PopUp } from "../components/layouts/PopUp";
+import Icon from "../styles/icons";
 
 export const HomePage = () => {
   const { t } = useTranslation();
@@ -44,8 +45,6 @@ export const HomePage = () => {
   // const { data: medicine, isLoading } = useLocations(query, Number(page));
 
   const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY)); //temporary hard fetch
-
-  console.log(medicineTEMPORARY);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().required("homePage.required"),
@@ -98,19 +97,22 @@ export const HomePage = () => {
         <LeftColumn>
           {/* dynamic filter display */}
           {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
-            <>
-              <StyledFilters />
-              <ShowFilters onClick={() => setShowFilters(prev => !prev)}>Rodyti Filtrus</ShowFilters>
-              <PopUp
-                visible={showFilters}
-                title={"Filtrai"}
-                onClose={() => {
-                  setShowFilters(false);
-                }}
-              >
-                <Filters />
-              </PopUp>
-            </>
+          <>
+            <StyledFilters />
+            <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
+              <Icon name={"filters"} />
+              Rodyti Filtrus
+            </ShowFilters>
+            <PopUp
+              visible={showFilters}
+              title={"Filtrai"}
+              onClose={() => {
+                setShowFilters(false);
+              }}
+            >
+              <Filters />
+            </PopUp>
+          </>
           {/* )} */}
         </LeftColumn>
         <RightColumn>
@@ -133,13 +135,14 @@ export const HomePage = () => {
           ) : (
             <NotFound>{t("medicines.notFound")}</NotFound>
           )}
-          {medicineTEMPORARY !== undefined && medicineTEMPORARY?.items !== 0 && (
-            <PageSelector
-              currentPage={Number(pageTEMPORARY)}
-              total={medicineTEMPORARY.total}
-              setCurrentPage={handlePageChange}
-            />
-          )}
+          {medicineTEMPORARY !== undefined &&
+            medicineTEMPORARY?.items !== 0 && (
+              <PageSelector
+                currentPage={Number(pageTEMPORARY)}
+                total={medicineTEMPORARY.total}
+                setCurrentPage={handlePageChange}
+              />
+            )}
         </RightColumn>
       </ContentContainer>
     </main>
@@ -153,7 +156,7 @@ const StyledFilters = styled(Filters)`
   }
 `
 const ShowFilters = styled.button`
-
+  gap: 12px;
   display: none;
   padding: 14.5px 20px;
   border-radius: 26px;
@@ -163,12 +166,12 @@ const ShowFilters = styled.button`
   font-family: "Inter";
   font-size: 1rem;
   margin-bottom: 16px;
-
+  
   &:hover {
     background-color: ${({theme}) => theme.colors.secondary};
   }
   @media ${device.mobileL} {
-    display: block;
+    display: flex;
   }
 `
 

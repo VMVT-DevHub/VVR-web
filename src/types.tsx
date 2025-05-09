@@ -34,7 +34,7 @@ interface Organization {
   loc: string;
   org: string;
   name: string;
-  country: string;
+  country?: string;
   city: string;
   address: string;
 }
@@ -125,25 +125,41 @@ interface Ingredient {
 export interface MedicineDetail {
   id: number;
   code: string;
-  name: string;
-  names: NameItem[];
-  status: CodeTypeLanguage;
-  type: CodeTypeLanguage;
-  case: {
+  name?: string;
+  names?: NameItem[];
+  status?: CodeTypeLanguage;
+  type?: CodeTypeLanguage;
+  case?: {
     name: string;
     code: number;
     type: string;
     lang: boolean;
   };
-  legal: CodeTypeLanguage;
-  basis: CodeTypeLanguage;
-  holder: Organization;
-  packs: Pack[];
-  mfctOps: Organization[];
-  reference: CodeTypeLanguage[];
-  classif: CodeTypeLanguage[];
-  extension: CodeTypeLanguage;
-  admProd: AdminProduct[];
-  mfctItem: MfctItem[];
-  ingredients: Ingredient[];
+  legal?: CodeTypeLanguage;
+  basis?: CodeTypeLanguage;
+  holder?: Organization;
+  packs?: Pack[];
+  mfctOps?: Organization[];
+  reference?: CodeTypeLanguage[];
+  classif?: CodeTypeLanguage[];
+  extension?: CodeTypeLanguage;
+  admProd?: AdminProduct[];
+  mfctItem?: MfctItem[];
+  ingredients?: Ingredient[];
+}
+
+ interface Substances {
+  code: number | string;
+  lang: boolean;
+  name: string;
+  names: string[];
+  type: string;
+}
+
+export interface Ingredients {
+  code: number | string;
+  concentration: boolean;
+  lang: boolean;
+  substance: Substances;
+  type: string;
 }
