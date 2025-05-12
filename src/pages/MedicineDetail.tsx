@@ -9,30 +9,35 @@ import { Packages } from "../components/others/Packages";
 export const MedicineDetail = () => {
   const { id } = useParams();
 
-  const { data: medicine, isLoading } = useMedicine(id!, "LT");
+  const { data: medicine, isLoading } = useMedicine(id!, "LT", false);
 
   if (isLoading) return <p>Kraunasi...</p>;
   if (!medicine) return <p>Kažkur įsivėlė klaida!</p>;
 
-  const temporaryTags = [{ name: "????" }, { name: "??????" }];
 
-  console.log(medicine);
-  console.log(medicine.code.split("-"));
+  const animalTags = medicine.admProd?.map((prod) =>
+    prod.routes?.map((route) => route.species?.map((species) => species.type))
+  );
+
+  const secondaryCountries = medicine.reglCase?.map(item => item.type).join(', ')
+
+  console.log(animalTags?.toString());
   return (
     <>
       <DetailTitle
         title={medicine.name}
         code={id}
-        tags={temporaryTags}
+        tags={animalTags}
         subtitle={medicine.ingredients}
       />
       <MedicineDetailContainer>
         <LeftColumn>
           <Title>Indikacija (-os)</Title>
-          <p>admProd ???</p>
+          <p>Šiuo metu aprašymo nėra.</p>
           <Title>Pakuotės</Title>
           {medicine.packs?.map((item) => {
             return (
+              //pridet vienetus kg ir tt
               <Packages
                 key={item.name}
                 name={medicine.code}
@@ -44,16 +49,43 @@ export const MedicineDetail = () => {
             );
           }) || "informacijos apie pakuotes nėra."}
           <Title>Išlauka</Title>
-          ???
+
+
+          {medicine.admProd?.map((prod, prodIndex) =>
+            prod.routes?.map((route, routeIndex) =>
+              route.species?.map((species, speciesIndex) => (
+                <AnimalContainer
+                  key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
+                >
+                  <Animal>{species.type}</Animal>
+                  <ProduceContainer>
+                    {species.withdrawalPeriod?.map((period, periodIndex) => (
+                      <Produce
+                        key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
+                      >
+                        <div>
+                          {period.tissue?.type}
+                          <p>Naudojimo būdas: {route.type}</p>
+                        </div>
+                        <p>
+                          {period.num} {period.type}s
+                        </p>
+                      </Produce>
+                    ))}
+                  </ProduceContainer>
+                </AnimalContainer>
+              ))
+            )
+          )}
           <Title>Veterinarinio vaisto informacija</Title>
           <MedicineContainer>
             <LeftInfoColumn>
-              <RegistrationInfo
+              {/* <RegistrationInfo
                 icon={"pill"}
                 title={"Vaisto tipas"}
                 data={"???"}
                 textSize="big"
-              />
+              /> */}
               <RegistrationInfo
                 icon={"flask"}
                 title={"Veiklioji(-iosios) medžiaga(-os)"}
@@ -63,7 +95,7 @@ export const MedicineDetail = () => {
               <RegistrationInfo
                 icon={"scroll"}
                 title={"Naudojimo būdas(-ai)"}
-                data={"???"}
+                data={medicine.admProd?.[0].routes?.[0].type}
                 textSize="big"
               />
             </LeftInfoColumn>
@@ -74,16 +106,16 @@ export const MedicineDetail = () => {
                 data={medicine.extension?.type}
                 textSize="big"
               />
-              <RegistrationInfo
+              {/* <RegistrationInfo
                 icon={"pipe"}
                 title={"Pagalbinės medžiagos"}
                 data={"???"}
                 textSize="big"
-              />
+              /> */}
               <RegistrationInfo
                 icon={"animal"}
                 title={"Paskirties gyvūnų rūšys pagal naudojimo būdą"}
-                data={"???"}
+                data={"?"}
                 textSize="big"
               />
             </RightInfoColumn>
@@ -96,7 +128,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"calendar"}
               title={"Registracijos data"}
-              data={"???"}
+              data={medicine.date.split("T")[0]}
             />
             <RegistrationInfo
               icon={"barcode"}
@@ -106,7 +138,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"pen"}
               title={"Registruotojas"}
-              data={medicine.holder?.name + " ???"}
+              data={`${medicine.holder?.name}, ${medicine.holder?.address}, ${medicine.holder?.country}`} //sutvarkt kad nebutu undefined undefined
             />
             <RegistrationInfo
               icon={"calendar"}
@@ -136,19 +168,19 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"flag"}
               title={"Susijusi valstybė narė"}
-              data={"???"}
+              data={secondaryCountries}
             />
             <RegistrationInfo
               icon={"pills"}
               title={"Veterinarinio vaisto grupė"}
-              data={"???"}
+              data={medicine.legal?.type}
             />
             <RegistrationInfo
               icon={"qrcode"}
               title={"ATCvet kodas"}
-              data={"???"}
+              data={medicine.classif?.[0].name} //gali būt keletas
             />
-            {medicine.mfctOps?.[0]?.name && (
+            {medicine.mfctOps?.[0]?.name && ( //keletą atvaizduoti
               <RegistrationInfo
                 icon={"microscope"}
                 title={"Gamintojas"}
@@ -158,7 +190,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"hashtag"}
               title={"UPD ID Nr."}
-              data={medicine.id + " ???"}
+              data={medicine.id.toString()}
             />
           </RegisteredInformation>
 
@@ -171,6 +203,42 @@ export const MedicineDetail = () => {
     </>
   );
 };
+
+const Animal = styled.p`
+  font-weight: 600;
+  margin-bottom: 12px;
+`
+
+const Produce = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: ${({theme}) => theme.colors.secondary};
+  padding: 12px;
+  font-weight: 600;
+  font-family: inter;
+  border-radius: 7px;
+  & p {
+    font-weight: 400;
+  font-family: inter;
+
+  }
+   & div {
+  font-family: inter;
+  }
+`
+
+const ProduceContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`
+const AnimalContainer = styled.div`
+  padding: 12px;
+  border: 1px solid ${({theme}) => theme.colors.secondary};
+  border-radius: 8px;
+  margin-bottom: 4px;
+`
 const MedicineContainer = styled.div`
   display: flex;
   justify-content: space-between;

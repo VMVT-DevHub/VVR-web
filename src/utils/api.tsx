@@ -56,16 +56,19 @@ class Api {
     });
   }
 
-  async getMedicine(id: string, language: string): Promise<MedicineDetail> {
+  async getMedicine(id: string, language: string, uat:boolean): Promise<MedicineDetail> {
     const validID = sanitizeString(id);
+    const queryString = uat ? `upd/med/${validID}?lang=${language}&uat=true` : `upd/med/${validID}?lang=${language}`
     return this.get<MedicineDetail>({
-      resource: `upd/med/${validID}?lang=${language}`,
+      resource: queryString,
     });
   }
 
-  async getAllMedicines(page:number): Promise<LocationResponse> {
+  async getAllMedicines(page:number, uat:boolean): Promise<LocationResponse> {
+    const queryString = uat ?   `/upd/med?lang=LT&uat=true` : `upd/med?page=${page}&limit=7&lang=LT`
     return this.get<LocationResponse>({
-      resource: `upd/med?page=${page}&limit=7&lang=LT`,
+      resource: queryString,
+      // resource: `/upd/med?lang=LT&uat=true`,
     });
   }
 }

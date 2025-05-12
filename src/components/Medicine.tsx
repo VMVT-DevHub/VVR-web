@@ -5,10 +5,10 @@ import { device } from "../styles";
 export interface MedicineProps {
   id: string;
   title: string;
-  subtitle?: string;
+  subtitle?: string[];
   code: string;
   isNew?: boolean;
-  tags?: { name: string }[];
+  tags?: string[];
   onClick?: () => void;
 }
 
@@ -28,14 +28,14 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
           </ImageContainer>
           <div>
             <Title>{title}</Title>
-            <Subtitle>{subtitle}</Subtitle>
+            <Subtitle>{subtitle?.join(', ')}</Subtitle>
           </div>
         </TopLeftContainer>
       </TopRow>
       <BottomRow>
         <TagContainer>
         {tags?.map((tag) => (
-          <Tag key={tag.name}>{tag.name}</Tag>
+          <Tag key={tag}>{tag}</Tag>
         ))}
         </TagContainer>
 
@@ -48,6 +48,7 @@ const TagContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 16px;
+  flex-wrap: wrap;
 `
 
 const MedicineContainer = styled.div`

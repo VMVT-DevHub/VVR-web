@@ -36,15 +36,15 @@ export const HomePage = () => {
     }
   }, [query, page, setSearchParams]);
 
-  const temporaryTags = [
-    { name: "Avims" },
-    { name: "Kiaulėms" },
-    { name: "Galvijams" },
-  ];
+
 
   // const { data: medicine, isLoading } = useLocations(query, Number(page));
 
-  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY)); //temporary hard fetch
+  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY), false); //temporary hard fetch
+
+
+  // const animals = medicineTEMPORARY.data.map(item => item.ingredients).join(', ')
+  console.log(medicineTEMPORARY?.data)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().required("homePage.required"),
@@ -123,11 +123,11 @@ export const HomePage = () => {
                 <Medicine
                   key={item.id}
                   id={item.id}
-                  subtitle={item.holder}
+                  subtitle={item.ingredients}
                   code={item.code}
                   title={item.name}
                   isNew={true}
-                  tags={temporaryTags}
+                  tags={item.species}
                   onClick={() => navigate(slugs.medicineDetail(item.id))}
                 />
               );
