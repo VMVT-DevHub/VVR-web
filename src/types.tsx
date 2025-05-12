@@ -12,6 +12,8 @@ export interface LocationResponse {
 export interface LocationItem {
   id: string;
   holder: string;
+  ingredients: string[];
+  species: string[];
   code: string;
   name: string;
   status: string;
@@ -26,8 +28,14 @@ interface NameItem {
 
 interface CodeTypeLanguage {
   code: number;
+  name: string;
   type: string;
   lang: boolean;
+}
+
+interface Countries {
+  code: number;
+  type: string;
 }
 
 interface Organization {
@@ -62,7 +70,7 @@ interface Species {
 }
 
 interface Route {
-  spieces: Species[];
+  species: Species[];
   code: number;
   type: string;
   lang: boolean;
@@ -125,6 +133,7 @@ interface Ingredient {
 export interface MedicineDetail {
   id: number;
   code: string;
+  date:string;
   name?: string;
   names?: NameItem[];
   status?: CodeTypeLanguage;
@@ -146,6 +155,7 @@ export interface MedicineDetail {
   admProd?: AdminProduct[];
   mfctItem?: MfctItem[];
   ingredients?: Ingredient[];
+  reglCase?: Countries[]
 }
 
  interface Substances {

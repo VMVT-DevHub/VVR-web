@@ -10,7 +10,7 @@ export interface SearchSectionProps {
   title: string | undefined;
   subtitle: Ingredients[] | undefined;
   code?:string;
-  tags?: { name: string }[];
+  tags?: string[][][] | undefined;
 }
 
 export const DetailTitle = ({
@@ -46,7 +46,7 @@ export const DetailTitle = ({
       <BottomRow>
         <TagContainer>
           {tags?.map((tag) => (
-            <Tag key={tag.name}>{tag.name}</Tag>
+            <Tag>{tag}</Tag>
           ))}
         </TagContainer>
       </BottomRow>
