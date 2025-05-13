@@ -4,7 +4,7 @@ import Icon from "../../styles/icons";
 export interface registrationInfoProps {
   icon: string;
   title: string;
-  data?: string;
+  data?: string | string[];
   textSize?: string;
 }
 
@@ -33,7 +33,7 @@ export const RegistrationInfo = ({
       </div>
       <TextContainer $textSize={text}>
         <p>{title}</p>
-        <p>{data}</p>
+        <p>{typeof data == 'string' ? data : data.join(', ')}</p>
       </TextContainer>
     </ItemContainer>
   );

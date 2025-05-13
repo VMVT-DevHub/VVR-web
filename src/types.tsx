@@ -12,6 +12,7 @@ export interface LocationResponse {
 export interface LocationItem {
   id: string;
   holder: string;
+  date:string;
   ingredients: string[];
   species: string[];
   code: string;
@@ -88,7 +89,7 @@ interface MfctItem {
   presentation: CodeTypeLanguage;
 }
 
-interface PackItem {
+export interface PackItem {
   num: number;
   ref: number;
   code: number;
@@ -114,9 +115,25 @@ interface Pack {
   items: PackItem[];
 }
 
+interface Denominator{
+  code: string;
+  name:string;
+  num:number;
+  type:string
+}
+
+interface Numerator{
+  code: string;
+  name:string;
+  num:number;
+  type:string
+}
+
 interface Substance {
   name: string;
   names: string[];
+  denominator: Denominator;
+  numerator: Numerator;
   code: number;
   type: string;
   lang: boolean;

@@ -20,6 +20,7 @@ export const DetailTitle = ({
   tags,
 }: SearchSectionProps) => {
 //   const { t } = useTranslation();
+const uniqueTags = new Set(tags?.flat().flat())
   const navigate = useNavigate();
   return (
     <SearchBarContainer>
@@ -44,11 +45,12 @@ export const DetailTitle = ({
         <Code>{code}</Code>
       </TopRow>
       <BottomRow>
-        <TagContainer>
-          {tags?.map((tag) => (
-            <Tag>{tag}</Tag>
+            <TagContainer>
+          {[...uniqueTags].map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
           ))}
-        </TagContainer>
+            </TagContainer>
+        
       </BottomRow>
     </SearchBarContainer>
   );
@@ -67,6 +69,7 @@ const TagContainer = styled.div`
   flex-direction: row;
   gap: 16px;
   margin-top: 24px;
+  flex-wrap: wrap;
 `
 const Code = styled.div`
   font-size: 0.75rem;
