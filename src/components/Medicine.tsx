@@ -81,6 +81,8 @@ const TopRightContainer = styled.div`
   order: 2;
   @media ${device.mobileXL} {
     order: 1;
+  width: 100%;
+
   }
   width: 35%;
 `;

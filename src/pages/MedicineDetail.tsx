@@ -28,8 +28,11 @@ export const MedicineDetail = () => {
   const animalTagsSet = new Set(animalTags);
 
   const usageTypes = medicine.admProd
-    ?.map((prod) => prod.routes?.map((route) => route.type))
+    ?.flatMap((prod) => prod.routes?.flatMap((route) => route.type))
     .filter((item) => typeof item !== "undefined");
+
+  const usageTypesSet = new Set(usageTypes);
+
 
   const secondaryCountries = medicine.reglCase
     ?.map((item) => item.type)
@@ -38,6 +41,7 @@ export const MedicineDetail = () => {
   const manufacturers = medicine.mfctOps?.map(
     (item) => `${item.name}, ${item.address}, ${item.country}`
   );
+
 
   const ingredients = medicine.ingredients
     ?.map((item) => {
@@ -74,6 +78,7 @@ export const MedicineDetail = () => {
           <p>Šiuo metu aprašymo nėra.</p>
           <Title>Pakuotės</Title>
           {medicine.packs?.map((item) => {
+            
             return (
               <Packages
                 key={item.name}
@@ -142,7 +147,7 @@ export const MedicineDetail = () => {
               <RegistrationInfo
                 icon={"scroll"}
                 title={"Naudojimo būdas(-ai)"}
-                data={usageTypes.flat().flat()}
+                data={[...usageTypesSet]}
                 textSize="big"
               />
             )}

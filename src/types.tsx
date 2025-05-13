@@ -91,13 +91,14 @@ interface MfctItem {
 
 export interface PackItem {
   num: number;
+  name: string;
   ref: number;
   code: number;
   type: string;
   lang: boolean;
 }
 
-interface Pack {
+export interface Pack {
   name: string;
   language: CodeTypeLanguage;
   marketing: {
