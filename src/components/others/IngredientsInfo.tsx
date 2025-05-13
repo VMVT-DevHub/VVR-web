@@ -50,7 +50,7 @@ export const IngredientsInfo = ({
                     denominatorNum &&
                     denominatorName && (
                       <>
-                        :{" "}
+                        :
                         <Info>
                           {numeratorNum} {numeratorName} / {denominatorNum}{" "}
                           {denominatorName}
@@ -77,6 +77,10 @@ const Ingredient = styled.div`
   gap: 7px;
   margin-top: 6px;
   font-style: italic;
+    & > div:first-child {
+        position: relative;
+        top: -3px;
+    }
 
 `;
 const TextContainer = styled.div`

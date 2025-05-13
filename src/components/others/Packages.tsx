@@ -27,8 +27,8 @@ export const Packages = ({
       </TopRow>
       <Subtitle>{info}</Subtitle>
       <Subtitle>
-        {type}, {weightType[0].num} {weightType[0].type} <Icon name="dot" />
-        Pakuotėje {quantity} vnt.{" "}
+        {type}, {weightType[0].num} {weightType[0].name ? weightType[0].name : weightType[0].type} <Icon name="dot" />
+        Pakuotėje {quantity} vnt.
       </Subtitle>
     </PackageContainer>
   );
