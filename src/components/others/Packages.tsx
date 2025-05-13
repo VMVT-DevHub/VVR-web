@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Icon from "../../styles/icons";
+import {PackItem} from "../../types"
 
 interface PackagesProps {
   name: string;
@@ -7,6 +8,7 @@ interface PackagesProps {
   status: string;
   quantity: number;
   type: string;
+  weightType: PackItem[]
 }
 export const Packages = ({
   name,
@@ -14,7 +16,9 @@ export const Packages = ({
   status,
   quantity,
   type,
+  weightType,
 }: PackagesProps) => {
+
   return (
     <PackageContainer>
       <TopRow>
@@ -23,7 +27,7 @@ export const Packages = ({
       </TopRow>
       <Subtitle>{info}</Subtitle>
       <Subtitle>
-        {type} <Icon name="dot" />
+        {type}, {weightType[0].num} {weightType[0].type} <Icon name="dot" />
         Pakuotėje {quantity} vnt.{" "}
       </Subtitle>
     </PackageContainer>

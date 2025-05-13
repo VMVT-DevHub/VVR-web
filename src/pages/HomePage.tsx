@@ -23,7 +23,7 @@ export const HomePage = () => {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
 
-  const [pageTEMPORARY, setPageTEMPORARY] = useState(1);
+  const [pageTEMPORARY, setPageTEMPORARY] = useState(19);
 
 
 
@@ -46,6 +46,8 @@ export const HomePage = () => {
   // const animals = medicineTEMPORARY.data.map(item => item.ingredients).join(', ')
   console.log(medicineTEMPORARY?.data)
 
+  // const [isMedicineNew, setIsMedicineNew] = useState(false);
+
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().required("homePage.required"),
   });
@@ -67,6 +69,19 @@ export const HomePage = () => {
     setPageTEMPORARY(newPage)
   };
 
+  // const handleDateDifference = (registrationDate:string) => {
+  //    const dateObj = new Date();
+  //   const month   = dateObj.getUTCMonth() + 1;
+  //   const day     = dateObj.getUTCDate();
+  //   const year    = dateObj.getUTCFullYear();
+
+  //   const currentDate = `${year}-${month}-${day}`;
+  //   const currentDateArray = currentDate.split('-')
+  //   const pastDateArray = registrationDate.split('-')
+
+  //   console.log(currentDateArray)
+  //   console.log(pastDateArray)
+  // }
 
   return (
     <main>
@@ -119,6 +134,7 @@ export const HomePage = () => {
           {isLoading ? <p>Loading...</p> : ""}
           {medicineTEMPORARY?.items !== 0 ? (
             medicineTEMPORARY?.data.map((item) => {
+                // handleDateDifference(item.date)
               return (
                 <Medicine
                   key={item.id}
@@ -126,7 +142,7 @@ export const HomePage = () => {
                   subtitle={item.ingredients}
                   code={item.code}
                   title={item.name}
-                  isNew={true}
+                  isNew={false}
                   tags={item.species}
                   onClick={() => navigate(slugs.medicineDetail(item.id))}
                 />

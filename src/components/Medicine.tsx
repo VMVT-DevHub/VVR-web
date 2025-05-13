@@ -18,8 +18,8 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
-          {isNew && <Code> {code}</Code>}
-          {/* {isNew && <NewSticker>Naujiena</NewSticker>} */}
+          <Code> {code}</Code>
+          {isNew && <NewSticker>Naujiena</NewSticker>}
         </TopRightContainer>
 
         <TopLeftContainer>
@@ -28,7 +28,7 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
           </ImageContainer>
           <div>
             <Title>{title}</Title>
-            <Subtitle>{subtitle?.join(', ')}</Subtitle>
+            <Subtitle>Veikliosios medžiagos: {subtitle?.join(', ')}</Subtitle>
           </div>
         </TopLeftContainer>
       </TopRow>
@@ -115,14 +115,14 @@ const Subtitle = styled.div`
   font-size: 0.875rem;
 `;
 
-// const NewSticker = styled.div`
-//   background-color: ${({ theme }) => theme.colors.primary_light};
-//   color: ${({ theme }) => theme.colors.secondary};
-//   font-size: 0.75rem;
-//   font-weight: 500;
-//   padding: 4px 8px;
-//   border-radius: 15px;
-// `;
+const NewSticker = styled.div`
+  background-color: ${({ theme }) => theme.colors.primary_light};
+  color: ${({ theme }) => theme.colors.secondary};
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 15px;
+`;
 
 const Tag = styled.div`
   display: flex;

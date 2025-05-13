@@ -5,28 +5,36 @@ import Icon from "../styles/icons";
 import { useMedicine } from "../utils/hooks";
 import { DetailTitle } from "../components/DetailTitle";
 import { Packages } from "../components/others/Packages";
+import { useState } from "react";
 
 export const MedicineDetail = () => {
   const { id } = useParams();
 
   const { data: medicine, isLoading } = useMedicine(id!, "LT", false);
+  const [timingExists, setTimingExists] = useState(true);
+  const [showAllPackages, setShowAllPackages] = useState(false);
 
   if (isLoading) return <p>Kraunasi...</p>;
   if (!medicine) return <p>Kažkur įsivėlė klaida!</p>;
-
 
   const animalTags = medicine.admProd?.map((prod) =>
     prod.routes?.map((route) => route.species?.map((species) => species.type))
   );
 
-  const secondaryCountries = medicine.reglCase?.map(item => item.type).join(', ')
+  const secondaryCountries = medicine.reglCase
+    ?.map((item) => item.type)
+    .join(", ");
 
-  console.log(animalTags?.toString());
+  const ingredients = medicine.ingredients?.map((item) => 
+  `${item.substance.name}, ${item.substance.numerator.num} ${item.substance.numerator.name} / ${item.substance.denominator.num} ${item.substance.denominator.name}`
+);
+  console.log(ingredients?.[1])
+  console.log(medicine);
   return (
     <>
       <DetailTitle
         title={medicine.name}
-        code={id}
+        code={medicine.code}
         tags={animalTags}
         subtitle={medicine.ingredients}
       />
@@ -36,6 +44,9 @@ export const MedicineDetail = () => {
           <p>Šiuo metu aprašymo nėra.</p>
           <Title>Pakuotės</Title>
           {medicine.packs?.map((item) => {
+
+
+
             return (
               //pridet vienetus kg ir tt
               <Packages
@@ -45,51 +56,61 @@ export const MedicineDetail = () => {
                 status={item.marketing?.type}
                 type={item.quantity?.type}
                 quantity={item.quantity?.num}
+                weightType={item.items}
               />
             );
           }) || "informacijos apie pakuotes nėra."}
           <Title>Išlauka</Title>
 
-
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) =>
-              route.species?.map((species, speciesIndex) => (
-                <AnimalContainer
-                  key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
-                >
-                  <Animal>{species.type}</Animal>
-                  <ProduceContainer>
-                    {species.withdrawalPeriod?.map((period, periodIndex) => (
-                      <Produce
-                        key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
-                      >
-                        <div>
-                          {period.tissue?.type}
-                          <p>Naudojimo būdas: {route.type}</p>
-                        </div>
-                        <p>
-                          {period.num} {period.type}s
-                        </p>
-                      </Produce>
-                    ))}
-                  </ProduceContainer>
-                </AnimalContainer>
-              ))
+              route.species?.map((species, speciesIndex) => {
+                return (
+                  species.withdrawalPeriod && (
+                    <AnimalContainer
+                      key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
+                    >
+                      <Animal>{species.type}</Animal>
+                      <ProduceContainer>
+                        {species.withdrawalPeriod.map(
+                          (period, periodIndex) => { 
+                            const isMinPossibleValue = period.num == 0 ? true : false;
+                            const isMaxPossibleValue = period.num == 999 ? true : false;
+                            return (
+                              <Produce
+                                key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
+                              >
+                                <div>
+                                  {period.tissue?.type}
+                                  <p>Naudojimo būdas: {route.type}</p>
+                                  {period.descr && <Description> {period.descr}</Description>}
+                                </div>
+                                <p>
+                                  {isMinPossibleValue
+                                    ? "Laukti nereikia"
+                                    : isMaxPossibleValue
+                                    ? "Nenaudojama"
+                                    : `${period.num} ${period.type}s`}
+                                </p>
+                              </Produce>
+                            );
+                            
+                          }
+                        )}
+                      </ProduceContainer>
+                    </AnimalContainer>
+                  )
+                );
+              })
             )
           )}
           <Title>Veterinarinio vaisto informacija</Title>
           <MedicineContainer>
             <LeftInfoColumn>
-              {/* <RegistrationInfo
-                icon={"pill"}
-                title={"Vaisto tipas"}
-                data={"???"}
-                textSize="big"
-              /> */}
               <RegistrationInfo
                 icon={"flask"}
                 title={"Veiklioji(-iosios) medžiaga(-os)"}
-                data={"???"}
+                data={ingredients}
                 textSize="big"
               />
               <RegistrationInfo
@@ -106,16 +127,10 @@ export const MedicineDetail = () => {
                 data={medicine.extension?.type}
                 textSize="big"
               />
-              {/* <RegistrationInfo
-                icon={"pipe"}
-                title={"Pagalbinės medžiagos"}
-                data={"???"}
-                textSize="big"
-              /> */}
               <RegistrationInfo
                 icon={"animal"}
                 title={"Paskirties gyvūnų rūšys pagal naudojimo būdą"}
-                data={"?"}
+                data={animalTags?.flat().flat()}
                 textSize="big"
               />
             </RightInfoColumn>
@@ -128,7 +143,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"calendar"}
               title={"Registracijos data"}
-              data={medicine.date.split("T")[0]}
+              data={medicine.date}
             />
             <RegistrationInfo
               icon={"barcode"}
@@ -178,7 +193,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"qrcode"}
               title={"ATCvet kodas"}
-              data={medicine.classif?.[0].name} //gali būt keletas
+              data={medicine.classif?.map((item) => item.name)} //gali būt keletas
             />
             {medicine.mfctOps?.[0]?.name && ( //keletą atvaizduoti
               <RegistrationInfo
@@ -207,41 +222,45 @@ export const MedicineDetail = () => {
 const Animal = styled.p`
   font-weight: 600;
   margin-bottom: 12px;
-`
+`;
 
 const Produce = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  background-color: ${({theme}) => theme.colors.secondary};
+  background-color: ${({ theme }) => theme.colors.secondary};
   padding: 12px;
   font-weight: 600;
   font-family: inter;
   border-radius: 7px;
   & p {
     font-weight: 400;
-  font-family: inter;
+    font-family: inter;
+  }
+  & div {
+    font-family: inter;
+  }
+`;
 
-  }
-   & div {
-  font-family: inter;
-  }
+const Description = styled.p`
+  margin-top: 8px;
 `
 
 const ProduceContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-`
+`;
 const AnimalContainer = styled.div`
   padding: 12px;
-  border: 1px solid ${({theme}) => theme.colors.secondary};
+  border: 1px solid ${({ theme }) => theme.colors.secondary};
   border-radius: 8px;
   margin-bottom: 4px;
-`
+`;
 const MedicineContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 8px;
 `;
 const LeftInfoColumn = styled.div`
   width: 50%;
