@@ -14,6 +14,8 @@ export const RegistrationInfo = ({
   data,
   textSize = "small",
 }: registrationInfoProps) => {
+
+
   const text =
     textSize == "small"
       ? {
@@ -25,7 +27,12 @@ export const RegistrationInfo = ({
           data: "0.875rem",
         };
 
+        
+  if (data == 'undefined') return null;
   if (!data) return null;
+
+  
+
   return (
     <ItemContainer>
       <div>
@@ -33,7 +40,7 @@ export const RegistrationInfo = ({
       </div>
       <TextContainer $textSize={text}>
         <p>{title}</p>
-        <p>{typeof data == 'string' ? data : data.join(', ')}</p>
+        <p>{typeof data == 'string' ? data : data.join(`, `)}</p>
       </TextContainer>
     </ItemContainer>
   );
@@ -48,6 +55,7 @@ const TextContainer = styled.div<{
     font-weight: 400;
   }
 `;
+
 const ItemContainer = styled.div`
   display: flex;
   gap: 8px;
