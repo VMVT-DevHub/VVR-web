@@ -3,14 +3,13 @@ import texture from "../styles/images/FonoRastas.svg";
 import { device } from "../styles";
 import { useNavigate } from "react-router-dom";
 import Icon from "../styles/icons";
-import { Ingredients } from "../types";
 
 
 export interface SearchSectionProps {
   title: string | undefined;
-  subtitle: Ingredients[] | undefined;
+  subtitle: undefined | string[];
   code?:string;
-  tags?: string[][][] | undefined;
+  tags?: string[] | undefined  | string[][][];
 }
 
 export const DetailTitle = ({
@@ -20,8 +19,8 @@ export const DetailTitle = ({
   tags,
 }: SearchSectionProps) => {
 //   const { t } = useTranslation();
-const uniqueTags = new Set(tags?.flat().flat())
-  const navigate = useNavigate();
+const navigate = useNavigate();
+
   return (
     <SearchBarContainer>
       <TopRow>
@@ -35,9 +34,9 @@ const uniqueTags = new Set(tags?.flat().flat())
             Veikliosios medžiagos:{" "}
             {subtitle?.map((item, index) => {
               if (index === subtitle.length - 1) {
-                return item.substance.name;
+                return item;
               } else {
-                return item.substance.name + ", ";
+                return item + ", ";
               }
             })}
           </Subtitle>
@@ -45,12 +44,16 @@ const uniqueTags = new Set(tags?.flat().flat())
         <Code>{code}</Code>
       </TopRow>
       <BottomRow>
-            <TagContainer>
-          {[...uniqueTags].map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-          ))}
-            </TagContainer>
-        
+        <TagContainer>
+          {tags && (() => {
+            const filteredTags = tags.filter(
+              (tag) => tag !== undefined
+            );
+            return filteredTags.length > 0
+              ? filteredTags.map((tag, index) => <Tag key={index}>{tag}</Tag>)
+              : null;
+          })()}
+        </TagContainer>
       </BottomRow>
     </SearchBarContainer>
   );
@@ -142,7 +145,7 @@ const Title = styled.h1`
 const Subtitle = styled.p`
   color: ${({ theme }) => theme.colors.description_blue};
   font-size: 0.875rem;
-  max-width: 468px;
+  max-width: 668px;
   font-weight: 400;
 `;
 

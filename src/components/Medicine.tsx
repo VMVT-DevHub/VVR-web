@@ -113,6 +113,8 @@ const Title = styled.div`
 const Subtitle = styled.div`
   font-weight: 400;
   font-size: 0.875rem;
+  font-style: italic;
+
 `;
 
 const NewSticker = styled.div`

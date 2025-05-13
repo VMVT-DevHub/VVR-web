@@ -139,13 +139,7 @@ interface Substance {
   lang: boolean;
 }
 
-interface Ingredient {
-  concentration: boolean;
-  substance: Substance;
-  code: number;
-  type: string;
-  lang: boolean;
-}
+
 
 export interface MedicineDetail {
   id: number;
@@ -171,12 +165,14 @@ export interface MedicineDetail {
   extension?: CodeTypeLanguage;
   admProd?: AdminProduct[];
   mfctItem?: MfctItem[];
-  ingredients?: Ingredient[];
+  ingredients?: Ingredients[];
   reglCase?: Countries[]
 }
 
  interface Substances {
   code: number | string;
+  denominator: Denominator;
+  numerator: Numerator;
   lang: boolean;
   name: string;
   names: string[];
@@ -185,8 +181,17 @@ export interface MedicineDetail {
 
 export interface Ingredients {
   code: number | string;
+  id: number;
   concentration: boolean;
   lang: boolean;
   substance: Substances;
   type: string;
+}
+
+export interface Ingredient {
+  concentration: boolean;
+  substance: Substance;
+  code: number;
+  type: string;
+  lang: boolean;
 }
