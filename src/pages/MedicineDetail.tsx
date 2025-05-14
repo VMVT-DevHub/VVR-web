@@ -23,24 +23,24 @@ export const MedicineDetail = () => {
         route.species?.flatMap((species) => species.type)
       )
     )
-    .filter((item) => typeof item !== "undefined");
+    .filter((item) => typeof item !== "undefined") || undefined;
 
   const animalTagsSet = new Set(animalTags);
 
   const usageTypes = medicine.admProd
     ?.flatMap((prod) => prod.routes?.flatMap((route) => route.type))
-    .filter((item) => typeof item !== "undefined");
+    .filter((item) => typeof item !== "undefined") || undefined;
 
   const usageTypesSet = new Set(usageTypes);
 
 
-  const secondaryCountries = medicine.reglCase
+  const secondaryCountries = medicine.reglCase?.countries
     ?.map((item) => item.type)
-    .join(", ");
+    .join(", ") || undefined;
 
   const manufacturers = medicine.mfctOps?.map(
     (item) => `${item.name}, ${item.address}, ${item.country}`
-  );
+  ) || undefined;
 
 
   const ingredients = medicine.ingredients
@@ -61,9 +61,10 @@ export const MedicineDetail = () => {
 
       return result;
     })
-    .filter((text) => text !== "");
+    .filter((text) => text !== "") || undefined;
 
   console.log(medicine);
+
   return (
     <>
       <DetailTitle
@@ -195,41 +196,41 @@ export const MedicineDetail = () => {
               title={"Registracijos statusas"}
               data={medicine.status?.type}
             />
-            <RegistrationInfo
+           {medicine.basis && <RegistrationInfo
               icon={"scales"}
               title={"Registracijos teisinis pagrindas "}
               data={medicine.basis?.type}
-            />
-            <RegistrationInfo
+            />}
+            {medicine.case && <RegistrationInfo
               icon={"arrows"}
               title={"Procedūros tipas"}
               data={medicine.case?.type}
-            />
-            <RegistrationInfo
+            />}
+            {medicine.reglCase && <RegistrationInfo
               icon={"hashtag"}
               title={"Procedūros numeris"}
-              data={medicine.case?.name}
-            />
-            <RegistrationInfo
+              data={medicine.reglCase?.name}
+            />}
+            {medicine.reglCase?.reglCountry && <RegistrationInfo
               icon={"globe"}
               title={"Referencinė valstybė narė"}
-              data={medicine.holder?.country}
-            />
-            <RegistrationInfo
+              data={medicine.reglCase?.reglCountry?.type}
+            />}
+            {medicine.reglCase && <RegistrationInfo
               icon={"flag"}
               title={"Susijusi valstybė narė"}
               data={secondaryCountries}
-            />
-            <RegistrationInfo
+            />}
+            {medicine.legal && <RegistrationInfo
               icon={"pills"}
               title={"Veterinarinio vaisto grupė"}
               data={medicine.legal?.type}
-            />
-            <RegistrationInfo
+            />}
+            {medicine.classif && <RegistrationInfo
               icon={"qrcode"}
               title={"ATCvet kodas"}
               data={medicine.classif?.map((item) => item.name)}
-            />
+            />}
             {medicine.mfctOps && (
               <RegistrationInfo
                 icon={"microscope"}
