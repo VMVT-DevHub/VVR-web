@@ -34,7 +34,15 @@ interface CodeTypeLanguage {
   lang: boolean;
 }
 
-interface Countries {
+ interface AllCountries {
+  code: number;
+  type: string;
+  countries: SecondaryCountries[];
+  name:string;
+  reglCountry: SecondaryCountries;
+}
+
+interface SecondaryCountries {
   code: number;
   type: string;
 }
@@ -167,7 +175,7 @@ export interface MedicineDetail {
   admProd?: AdminProduct[];
   mfctItem?: MfctItem[];
   ingredients?: Ingredients[];
-  reglCase?: Countries[]
+  reglCase?: AllCountries;
 }
 
  interface Substances {
