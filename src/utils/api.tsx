@@ -65,7 +65,7 @@ class Api {
   }
 
   async getAllMedicines(page:number, uat:boolean): Promise<LocationResponse> {
-    const queryString = uat ?   `/upd/med?lang=LT&uat=true` : `upd/med?page=${page}&limit=7&lang=LT`
+    const queryString = uat ?   `upd/med?lang=LT&uat=true` : `upd/med?page=${page}&limit=7&lang=LT`
     return this.get<LocationResponse>({
       resource: queryString,
       // resource: `/upd/med?lang=LT&uat=true`,
