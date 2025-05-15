@@ -17,7 +17,7 @@ export const useLocations = (countryCode:string, page:number) => {
 
 export const useMedicine = (id:string, language:string, uat:boolean) => {
   const { data, isLoading, refetch } = useQuery<MedicineDetail>({
-  queryKey: ['medicine', { id, language }],
+  queryKey: ['medicine', { id, language, uat }],
   queryFn: () => api.getMedicine(id, language, uat),
   enabled: !!id,
   retry: false,
@@ -29,7 +29,7 @@ export const useMedicine = (id:string, language:string, uat:boolean) => {
 
 export const useAllMedicines = (page:number, uat:boolean) => {
   const { data, isLoading, refetch } = useQuery<LocationResponse>({
-  queryKey: ['medicines', {page}],
+  queryKey: ['medicines', {page, uat}],
   queryFn: () => api.getAllMedicines(page, uat),
   retry: false,
   refetchOnWindowFocus: false,

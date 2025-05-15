@@ -23,9 +23,8 @@ export const HomePage = () => {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
 
-  const [pageTEMPORARY, setPageTEMPORARY] = useState(19);
-
-
+  const [pageTEMPORARY, setPageTEMPORARY] = useState(1);
+  const [isUPD, setIsUPD] = useState(false);
 
   useEffect(() => {
     if (isNaN(Number(page)) || Number(page) < 0) {
@@ -40,7 +39,7 @@ export const HomePage = () => {
 
   // const { data: medicine, isLoading } = useLocations(query, Number(page));
 
-  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY), false); //temporary hard fetch
+  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY), isUPD); //temporary hard fetch
 
 
   // const animals = medicineTEMPORARY.data.map(item => item.ingredients).join(', ')
@@ -108,7 +107,13 @@ export const HomePage = () => {
           );
         }}
       </Formik>
+      <form>
+        <br></br>
+        <label htmlFor="upd">Ar naudoti UPD test?</label>
+        <input  id="upd" name="upd" type={"checkbox"}checked={isUPD} onChange={(e) => setIsUPD(e.target.checked)} />
+      </form>
       <ContentContainer>
+      
         <LeftColumn>
           {/* dynamic filter display */}
           {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
@@ -144,7 +149,7 @@ export const HomePage = () => {
                   title={item.name}
                   isNew={false}
                   tags={item.species}
-                  onClick={() => navigate(slugs.medicineDetail(item.id))}
+                  onClick={() => navigate(slugs.medicineDetail(item.id), { state: { isUPD } })}
                 />
               );
             })
