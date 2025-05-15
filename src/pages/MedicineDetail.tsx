@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { RegistrationInfo } from "../components/others/RegistrationInfo";
 import { IngredientsInfo } from "../components/others/IngredientsInfo";
@@ -6,13 +6,28 @@ import Icon from "../styles/icons";
 import { useMedicine } from "../utils/hooks";
 import { DetailTitle } from "../components/DetailTitle";
 import { Packages } from "../components/others/Packages";
+import { useEffect, useState } from "react";
 
 export const MedicineDetail = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const [isUPD, setIsUPD] = useState(false);
 
-  const { data: medicine, isLoading } = useMedicine(id!, "LT", false);
+  useEffect(() => {
+    // Extract isUPD from location state
+    const updFromState = location.state?.isUPD;
+    
+    // Only update state if value exists and is boolean
+    if (typeof updFromState === 'boolean') {
+      setIsUPD(updFromState);
+    }
+  }, [location]);
+  const { data: medicine, isLoading } = useMedicine(id!, "LT", isUPD);
   // const [timingExists, setTimingExists] = useState(true);
   // const [showAllPackages, setShowAllPackages] = useState(false);
+  // const [showAllPackages, setShowAllPackages] = useState(false);
+
+
 
   if (isLoading) return <p>Kraunasi...</p>;
   if (!medicine) return <p>Kažkur įsivėlė klaida!</p>;
