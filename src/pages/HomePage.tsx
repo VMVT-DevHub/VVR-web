@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
-import { Formik, Form } from "formik";
+import { Formik, Form, FormikState } from "formik";
 import * as Yup from "yup";
 import { useAllMedicines } from "../utils/hooks";
 import { Medicine } from "../components/Medicine";
@@ -23,7 +23,7 @@ export const HomePage = () => {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
 
-  const [pageTEMPORARY, setPageTEMPORARY] = useState(1);
+  // const [pageTEMPORARY, setPageTEMPORARY] = useState(1);
   const [isUPD, setIsUPD] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const HomePage = () => {
 
   // const { data: medicine, isLoading } = useLocations(query, Number(page));
 
-  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(Number(pageTEMPORARY), isUPD); //temporary hard fetch
+  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(query, Number(page), isUPD); //temporary hard fetch
 
 
   // const animals = medicineTEMPORARY.data.map(item => item.ingredients).join(', ')
@@ -53,19 +53,24 @@ export const HomePage = () => {
 
   const formValues = { medicine: "" };
 
-  const handleSubmit = (values: typeof formValues) => {
-    setSearchParams({
-      query: values.medicine,
-      page: "1",
-    });
-  };
+const handleSubmit = (
+  values: typeof formValues, 
+  { resetForm }: { resetForm: (nextState?: Partial<FormikState<typeof formValues>>) => void }
+) => {
+  setSearchParams({
+    query: values.medicine,
+    page: "1",
+  });
+
+  resetForm({ values: values, isSubmitting: false, isValidating: false });
+};
 
   const handlePageChange = (newPage: number) => {
-    // setSearchParams({
-    //   query,
-    //   page: newPage.toString(),
-    // });
-    setPageTEMPORARY(newPage)
+    setSearchParams({
+      query,
+      page: newPage.toString(),
+    });
+    // setPageTEMPORARY(newPage)
   };
 
   // const handleDateDifference = (registrationDate:string) => {
@@ -97,7 +102,7 @@ export const HomePage = () => {
               <SearchSection
                 title={t("homePage.title")}
                 subtitle={t("homePage.subtitle")}
-                value={values.medicine}
+                value={query || values.medicine}
                 name="medicine"
                 onChange={(el) => setFieldValue("medicine", el)}
                 error={errors.medicine}
@@ -159,7 +164,7 @@ export const HomePage = () => {
           {medicineTEMPORARY !== undefined &&
             medicineTEMPORARY?.items !== 0 && (
               <PageSelector
-                currentPage={Number(pageTEMPORARY)}
+                currentPage={Number(page)}
                 total={medicineTEMPORARY.total}
                 setCurrentPage={handlePageChange}
               />
