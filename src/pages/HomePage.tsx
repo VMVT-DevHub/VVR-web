@@ -102,7 +102,7 @@ const handleSubmit = (
               <SearchSection
                 title={t("homePage.title")}
                 subtitle={t("homePage.subtitle")}
-                value={query || values.medicine}
+                value={values.medicine}
                 name="medicine"
                 onChange={(el) => setFieldValue("medicine", el)}
                 error={errors.medicine}
