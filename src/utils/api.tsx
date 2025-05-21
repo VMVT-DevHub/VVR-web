@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, ResponseType } from 'axios';
 import { LocationResponse, MedicineDetail } from '../types';
 import { sanitizeString } from './hooks';
 
@@ -6,6 +6,7 @@ interface Get {
   resource: string;
   id?: string | number;
   params?: Record<string, unknown>;
+  responseType?: ResponseType;
 }
 
 class Api {
@@ -37,9 +38,10 @@ class Api {
     }
   }
 
-  async get<T>({ resource, id, params }: Get): Promise<T> {
+  async get<T>({ resource, id, params, responseType }: Get): Promise<T> {
     const config: AxiosRequestConfig = {
       params,
+      responseType,
     };
 
     return this.errorWrapper<T>(() =>
@@ -69,6 +71,13 @@ class Api {
     return this.get<LocationResponse>({
       resource: queryString,
       // resource: `/upd/med?lang=LT&uat=true`,
+    });
+  }
+
+  async getDocuments(med_id: string, doc_id:string): Promise<Blob> {
+    return this.get<Blob>({
+      resource: `upd/med/${med_id}/${doc_id}?preview`,
+      responseType: 'blob',
     });
   }
 }

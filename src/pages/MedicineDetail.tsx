@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { RegistrationInfo } from "../components/others/RegistrationInfo";
 import { IngredientsInfo } from "../components/others/IngredientsInfo";
 import Icon from "../styles/icons";
-import { useMedicine } from "../utils/hooks";
+import { handleDocumentDownload, useMedicine } from "../utils/hooks";
 import { DetailTitle } from "../components/DetailTitle";
 import { Packages } from "../components/others/Packages";
 import { useEffect, useState } from "react";
@@ -23,6 +23,15 @@ export const MedicineDetail = () => {
     }
   }, [location]);
   const { data: medicine, isLoading } = useMedicine(id!, "LT", isUPD);
+
+  // const { data: download } = useDocuments(id!, "3cb7e908-9a25-49fe-b8bd-0dcf18f365a4", true);
+
+
+
+
+
+// Now call the function
+
   // const [timingExists, setTimingExists] = useState(true);
   // const [showAllPackages, setShowAllPackages] = useState(false);
   // const [showAllPackages, setShowAllPackages] = useState(false);
@@ -94,7 +103,6 @@ export const MedicineDetail = () => {
           <p>Šiuo metu aprašymo nėra.</p>
           <Title>Pakuotės</Title>
           {medicine.packs?.map((item) => {
-            
             return (
               <Packages
                 key={item.name}
@@ -182,8 +190,6 @@ export const MedicineDetail = () => {
               />
             )}
           </MedicineContainer>
-          <LeftInfoColumn></LeftInfoColumn>
-          <RightInfoColumn></RightInfoColumn>
         </LeftColumn>
 
         <RightColumn>
@@ -211,41 +217,55 @@ export const MedicineDetail = () => {
               title={"Registracijos statusas"}
               data={medicine.status?.type}
             />
-           {medicine.basis && <RegistrationInfo
-              icon={"scales"}
-              title={"Registracijos teisinis pagrindas "}
-              data={medicine.basis?.type}
-            />}
-            {medicine.case && <RegistrationInfo
-              icon={"arrows"}
-              title={"Procedūros tipas"}
-              data={medicine.case?.type}
-            />}
-            {medicine.reglCase && <RegistrationInfo
-              icon={"hashtag"}
-              title={"Procedūros numeris"}
-              data={medicine.reglCase?.name}
-            />}
-            {medicine.reglCase?.reglCountry && <RegistrationInfo
-              icon={"globe"}
-              title={"Referencinė valstybė narė"}
-              data={medicine.reglCase?.reglCountry?.type}
-            />}
-            {medicine.reglCase && <RegistrationInfo
-              icon={"flag"}
-              title={"Susijusi valstybė narė"}
-              data={secondaryCountries}
-            />}
-            {medicine.legal && <RegistrationInfo
-              icon={"pills"}
-              title={"Veterinarinio vaisto grupė"}
-              data={medicine.legal?.type}
-            />}
-            {medicine.classif && <RegistrationInfo
-              icon={"qrcode"}
-              title={"ATCvet kodas"}
-              data={medicine.classif?.map((item) => item.name)}
-            />}
+            {medicine.basis && (
+              <RegistrationInfo
+                icon={"scales"}
+                title={"Registracijos teisinis pagrindas "}
+                data={medicine.basis?.type}
+              />
+            )}
+            {medicine.case && (
+              <RegistrationInfo
+                icon={"arrows"}
+                title={"Procedūros tipas"}
+                data={medicine.case?.type}
+              />
+            )}
+            {medicine.reglCase && (
+              <RegistrationInfo
+                icon={"hashtag"}
+                title={"Procedūros numeris"}
+                data={medicine.reglCase?.name}
+              />
+            )}
+            {medicine.reglCase?.reglCountry && (
+              <RegistrationInfo
+                icon={"globe"}
+                title={"Referencinė valstybė narė"}
+                data={medicine.reglCase?.reglCountry?.type}
+              />
+            )}
+            {medicine.reglCase && (
+              <RegistrationInfo
+                icon={"flag"}
+                title={"Susijusi valstybė narė"}
+                data={secondaryCountries}
+              />
+            )}
+            {medicine.legal && (
+              <RegistrationInfo
+                icon={"pills"}
+                title={"Veterinarinio vaisto grupė"}
+                data={medicine.legal?.type}
+              />
+            )}
+            {medicine.classif && (
+              <RegistrationInfo
+                icon={"qrcode"}
+                title={"ATCvet kodas"}
+                data={medicine.classif?.map((item) => item.name)}
+              />
+            )}
             {medicine.mfctOps && (
               <RegistrationInfo
                 icon={"microscope"}
@@ -256,7 +276,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"hashtag"}
               title={"UPD ID Nr."}
-              data={medicine.id.toString()}
+              data={medicine.id?.toString()}
             />
           </RegisteredInformation>
 
@@ -264,11 +284,78 @@ export const MedicineDetail = () => {
             <Icon name={"book"} />
             <p>Produkto informacija</p>
           </ProductInfoTitle>
+
+          {medicine.documents ? medicine.documents.map((item) => {
+            return (
+              <DocumentDownloadContainer key={item.id}>
+                <DownloadTitle>
+                  <p>{item.type?.type}</p>
+                  {item.lang?.toUpperCase()} {item.date?.split("T")[0]}
+                </DownloadTitle>
+                <ButtonContainer>
+                  <StyledLink
+                    onClick={() =>
+                      handleDocumentDownload(item.id, item.name, true, id!)
+                    }
+                  >
+                    <Icon name="view" />
+                    Peržiūrėti
+                  </StyledLink>
+                  <StyledLink
+                    onClick={() =>
+                      handleDocumentDownload(item.id, item.name, false, id!)
+                    }
+                  >
+                    <Icon name="download" />
+                    Atsisiųsti
+                  </StyledLink>
+                </ButtonContainer>
+              </DocumentDownloadContainer>
+            );
+          }) : <DownloadTitle>Pridėtų dokumentų nėra.</DownloadTitle>}
         </RightColumn>
       </MedicineDetailContainer>
     </>
   );
 };
+
+const DownloadTitle = styled.div`
+  margin-top: 4px;
+  font-family: "inter";
+  font-size: 0.8rem;
+  & p {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  
+`;
+
+const StyledLink = styled.button`
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  &:hover {
+    font-weight: bold;
+  }
+`
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 8px;
+`
+
+const DocumentDownloadContainer = styled.div`
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.colors.grey_light};
+  font-size: 1rem;
+  padding: 8px 16px 12px 16px;
+  border-radius: 20px;
+`
 
 const Animal = styled.p`
   font-weight: 600;
@@ -310,12 +397,6 @@ const AnimalContainer = styled.div`
   margin-bottom: 4px;
 `;
 const MedicineContainer = styled.div``;
-const LeftInfoColumn = styled.div`
-  width: 50%;
-`;
-const RightInfoColumn = styled.div`
-  width: 50%;
-`;
 const ProductInfoTitle = styled.div`
   display: flex;
   justify-content: center;

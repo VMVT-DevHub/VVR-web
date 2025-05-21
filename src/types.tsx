@@ -148,12 +148,28 @@ interface Substance {
   lang: boolean;
 }
 
+interface CodeType {
+  code: string;
+  lang: boolean;
+  type: string;
+}
+
+interface Document{
+  category: CodeType;
+  content: string;
+  date: string
+  id: string;
+  lang: string;
+  name: string;
+  type: CodeType;
+}
 
 
 export interface MedicineDetail {
   id: number;
   code: string;
   date:string;
+  documents: Document[];
   name?: string;
   names?: NameItem[];
   status?: CodeTypeLanguage;
