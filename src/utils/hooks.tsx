@@ -27,6 +27,7 @@ export const useMedicine = (id:string, language:string, uat:boolean) => {
   return { data, isLoading, refetch };
 };
 
+
 export const useAllMedicines = (query: string, page:number, uat:boolean) => {
   const { data, isLoading, refetch } = useQuery<LocationResponse>({
   queryKey: ['medicines', {page, uat, query}],
@@ -49,3 +50,29 @@ export function sanitizeString(str:string) {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
   }
+
+  export const handleDocumentDownload = async (doc_id: string, name: string, isPreview:boolean, id:string) => {
+    try {
+
+    const blob = await api.getDocuments(id!, doc_id);
+    const href = URL.createObjectURL(blob);
+
+    if(isPreview)
+    {
+      window.open(href, "_blank");
+    }
+    else 
+    {
+      const link = document.createElement("a");
+      link.href = href;
+      link.download = name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(href);
+    }
+  } catch (error) {
+    console.error("Failed to fetch and download document:", error);
+  }
+};
