@@ -147,6 +147,7 @@ const Subtitle = styled.p`
   font-size: 0.875rem;
   max-width: 668px;
   font-weight: 400;
+  font-style: italic;
 `;
 
 

@@ -3,10 +3,12 @@ import styled from "styled-components";
 import { RegistrationInfo } from "../components/others/RegistrationInfo";
 import { IngredientsInfo } from "../components/others/IngredientsInfo";
 import Icon from "../styles/icons";
-import { handleDocumentDownload, useMedicine } from "../utils/hooks";
+import { useMedicine } from "../utils/hooks";
 import { DetailTitle } from "../components/DetailTitle";
 import { Packages } from "../components/others/Packages";
 import { useEffect, useState } from "react";
+import { DownloadInfo } from "../components/others/DownloadInfo";
+import { Loader } from "../components/Loader";
 
 export const MedicineDetail = () => {
   const { id } = useParams();
@@ -14,29 +16,14 @@ export const MedicineDetail = () => {
   const [isUPD, setIsUPD] = useState(false);
 
   useEffect(() => {
-    // Extract isUPD from location state
     const updFromState = location.state?.isUPD;
-    
-    // Only update state if value exists and is boolean
     if (typeof updFromState === 'boolean') {
       setIsUPD(updFromState);
     }
   }, [location]);
   const { data: medicine, isLoading } = useMedicine(id!, "LT", isUPD);
 
-  // const { data: download } = useDocuments(id!, "3cb7e908-9a25-49fe-b8bd-0dcf18f365a4", true);
-
-
-
-
-
-// Now call the function
-
-  // const [timingExists, setTimingExists] = useState(true);
-  // const [showAllPackages, setShowAllPackages] = useState(false);
-  // const [showAllPackages, setShowAllPackages] = useState(false);
-
-
+  if (isLoading) return <Loader />;
 
   if (isLoading) return <p>Kraunasi...</p>;
   if (!medicine) return <p>Kažkur įsivėlė klaida!</p>;
@@ -47,7 +34,9 @@ export const MedicineDetail = () => {
         route.species?.flatMap((species) => species.type)
       )
     )
-    .filter((item) => typeof item !== "undefined") || undefined;
+    .filter((item) => typeof item !== "undefined" || item !== null) || undefined;
+
+    console.log(animalTags)
 
   const animalTagsSet = new Set(animalTags);
 
@@ -59,7 +48,7 @@ export const MedicineDetail = () => {
 
 
   const secondaryCountries = medicine.reglCase?.countries
-    ?.map((item) => item.type)
+    ?.map((item) => item.type).filter(item  => item !== null)
     .join(", ") || undefined;
 
   const manufacturers = medicine.mfctOps?.map(
@@ -117,6 +106,7 @@ export const MedicineDetail = () => {
           }) || "informacijos apie pakuotes nėra."}
           <Title>Išlauka</Title>
 
+          {/* 4 array deep object :) */}
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) =>
               route.species?.map((species, speciesIndex) => {
@@ -248,7 +238,7 @@ export const MedicineDetail = () => {
             {medicine.reglCase && (
               <RegistrationInfo
                 icon={"flag"}
-                title={"Susijusi valstybė narė"}
+                title={"Susijusios valstybės narės"}
                 data={secondaryCountries}
               />
             )}
@@ -287,30 +277,15 @@ export const MedicineDetail = () => {
 
           {medicine.documents ? medicine.documents.map((item) => {
             return (
-              <DocumentDownloadContainer key={item.id}>
-                <DownloadTitle>
-                  <p>{item.type?.type}</p>
-                  {item.lang?.toUpperCase()} {item.date?.split("T")[0]}
-                </DownloadTitle>
-                <ButtonContainer>
-                  <StyledLink
-                    onClick={() =>
-                      handleDocumentDownload(item.id, item.name, true, id!)
-                    }
-                  >
-                    <Icon name="view" />
-                    Peržiūrėti
-                  </StyledLink>
-                  <StyledLink
-                    onClick={() =>
-                      handleDocumentDownload(item.id, item.name, false, id!)
-                    }
-                  >
-                    <Icon name="download" />
-                    Atsisiųsti
-                  </StyledLink>
-                </ButtonContainer>
-              </DocumentDownloadContainer>
+             <DownloadInfo
+              key={item.id}
+              med_id={id!}
+              doc_id={item.id}
+              name={item.name}
+              title={item.type?.type}
+              lang={item.lang?.toUpperCase()}
+              date={item.date?.split("T")[0]}
+             />
             );
           }) : <DownloadTitle>Pridėtų dokumentų nėra.</DownloadTitle>}
         </RightColumn>
@@ -330,32 +305,7 @@ const DownloadTitle = styled.div`
   
 `;
 
-const StyledLink = styled.button`
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  &:hover {
-    font-weight: bold;
-  }
-`
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: 8px;
-`
 
-const DocumentDownloadContainer = styled.div`
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid ${({ theme }) => theme.colors.grey_light};
-  font-size: 1rem;
-  padding: 8px 16px 12px 16px;
-  border-radius: 20px;
-`
 
 const Animal = styled.p`
   font-weight: 600;

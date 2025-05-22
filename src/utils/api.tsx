@@ -49,15 +49,6 @@ class Api {
     );
   }
 
-  async getLocations(countryCode: string, page: number): Promise<LocationResponse> {
-
-    const validPage = Math.max(1, Number(page));
-    const validCountryCode = sanitizeString(countryCode);
-    return this.get<LocationResponse>({
-      resource: `spor/locations?country=${validCountryCode}&limit=7&page=${validPage}`,
-    });
-  }
-
   async getMedicine(id: string, language: string, uat:boolean): Promise<MedicineDetail> {
     const validID = sanitizeString(id);
     const queryString = uat ? `upd/med/${validID}?lang=${language}&uat=true` : `upd/med/${validID}?lang=${language}`
