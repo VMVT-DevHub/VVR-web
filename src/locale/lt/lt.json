@@ -16,7 +16,7 @@
         "meaning": "Piktogramų reikšmės",
         "prescription": "Receptinis vaistas",
         "nonprescription": "Nereceptinis vaistas",
-        "vetPrescription": "Receptinis vaistas, naudojamas tik veterinarijos gydytojo"
+        "vetPrescription": "Receptinis vaistas, parduodamas tik veterinarijos gydytojui"
     },
     "medicines": {
         "previous": "Anks.",

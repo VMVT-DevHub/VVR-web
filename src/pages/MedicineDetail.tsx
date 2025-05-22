@@ -9,8 +9,10 @@ import { Packages } from "../components/others/Packages";
 import { useEffect, useState } from "react";
 import { DownloadInfo } from "../components/others/DownloadInfo";
 import { Loader } from "../components/Loader";
+import { useTranslation } from "react-i18next";
 
 export const MedicineDetail = () => {
+  const { i18n } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
   const [isUPD, setIsUPD] = useState(false);
@@ -21,7 +23,7 @@ export const MedicineDetail = () => {
       setIsUPD(updFromState);
     }
   }, [location]);
-  const { data: medicine, isLoading } = useMedicine(id!, "LT", isUPD);
+  const { data: medicine, isLoading } = useMedicine(id!, i18n.language, isUPD);
 
   if (isLoading) return <Loader />;
 
@@ -36,7 +38,6 @@ export const MedicineDetail = () => {
     )
     .filter((item) => typeof item !== "undefined" || item !== null) || undefined;
 
-    console.log(animalTags)
 
   const animalTagsSet = new Set(animalTags);
 
@@ -85,31 +86,20 @@ export const MedicineDetail = () => {
         code={medicine.code}
         tags={[...animalTagsSet]}
         subtitle={ingredients}
+        prescription={medicine.legal?.code}
       />
       <MedicineDetailContainer>
         <LeftColumn>
           <Title>Indikacija (-os)</Title>
           <p>Šiuo metu aprašymo nėra.</p>
-          <Title>Pakuotės</Title>
-          {medicine.packs?.map((item) => {
-            return (
-              <Packages
-                key={item.name}
-                name={medicine.code}
-                info={item.name}
-                status={item.marketing?.type}
-                type={item.quantity?.type}
-                quantity={item.quantity?.num}
-                weightType={item.items}
-              />
-            );
-          }) || "informacijos apie pakuotes nėra."}
+
           <Title>Išlauka</Title>
 
-          {/* 4 array deep object :) */}
           {medicine.admProd?.map((prod, prodIndex) =>
-            prod.routes?.map((route, routeIndex) =>
-              route.species?.map((species, speciesIndex) => {
+            prod.routes?.map((route, routeIndex) => {
+
+              return !route.species ?<p>Netaikoma</p> :
+               route.species?.map((species, speciesIndex) => {
                 return (
                   species.withdrawalPeriod && (
                     <AnimalContainer
@@ -147,8 +137,8 @@ export const MedicineDetail = () => {
                     </AnimalContainer>
                   )
                 );
-              })
-            )
+              });
+            })
           )}
           <Title>Veterinarinio vaisto informacija</Title>
           <MedicineContainer>
@@ -174,12 +164,26 @@ export const MedicineDetail = () => {
             {animalTags && animalTags.length > 0 && (
               <RegistrationInfo
                 icon={"animal"}
-                title={"Paskirties gyvūnų rūšys pagal naudojimo būdą"}
+                title={"Paskirties gyvūnų rūšys"}
                 data={[...animalTagsSet]}
                 textSize="big"
               />
             )}
           </MedicineContainer>
+          <Title>Pakuotės</Title>
+          {medicine.packs?.map((item) => {
+            return (
+              <Packages
+                key={item.name}
+                name={medicine.code}
+                info={item.name}
+                status={item.marketing?.type}
+                type={item.quantity?.type}
+                quantity={item.quantity?.num}
+                weightType={item.items}
+              />
+            );
+          }) || "informacijos apie pakuotes nėra."}
         </LeftColumn>
 
         <RightColumn>
@@ -275,19 +279,23 @@ export const MedicineDetail = () => {
             <p>Produkto informacija</p>
           </ProductInfoTitle>
 
-          {medicine.documents ? medicine.documents.map((item) => {
-            return (
-             <DownloadInfo
-              key={item.id}
-              med_id={id!}
-              doc_id={item.id}
-              name={item.name}
-              title={item.type?.type}
-              lang={item.lang?.toUpperCase()}
-              date={item.date?.split("T")[0]}
-             />
-            );
-          }) : <DownloadTitle>Pridėtų dokumentų nėra.</DownloadTitle>}
+          {medicine.documents ? (
+            medicine.documents.map((item) => {
+              return (
+                <DownloadInfo
+                  key={item.id}
+                  med_id={id!}
+                  doc_id={item.id}
+                  name={item.name}
+                  title={item.type?.type}
+                  lang={item.lang?.toUpperCase()}
+                  date={item.date?.split("T")[0]}
+                />
+              );
+            })
+          ) : (
+            <DownloadTitle>Pridėtų dokumentų nėra.</DownloadTitle>
+          )}
         </RightColumn>
       </MedicineDetailContainer>
     </>

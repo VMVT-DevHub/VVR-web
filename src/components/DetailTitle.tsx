@@ -3,13 +3,16 @@ import texture from "../styles/images/FonoRastas.svg";
 import { device } from "../styles";
 import { useNavigate } from "react-router-dom";
 import Icon from "../styles/icons";
-
+import rx from "../styles/images/Rx.svg";
+import rxplus from "../styles/images/Rxplus.svg";
+import otc from "../styles/images/Otc.svg";
 
 export interface SearchSectionProps {
   title: string | undefined;
   subtitle: undefined | string[];
   code?:string;
   tags?: string[] | undefined  | string[][][];
+  prescription?: number | null;
 }
 
 export const DetailTitle = ({
@@ -17,9 +20,24 @@ export const DetailTitle = ({
   code,
   subtitle,
   tags,
+  prescription
 }: SearchSectionProps) => {
 //   const { t } = useTranslation();
 const navigate = useNavigate();
+
+  const handlePrescription = (code:number | null | undefined) => {
+    if(!code) return rx;
+    switch (code){
+        case 200000017698:
+          return rx;
+        case 200000017695:
+          return otc;
+        case 200000017699:
+          return rxplus;
+        default:
+          return rx;
+      }
+  }
 
   return (
     <SearchBarContainer>
@@ -29,17 +47,22 @@ const navigate = useNavigate();
             <Icon name={"arrow-left"} />
             Grįžti atgal
           </StyledButton>
-          <Title>{title}</Title>
-          <Subtitle>
-            Veikliosios medžiagos:{" "}
-            {subtitle?.map((item, index) => {
-              if (index === subtitle.length - 1) {
-                return item;
-              } else {
-                return item + ", ";
-              }
-            })}
-          </Subtitle>
+          <TitleContainer>
+            <Image><StyledImg src={handlePrescription(prescription)} alt="vaisto grupė" /></Image>
+            <div>
+              <Title>{title}</Title>
+              <Subtitle>
+                Veikliosios medžiagos:{" "}
+                {subtitle?.map((item, index) => {
+                  if (index === subtitle.length - 1) {
+                    return item;
+                  } else {
+                    return item + ", ";
+                  }
+                })}
+              </Subtitle>
+            </div>
+          </TitleContainer>
         </TextContainer>
         <Code>{code}</Code>
       </TopRow>
@@ -58,6 +81,14 @@ const navigate = useNavigate();
     </SearchBarContainer>
   );
 };
+const StyledImg = styled.img`
+  width: 56px;
+`;
+const TitleContainer = styled.div`
+  display: flex;
+  gap: 16px;
+
+`
 const StyledButton = styled.button`
     display: flex;
     gap: 6px;
@@ -96,11 +127,15 @@ const Tag = styled.div`
   background-color: ${({theme}) => theme.colors.white};
 `;
 
-// const Image = styled.div`
-//   @media ${device.mobileL} {
-//     display: none;
-//   }
-// `
+const Image = styled.div`
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background-color: white;
+  @media ${device.mobileL} {
+    display: none;
+  }
+`
 // const ErrorMessage = styled.p`
 //   margin: 8px 0 0 8px;
 //   color: red;

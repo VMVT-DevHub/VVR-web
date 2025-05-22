@@ -16,7 +16,7 @@ import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
 
 export const HomePage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false)
@@ -35,7 +35,7 @@ export const HomePage = () => {
     }
   }, [query, page, setSearchParams]);
 
-  const { data: medicine, isLoading } = useAllMedicines(query, Number(page), isUPD);
+  const { data: medicine, isLoading } = useAllMedicines(query, Number(page), isUPD, i18n.language);
 
     if (isLoading) return <Loader />;
   
