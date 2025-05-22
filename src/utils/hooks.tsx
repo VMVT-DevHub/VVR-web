@@ -14,10 +14,10 @@ export const useMedicine = (id: string, language: string, uat: boolean) => {
   return { data, isLoading, refetch };
 };
 
-export const useAllMedicines = (query: string, page: number, uat: boolean) => {
+export const useAllMedicines = (query: string, page: number, uat: boolean, language: string) => {
   const { data, isLoading, refetch } = useQuery<LocationResponse>({
-    queryKey: ["medicines", { page, uat, query }],
-    queryFn: () => api.getAllMedicines(query, page, uat),
+    queryKey: ["medicines", { page, uat, query, language }],
+    queryFn: () => api.getAllMedicines(query, page, uat, language),
     retry: false,
     // enabled: !!query
     refetchOnWindowFocus: false,
@@ -77,4 +77,6 @@ export const useDocDownload = (
 
   return { isFetching, refetch };
 };
+
+
 
