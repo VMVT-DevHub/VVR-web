@@ -13,6 +13,7 @@ import { Filters } from "../components/Filters";
 import { useEffect, useState } from "react";
 import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
+import { Loader } from "../components/Loader";
 
 export const HomePage = () => {
   const { t } = useTranslation();
@@ -23,7 +24,6 @@ export const HomePage = () => {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
 
-  // const [pageTEMPORARY, setPageTEMPORARY] = useState(1);
   const [isUPD, setIsUPD] = useState(false);
 
   useEffect(() => {
@@ -35,23 +35,18 @@ export const HomePage = () => {
     }
   }, [query, page, setSearchParams]);
 
+  const { data: medicine, isLoading } = useAllMedicines(query, Number(page), isUPD);
 
+    if (isLoading) return <Loader />;
+  
 
-  // const { data: medicine, isLoading } = useLocations(query, Number(page));
-
-  const { data: medicineTEMPORARY, isLoading } = useAllMedicines(query, Number(page), isUPD); //temporary hard fetch
-
-
-  // const animals = medicineTEMPORARY.data.map(item => item.ingredients).join(', ')
-  console.log(medicineTEMPORARY?.data)
-
-  // const [isMedicineNew, setIsMedicineNew] = useState(false);
+  console.log(medicine?.data)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().required("homePage.required"),
   });
 
-  const formValues = { medicine: "" };
+  const formValues = { medicine: query };
 
 const handleSubmit = (
   values: typeof formValues, 
@@ -70,7 +65,6 @@ const handleSubmit = (
       query,
       page: newPage.toString(),
     });
-    // setPageTEMPORARY(newPage)
   };
 
   // const handleDateDifference = (registrationDate:string) => {
@@ -121,7 +115,7 @@ const handleSubmit = (
       
         <LeftColumn>
           {/* dynamic filter display */}
-          {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
+          {medicine !== undefined && medicine?.items !== 0 && (
           <>
             <StyledFilters />
             <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
@@ -138,12 +132,12 @@ const handleSubmit = (
               <Filters />
             </PopUp>
           </>
-          {/* )} */}
+          )}
         </LeftColumn>
         <RightColumn>
           {isLoading ? <p>Loading...</p> : ""}
-          {medicineTEMPORARY?.items !== 0 ? (
-            medicineTEMPORARY?.data.map((item) => {
+          {medicine?.items !== 0 ? (
+            medicine?.data.map((item) => {
                 // handleDateDifference(item.date)
               return (
                 <Medicine
@@ -161,11 +155,11 @@ const handleSubmit = (
           ) : (
             <NotFound>{t("medicines.notFound")}</NotFound>
           )}
-          {medicineTEMPORARY !== undefined &&
-            medicineTEMPORARY?.items !== 0 && (
+          {medicine !== undefined &&
+            medicine?.items !== 0 && (
               <PageSelector
                 currentPage={Number(page)}
-                total={medicineTEMPORARY.total}
+                total={medicine.total}
                 setCurrentPage={handlePageChange}
               />
             )}
