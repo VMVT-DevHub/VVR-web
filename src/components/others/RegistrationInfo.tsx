@@ -4,7 +4,7 @@ import Icon from "../../styles/icons";
 export interface registrationInfoProps {
   icon: string;
   title: string;
-  data?: string | string[];
+  data?: string | string[] | null;
   textSize?: string;
 }
 
@@ -28,10 +28,9 @@ export const RegistrationInfo = ({
         };
 
         
-  if (data == 'undefined') return null;
+  if (data == 'undefined' || data == null || data.length == 0) return null;
   if (!data) return null;
 
-  
 
   return (
     <ItemContainer>

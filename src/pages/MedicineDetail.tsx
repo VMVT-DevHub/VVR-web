@@ -10,12 +10,13 @@ import { useEffect, useState } from "react";
 import { DownloadInfo } from "../components/others/DownloadInfo";
 import { Loader } from "../components/Loader";
 import { useTranslation } from "react-i18next";
+import { device } from "../styles";
 
 export const MedicineDetail = () => {
   const { i18n } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
-  const [isUPD, setIsUPD] = useState(false);
+  const [isUPD, setIsUPD] = useState(localStorage.getItem("isUPD") === 'true' || false);
 
   useEffect(() => {
     const updFromState = location.state?.isUPD;
@@ -52,10 +53,35 @@ export const MedicineDetail = () => {
     ?.map((item) => item.type).filter(item  => item !== null)
     .join(", ") || undefined;
 
-  const manufacturers = medicine.mfctOps?.map(
-    (item) => `${item.name}, ${item.address}, ${item.country}`
-  ) || undefined;
+  const manufacturers = medicine.mfctOps?.map((item) => {
+      const manufacturer = [];
+      if(item.name) manufacturer.push(item.name);
+      if(item.address) manufacturer.push(item.address);
+      if(item.country) manufacturer.push(item.country);
+      if (manufacturer.length == 0) return null;
+      else return manufacturer.join(", ");
+    }
+  ).filter(item => item !== null) || undefined;
 
+  // const holders = medicine.holder?.map((item) => {
+  //     const manufacturer = [];
+  //     if(item.name) manufacturer.push(item.name);
+  //     if(item.address) manufacturer.push(item.address);
+  //     if(item.country) manufacturer.push(item.country);
+  //     if (manufacturer.length == 0) return null;
+  //     else return manufacturer.join(", ");
+  //   }
+  // ).filter(item => item !== null) || undefined;
+
+
+  const handleHolder = (name:string | undefined, address:string | undefined, country:string | undefined) => {
+    const holder = [];
+    if(name) holder.push(name);
+    if(address) holder.push(address);
+    if(country) holder.push(country);
+    if (holder.length == 0) return undefined;
+    else return holder.join(", ");
+  }
 
   const ingredients = medicine.ingredients
     ?.map((item) => {
@@ -97,11 +123,11 @@ export const MedicineDetail = () => {
 
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) => {
-
-              return !route.species ?<p>Netaikoma</p> :
-               route.species?.map((species, speciesIndex) => {
-                return (
-                  species.withdrawalPeriod && (
+              return !route.species ? (
+                <p>Naudojimo būdui „{route.type}“ netaikoma</p>
+              ) : (
+                route.species?.map((species, speciesIndex) => {
+                  return species.withdrawalPeriod ? (
                     <AnimalContainer
                       key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
                     >
@@ -135,9 +161,20 @@ export const MedicineDetail = () => {
                         })}
                       </ProduceContainer>
                     </AnimalContainer>
-                  )
-                );
-              });
+                  ) : (
+                    <AnimalContainer key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}>
+                      <Animal>{species.type}</Animal>
+                      <Produce
+                        key={`${prodIndex}-${routeIndex}-${speciesIndex}`}
+                      >
+                        <p> </p>
+
+                        <p> Netaikoma</p>
+                      </Produce>
+                    </AnimalContainer>
+                  );
+                })
+              );
             })
           )}
           <Title>Veterinarinio vaisto informacija</Title>
@@ -203,7 +240,11 @@ export const MedicineDetail = () => {
               <RegistrationInfo
                 icon={"pen"}
                 title={"Registruotojas"}
-                data={`${medicine.holder?.name}, ${medicine.holder?.address}, ${medicine.holder?.country}`}
+                data={handleHolder(
+                  medicine.holder?.name,
+                  medicine.holder?.address,
+                  medicine.holder?.country
+                )}
               />
             )}
             <RegistrationInfo
@@ -382,17 +423,28 @@ const LeftColumn = styled.section`
   & h2:first-of-type {
     margin-top: 0;
   }
+   @media ${device.mobileL} {
+       width: 100%;
+
+    }
 `;
 
 const RightColumn = styled.section`
   display: flex;
   flex-direction: column;
   width: 33%;
+  @media ${device.mobileL} {
+       width: 100%;
+
+    }
 `;
 
 const MedicineDetailContainer = styled.main`
   display: flex;
   gap: 32px;
+  @media ${device.mobileL} {
+      flex-direction: column;
+    }
 `;
 
 const Title = styled.h2``;

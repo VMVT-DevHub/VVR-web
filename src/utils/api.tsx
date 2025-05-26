@@ -11,15 +11,17 @@ interface Get {
 
 class Api {
   private AuthApiAxios: AxiosInstance;
-  // private readonly proxy: string = '/upd';
-  private readonly proxy: string = '/api';
+  // private readonly proxy: string = '/api';
+
+  //Currently we got two proxy callers: /doc and /api. /doc might be private later
+  //for now i just added them to the queries, there's probably a way to make it nicer
 
   constructor() {
     this.AuthApiAxios = axios.create();
 
     this.AuthApiAxios.interceptors.request.use(
       (config) => {
-        config.url = this.proxy + config.url;
+        // config.url = this.proxy + config.url;
         return config;
       },
       (error) => Promise.reject(error)
@@ -51,14 +53,14 @@ class Api {
 
   async getMedicine(id: string, language: string, uat:boolean): Promise<MedicineDetail> {
     const validID = sanitizeString(id);
-    const queryString = uat ? `upd/med/${validID}?lang=${language}&uat=true` : `upd/med/${validID}?lang=${language}`
+    const queryString = uat ? `api/med/${validID}?lang=${language}&uat=true` : `api/med/${validID}?lang=${language}`
     return this.get<MedicineDetail>({
       resource: queryString,
     });
   }
 
   async getAllMedicines(query:string, page:number, uat:boolean, language:string): Promise<LocationResponse> {
-    const queryString = uat ?   `upd/med?q=${query}&lang=${language}&uat=true` : `upd/med?q=${query}&page=${page}&limit=7&lang=${language}`
+    const queryString = uat ?   `api/med?q=${query}&lang=${language}&uat=true` : `api/med?q=${query}&page=${page}&limit=7&lang=${language}`
     return this.get<LocationResponse>({
       resource: queryString,
       // resource: `/upd/med?lang=LT&uat=true`,
@@ -67,7 +69,7 @@ class Api {
 
   async getDocuments(med_id: string, doc_id:string): Promise<Blob> {
     return this.get<Blob>({
-      resource: `upd/med/${med_id}/${doc_id}?preview`,
+      resource: `doc/${med_id}/${doc_id}?preview`,
       responseType: 'blob',
     });
   }

@@ -14,6 +14,10 @@ export default () => {
           target: env.VITE_PROXY_URL,
           changeOrigin: true,
         },
+        '/doc': {
+          target: env.VITE_PROXY_URL,
+          changeOrigin: true,
+        },
       },
     },
     assetsInclude: ['**/*.png'],
