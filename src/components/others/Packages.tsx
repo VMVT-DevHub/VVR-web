@@ -6,6 +6,7 @@ interface PackagesProps {
   name: string;
   info: string;
   status: string;
+  status_code: number;
   quantity: number;
   type: string;
   weightType: PackItem[]
@@ -14,22 +15,50 @@ export const Packages = ({
   name,
   info,
   status,
+  status_code,
   quantity,
   type,
   weightType,
 }: PackagesProps) => {
 
+  console.log(status)
+
+    const handleStatus = (code:number | null | undefined) => {
+    if(!code) return "not marketed";
+    switch (code){
+        case 100000072074:
+          return "#c36464";
+        case 100000072075:
+          return "#a4a2a2";
+        case 100000072083:
+          return "#6b9e5d";
+        case 200000026055:
+          return "#a4a2a2"
+        case 230000000000:
+          return "#a4a2a2";
+        default:
+          return "not marketed";
+      }
+  }
+  
+
   return (
     <PackageContainer>
+        
+
       <TopRow>
         <Title>{name}</Title>
-        <Tag>{status}</Tag>
+        <Tag $statusColor={handleStatus(status_code)}>{status}</Tag>
       </TopRow>
       <Subtitle>{info}</Subtitle>
-      <Subtitle>
-        {type}, {weightType[0].num} {weightType[0].name ? weightType[0].name : weightType[0].type} <Icon name="dot" />
-        Pakuotėje {quantity} vnt.
-      </Subtitle>
+      {weightType.map(item => {
+        return(
+          <Subtitle>
+            {type}, {item.num} {item.name ? item.name : item.type} <Icon name="dot" />
+             Pakuotėje {quantity} vnt.
+          </Subtitle>
+        )
+      })}
     </PackageContainer>
   );
 };
@@ -47,8 +76,9 @@ const TopRow = styled.div`
 const Title = styled.p`
   font-weight: 600;
 `;
-const Tag = styled.p`
-  background-color: ${({ theme }) => theme.colors.grey_light};
+const Tag = styled.p<{$statusColor:string}>`
+  background-color: ${({ $statusColor }) => ($statusColor)};
+  color: white;
   border-radius: 15px;
   padding: 4px 8px;
   font-size: 0.75rem;

@@ -152,18 +152,25 @@ const SearchBarContainer = styled.div`
   background-repeat: no-repeat;
   background-position: right top;
   margin-bottom: 40px;
+
 `;
 
 const TopRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: start;
+       @media ${device.mobileL} {
+      flex-direction: column;
+      gap: 12px;
+
+    }
 `;
 
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
 `;
 
 const Title = styled.h1`
@@ -172,7 +179,7 @@ const Title = styled.h1`
   max-width: 640px;
   font-weight: 600;
   @media ${device.mobileL} {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     max-width: 100%;
   }
 `;

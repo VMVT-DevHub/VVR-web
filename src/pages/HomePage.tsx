@@ -24,7 +24,7 @@ export const HomePage = () => {
   const query = searchParams.get("query") || "";
   const page = searchParams.get("page") || 1;
 
-  const [isUPD, setIsUPD] = useState(false);
+  const [isUPD, setIsUPD] = useState(localStorage.getItem("isUPD") === 'true' || false);
 
   useEffect(() => {
     if (isNaN(Number(page)) || Number(page) < 0) {
@@ -66,6 +66,8 @@ const handleSubmit = (
       page: newPage.toString(),
     });
   };
+
+  console.log("current page: ", page)
 
   // const handleDateDifference = (registrationDate:string) => {
   //    const dateObj = new Date();
@@ -109,36 +111,43 @@ const handleSubmit = (
       <form>
         <br></br>
         <label htmlFor="upd">Ar naudoti UPD test?</label>
-        <input  id="upd" name="upd" type={"checkbox"}checked={isUPD} onChange={(e) => setIsUPD(e.target.checked)} />
+        <input
+          id="upd"
+          name="upd"
+          type={"checkbox"}
+          checked={isUPD}
+          onChange={(e) => {
+            return setIsUPD(e.target.checked), localStorage.setItem("isUPD", e.target.checked.toString());
+          }}
+        />
       </form>
       <ContentContainer>
-      
         <LeftColumn>
           {/* dynamic filter display */}
           {medicine !== undefined && medicine?.items !== 0 && (
-          <>
-            <StyledFilters />
-            <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
-              <Icon name={"filters"} />
-              Rodyti Filtrus
-            </ShowFilters>
-            <PopUp
-              visible={showFilters}
-              title={"Filtrai"}
-              onClose={() => {
-                setShowFilters(false);
-              }}
-            >
-              <Filters />
-            </PopUp>
-          </>
+            <>
+              <StyledFilters />
+              <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
+                <Icon name={"filters"} />
+                Rodyti Filtrus
+              </ShowFilters>
+              <PopUp
+                visible={showFilters}
+                title={"Filtrai"}
+                onClose={() => {
+                  setShowFilters(false);
+                }}
+              >
+                <Filters />
+              </PopUp>
+            </>
           )}
         </LeftColumn>
         <RightColumn>
           {isLoading ? <p>Loading...</p> : ""}
           {medicine?.items !== 0 ? (
-            medicine?.data.map((item) => {
-                // handleDateDifference(item.date)
+            medicine?.data?.map((item) => {
+              // handleDateDifference(item.date)
               return (
                 <Medicine
                   key={item.id}
@@ -148,21 +157,24 @@ const handleSubmit = (
                   title={item.name}
                   isNew={false}
                   tags={item.species}
-                  onClick={() => navigate(slugs.medicineDetail(item.id), { state: { isUPD } })}
+                  onClick={() =>
+                    navigate(slugs.medicineDetail(item.id), {
+                      state: { isUPD },
+                    })
+                  }
                 />
               );
             })
           ) : (
             <NotFound>{t("medicines.notFound")}</NotFound>
           )}
-          {medicine !== undefined &&
-            medicine?.items !== 0 && (
-              <PageSelector
-                currentPage={Number(page)}
-                total={medicine.total}
-                setCurrentPage={handlePageChange}
-              />
-            )}
+          {medicine !== undefined && medicine?.items !== 0 && (
+            <PageSelector
+              currentPage={Number(page)}
+              total={medicine.total}
+              setCurrentPage={handlePageChange}
+            />
+          )}
         </RightColumn>
       </ContentContainer>
     </main>
