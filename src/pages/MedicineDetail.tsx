@@ -37,7 +37,7 @@ export const MedicineDetail = () => {
         route.species?.flatMap((species) => species.type)
       )
     )
-    .filter((item) => typeof item !== "undefined" || item !== null) || undefined;
+    .filter((item) => typeof item !== "undefined" && item !== null) || undefined;
 
 
   const animalTagsSet = new Set(animalTags);
@@ -62,16 +62,6 @@ export const MedicineDetail = () => {
       else return manufacturer.join(", ");
     }
   ).filter(item => item !== null) || undefined;
-
-  // const holders = medicine.holder?.map((item) => {
-  //     const manufacturer = [];
-  //     if(item.name) manufacturer.push(item.name);
-  //     if(item.address) manufacturer.push(item.address);
-  //     if(item.country) manufacturer.push(item.country);
-  //     if (manufacturer.length == 0) return null;
-  //     else return manufacturer.join(", ");
-  //   }
-  // ).filter(item => item !== null) || undefined;
 
 
   const handleHolder = (name:string | undefined, address:string | undefined, country:string | undefined) => {
@@ -123,60 +113,74 @@ export const MedicineDetail = () => {
 
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) => {
-              return !route.species ? (
-                <p>Naudojimo būdui „{route.type}“ netaikoma</p>
-              ) : (
-                route.species?.map((species, speciesIndex) => {
-                  return species.withdrawalPeriod ? (
-                    <AnimalContainer
-                      key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
-                    >
-                      <Animal>{species.type}</Animal>
-                      <ProduceContainer>
-                        {species.withdrawalPeriod.map((period, periodIndex) => {
-                          const isMinPossibleValue =
-                            period.num == 0 ? true : false;
-                          const isMaxPossibleValue =
-                            period.num == 999 ? true : false;
-                          return (
-                            <Produce
-                              key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
-                            >
-                              <div>
-                                {period.tissue?.type}
-                                <p>Naudojimo būdas: {route.type}</p>
-                                {period.descr && (
-                                  <Description> {period.descr}</Description>
-                                )}
-                              </div>
-                              <p>
-                                {isMinPossibleValue
-                                  ? "Laukti nereikia"
-                                  : isMaxPossibleValue
-                                  ? "Nenaudojama"
-                                  : `${period.num} ${period.type}s`}
-                              </p>
-                            </Produce>
-                          );
-                        })}
-                      </ProduceContainer>
-                    </AnimalContainer>
-                  ) : (
-                    <AnimalContainer key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}>
-                      <Animal>{species.type}</Animal>
-                      <Produce
-                        key={`${prodIndex}-${routeIndex}-${speciesIndex}`}
-                      >
-                        <p> </p>
+              if (!route.species) {
+                return (
+                  <p key={`${prodIndex}-${routeIndex}`}>
+                    Naudojimo būdui „{route.type}" netaikoma
+                  </p>
+                );
+              }
 
-                        <p> Netaikoma</p>
-                      </Produce>
+              const hasAnyWithdrawalPeriods = route.species.some(
+                (species) => species.withdrawalPeriod
+              );
+
+              if (!hasAnyWithdrawalPeriods) {
+                return (
+                  <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
+                    <UsageType>{route.type}</UsageType>
+                    <AnimalContainer key={`${prodIndex}-${routeIndex}`}>
+                      <p>Išlauka netaikoma</p>
                     </AnimalContainer>
-                  );
-                })
+                  </UsageTypeContainer>
+                );
+              }
+
+              return (
+                <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
+                  <UsageType>{route.type}</UsageType>
+                  {route.species
+                    .filter((species) => species.withdrawalPeriod)
+                    .map((species, speciesIndex) => (
+                      <AnimalContainer
+                        key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
+                      >
+                        <Animal>{species.type}</Animal>
+                        <ProduceContainer>
+                          {species.withdrawalPeriod.map(
+                            (period, periodIndex) => {
+                              const isMinPossibleValue = period.num == 0;
+                              const isMaxPossibleValue = period.num == 999;
+
+                              return (
+                                <Produce
+                                  key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
+                                >
+                                  <div>
+                                    {period.tissue?.type}
+                                    {period.descr && (
+                                      <Description> {period.descr}</Description>
+                                    )}
+                                  </div>
+                                  <p>
+                                    {isMinPossibleValue
+                                      ? "Laukti nereikia"
+                                      : isMaxPossibleValue
+                                      ? "Nenaudojama"
+                                      : `${period.num} ${period.type}`}
+                                  </p>
+                                </Produce>
+                              );
+                            }
+                          )}
+                        </ProduceContainer>
+                      </AnimalContainer>
+                    ))}
+                </UsageTypeContainer>
               );
             })
           )}
+
           <Title>Veterinarinio vaisto informacija</Title>
           <MedicineContainer>
             <IngredientsInfo
@@ -215,6 +219,7 @@ export const MedicineDetail = () => {
                 name={medicine.code}
                 info={item.name}
                 status={item.marketing?.type}
+                status_code={item.marketing?.code}
                 type={item.quantity?.type}
                 quantity={item.quantity?.num}
                 weightType={item.items}
@@ -304,7 +309,7 @@ export const MedicineDetail = () => {
             {medicine.mfctOps && (
               <RegistrationInfo
                 icon={"microscope"}
-                title={"Gamintojas"}
+                title={"Gamintojas (-ai)"}
                 data={manufacturers}
               />
             )}
@@ -353,11 +358,15 @@ const DownloadTitle = styled.div`
   }
   
 `;
+const UsageType = styled.p`
+  font-weight: 600;
+  margin-bottom: 12px;
 
+`
 
 
 const Animal = styled.p`
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 12px;
 `;
 
@@ -367,7 +376,7 @@ const Produce = styled.div`
   align-items: flex-start;
   background-color: ${({ theme }) => theme.colors.secondary};
   padding: 12px;
-  font-weight: 600;
+  font-weight: 400;
   font-family: inter;
   border-radius: 7px;
   & p {
@@ -390,12 +399,19 @@ const ProduceContainer = styled.div`
   gap: 4px;
 `;
 const AnimalContainer = styled.div`
-  padding: 12px;
-  border: 1px solid ${({ theme }) => theme.colors.secondary};
+  padding: 12px 12px 8px 12px;
+  border: 2px solid ${({ theme }) => theme.colors.secondary};
   border-radius: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+`;
+const UsageTypeContainer = styled.div`
+  padding: 12px 12px 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
 `;
 const MedicineContainer = styled.div``;
+
+
 const ProductInfoTitle = styled.div`
   display: flex;
   justify-content: center;

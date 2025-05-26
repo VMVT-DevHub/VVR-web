@@ -14,8 +14,6 @@ export const RegistrationInfo = ({
   data,
   textSize = "small",
 }: registrationInfoProps) => {
-
-
   const text =
     textSize == "small"
       ? {
@@ -27,10 +25,8 @@ export const RegistrationInfo = ({
           data: "0.875rem",
         };
 
-        
-  if (data == 'undefined' || data == null || data.length == 0) return null;
+  if (data == "undefined" || data == null || data.length == 0) return null;
   if (!data) return null;
-
 
   return (
     <ItemContainer>
@@ -39,17 +35,40 @@ export const RegistrationInfo = ({
       </div>
       <TextContainer $textSize={text}>
         <p>{title}</p>
-        <p>{typeof data == 'string' ? data : data.join(`, `)}</p>
+        <div>
+          {typeof data == "string"
+            ? data
+            : title == "Gamintojas (-ai)"
+            ? data.map((item) => {
+                return (
+                  <InfoContainer key={item}>
+                    <div>
+                      <Icon name={"dot"} />
+                    </div>
+                    {item}
+                  </InfoContainer>
+                );
+              })
+            : data.join(`, `)}
+        </div>
       </TextContainer>
     </ItemContainer>
   );
 };
+const InfoContainer = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin-bottom: 6px;
+    font-weight: 600;
+
+`
 const TextContainer = styled.div<{
   $textSize: { title: string; data: string };
 }>`
   font-size: ${({ $textSize }) => $textSize.title};
   font-weight: 600;
-  & :first-child {
+  & p {
     font-size: ${({ $textSize }) => $textSize.data};
     font-weight: 400;
   }

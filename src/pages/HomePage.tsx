@@ -67,6 +67,8 @@ const handleSubmit = (
     });
   };
 
+  console.log("current page: ", page)
+
   // const handleDateDifference = (registrationDate:string) => {
   //    const dateObj = new Date();
   //   const month   = dateObj.getUTCMonth() + 1;
