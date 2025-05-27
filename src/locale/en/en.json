@@ -21,5 +21,8 @@
         "previous": "Prev.",
         "next": "Next",
         "notFound": "Nothing has been found. Please adjust the search field and try again."
+    },
+    "validation": {
+        "medicineLength": "The input \"{{value}}\" must be empty or longer than 2 characters."
     }
 }
