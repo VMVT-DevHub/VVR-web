@@ -24,6 +24,6 @@
         "notFound": "Nieko nerasta. Pakoreguokite paieškos lauką ir bandykite dar kartą."
     },
     "validation": {
-        "medicineLength": "Įvestis turi būti tuščia arba \"{{value}}\" turi būti bent 3 simbolių ilgio."
+        "medicineLength": "Įvestis turi būti tuščia arba bent 3 simbolių ilgio."
     }
 }

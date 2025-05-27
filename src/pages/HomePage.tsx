@@ -48,7 +48,7 @@ export const HomePage = () => {
         if (!value || value.length > 2) {
           return true;
         }
-
+          // arba galima padaryti su REGEX
         return this.createError({
           message: t('validation.medicineLength', { value }),
         });

@@ -23,6 +23,6 @@
         "notFound": "Nothing has been found. Please adjust the search field and try again."
     },
     "validation": {
-        "medicineLength": "The input \"{{value}}\" must be empty or longer than 2 characters."
+        "medicineLength": "The input must be empty or longer than 2 characters."
     }
 }
