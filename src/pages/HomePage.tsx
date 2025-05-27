@@ -43,7 +43,10 @@ export const HomePage = () => {
   console.log(medicine?.data)
 
   const medicineSchema = Yup.object().shape({
-    medicine: Yup.string().required("homePage.required"),
+    medicine: Yup.string().matches(
+      /^$|^.{3,}$/,
+      t('validation.medicineLength')
+    )
   });
 
   const formValues = { medicine: query };
