@@ -43,9 +43,16 @@ export const HomePage = () => {
   console.log(medicine?.data)
 
   const medicineSchema = Yup.object().shape({
-    medicine: Yup.string().matches(
-      /^$|^.{3,}$/,
-      t('validation.medicineLength')
+    medicine: Yup.string().test(
+      function (value) {
+        if (!value || value.length > 2) {
+          return true;
+        }
+
+        return this.createError({
+          message: t('validation.medicineLength', { value }),
+        });
+      }
     )
   });
 
