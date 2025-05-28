@@ -21,21 +21,21 @@ export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false)
 
-  const query = searchParams.get("query") || "";
-  const page = searchParams.get("page") || 1;
+  const q = searchParams.get("q") || ""; // q == query
+  const p = searchParams.get("p") || 1; // p == page
 
   const [isUPD, setIsUPD] = useState(localStorage.getItem("isUPD") === 'true' || false);
 
   useEffect(() => {
-    if (isNaN(Number(page)) || Number(page) < 0) {
+    if (isNaN(Number(p)) || Number(p) < 0) {
       setSearchParams({
-        query,
-        page: "1",
+        q,
+        p: "1",
       });
     }
-  }, [query, page, setSearchParams]);
+  }, [q, p, setSearchParams]);
 
-  const { data: medicine, isLoading } = useAllMedicines(query, Number(page), isUPD, i18n.language);
+  const { data: medicine, isLoading } = useAllMedicines(q, Number(p), isUPD, i18n.language);
 
     if (isLoading) return <Loader />;
   
@@ -56,15 +56,15 @@ export const HomePage = () => {
     )
   });
 
-  const formValues = { medicine: query };
+  const formValues = { medicine: q };
 
 const handleSubmit = (
   values: typeof formValues, 
   { resetForm }: { resetForm: (nextState?: Partial<FormikState<typeof formValues>>) => void }
 ) => {
   setSearchParams({
-    query: values.medicine,
-    page: "1",
+    q: values.medicine,
+    p: "1",
   });
 
   resetForm({ values: values, isSubmitting: false, isValidating: false });
@@ -72,12 +72,12 @@ const handleSubmit = (
 
   const handlePageChange = (newPage: number) => {
     setSearchParams({
-      query,
-      page: newPage.toString(),
+      q,
+      p: newPage.toString(),
     });
   };
 
-  console.log("current page: ", page)
+  console.log("current p: ", p)
 
   // const handleDateDifference = (registrationDate:string) => {
   //    const dateObj = new Date();
@@ -180,7 +180,7 @@ const handleSubmit = (
           )}
           {medicine !== undefined && medicine?.items !== 0 && (
             <PageSelector
-              currentPage={Number(page)}
+              currentPage={Number(p)}
               total={medicine.total}
               setCurrentPage={handlePageChange}
             />
