@@ -9,7 +9,36 @@
         "search": "Ieškoti",
         "searchLoading": "Ieškoma..",
         "required": "Privalomas laukas"
-
+    },
+    "medicineDetail": {
+        "goBack": "Grįžti atgal",
+        "indication": "Indikacija (-os)",
+        "withdrawal": "Išlauka",
+        "packs": "Pakuotės",
+        "medicineInfo": "Veterinarinio vaisto informacija",
+        "registerInfo": "Registracijos informacija",
+        "productInfo": "Produkto informacija",
+        "date": "Registracijos data",
+        "number": "Registracijos numeris",
+        "holder": "Registruotojas",
+        "status": "Registracijos statusas",
+        "legal": "Registracijos teisinis pagrindas",
+        "procType": "Procedūros tipas",
+        "procNumber": "Procedūros numeris",
+        "refCountry": "Referencinė valstybė narė",
+        "otherCountries": "Susijusios valstybės narės",
+        "group": "Veterinarinio vaisto grupė",
+        "ATCvet": "ATCvet kodas",
+        "manufacturer": "Gamintojas (-ai)",
+        "upd": "UPD ID Nr.",
+        "ingredients": "Veiklioji(-iosios) medžiaga(-os)",
+        "usageType": "Naudojimo būdas(-ai)",
+        "type": "Vaisto forma",
+        "animals": "Paskirties gyvūnų rūšys",
+        "pack": "Pakuotėje ",
+        "quantity": "vnt.",
+        "view": "Peržiūrėti",
+        "download": "Atsisiųsti"
     },
     "footer":{
         "vmvt": "Valstybinė maisto ir veterinarijos tarnyba",
@@ -21,9 +50,23 @@
     "medicines": {
         "previous": "Anks.",
         "next": "Kitas",
-        "notFound": "Nieko nerasta. Pakoreguokite paieškos lauką ir bandykite dar kartą."
+        "notFound": "Nieko nerasta. Pakoreguokite paieškos lauką ir bandykite dar kartą.",
+        "new": "Naujiena",
+        "ingredients": "Veikliosios medžiagos: "
     },
     "validation": {
         "medicineLength": "Įvestis turi būti tuščia arba bent 3 simbolių ilgio."
+    },
+    "error": {
+        "notFoundTitle": "Ups! Tikriausiai pasiklydote.",
+        "notFoundLink": "Grįžti į pradžią",
+        "noMedicineDetail": "Kažkur įsivėlė klaida!",
+        "noFiles": "Pridėtų dokumentų nėra.",
+        "noPacks": "Informacijos apie pakuotes nėra.",
+        "noDescription": "Šiuo metu aprašymo nėra.",
+        "noWithdrawal": "Išlauka netaikoma",
+        "notForUsage": "Netaikoma naudojimo būdui(-ams): ",
+        "noWaitingPeriod": "Laukti nereikia",
+        "notUsed": "Nenaudojama"
     }
 }
