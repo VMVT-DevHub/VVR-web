@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { RegistrationInfo } from "../components/others/RegistrationInfo";
 import { IngredientsInfo } from "../components/others/IngredientsInfo";
 import Icon from "../styles/icons";
-import { useMedicine } from "../utils/hooks";
+import { sortByLanguage, useMedicine } from "../utils/hooks";
 import { DetailTitle } from "../components/DetailTitle";
 import { Packages } from "../components/others/Packages";
 import { useEffect, useState } from "react";
@@ -48,11 +48,18 @@ export const MedicineDetail = () => {
 
   const usageTypesSet = new Set(usageTypes);
 
+  //this should be done through api, temp solution
+  if(usageTypesSet.has("Vartoti per burną"))
+  {
+    usageTypesSet.delete("Vartoti per burną")
+    usageTypesSet.add("Naudoti per burną")
+  }
 
   const secondaryCountries = medicine.reglCase?.countries
     ?.map((item) => item.type).filter(item  => item !== null)
-    .join(", ") || undefined;
+    || undefined;
 
+    // .join(", ") 
   const manufacturers = medicine.mfctOps?.map((item) => {
       const manufacturer = [];
       if(item.name) manufacturer.push(item.name);
@@ -128,17 +135,16 @@ export const MedicineDetail = () => {
               if (!hasAnyWithdrawalPeriods) {
                 return (
                   <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
-                    <UsageType>{route.type}</UsageType>
+                    <UsageType>{route.type == "Vartoti per burną" ? "Naudoti per burną" : route.type}</UsageType>
                     <AnimalContainer key={`${prodIndex}-${routeIndex}`}>
                       <p>Išlauka netaikoma</p>
                     </AnimalContainer>
                   </UsageTypeContainer>
                 );
               }
-
               return (
                 <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
-                  <UsageType>{route.type}</UsageType>
+                  <UsageType>{route.type == "Vartoti per burną" ? "Naudoti per burną" : route.type}</UsageType>
                   {route.species
                     .filter((species) => species.withdrawalPeriod)
                     .map((species, speciesIndex) => (
@@ -326,7 +332,7 @@ export const MedicineDetail = () => {
           </ProductInfoTitle>
 
           {medicine.documents ? (
-            medicine.documents.map((item) => {
+            medicine.documents.sort( sortByLanguage ).map((item) => {
               return (
                 <DownloadInfo
                   key={item.id}
@@ -399,7 +405,7 @@ const ProduceContainer = styled.div`
   gap: 4px;
 `;
 const AnimalContainer = styled.div`
-  padding: 12px 12px 8px 12px;
+  padding: 12px;
   border: 2px solid ${({ theme }) => theme.colors.secondary};
   border-radius: 8px;
   margin-bottom: 8px;
@@ -441,7 +447,7 @@ const LeftColumn = styled.section`
   }
    @media ${device.mobileL} {
        width: 100%;
-
+      order: 2;
     }
 `;
 
@@ -451,7 +457,7 @@ const RightColumn = styled.section`
   width: 33%;
   @media ${device.mobileL} {
        width: 100%;
-
+      order: 1;
     }
 `;
 

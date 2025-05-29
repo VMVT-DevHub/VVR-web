@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
 import { Formik, Form, FormikState } from "formik";
 import * as Yup from "yup";
-import { useAllMedicines } from "../utils/hooks";
+import { useAllMedicines, useFilters } from "../utils/hooks";
 import { Medicine } from "../components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
@@ -35,11 +35,14 @@ export const HomePage = () => {
     }
   }, [q, p, setSearchParams]);
 
+
   const { data: medicine, isLoading } = useAllMedicines(q, Number(p), isUPD, i18n.language);
+  const { data: filters} = useFilters(i18n.language);
 
-    if (isLoading) return <Loader />;
+  console.log(filters)
+
+
   
-
   console.log(medicine?.data)
 
   const medicineSchema = Yup.object().shape({
@@ -58,14 +61,15 @@ export const HomePage = () => {
 
   const formValues = { medicine: q };
 
-const handleSubmit = (
-  values: typeof formValues, 
-  { resetForm }: { resetForm: (nextState?: Partial<FormikState<typeof formValues>>) => void }
-) => {
+  const handleSubmit = (
+    values: typeof formValues, 
+    { resetForm }: { resetForm: (nextState?: Partial<FormikState<typeof formValues>>) => void }
+  ) => {
   setSearchParams({
     q: values.medicine,
     p: "1",
   });
+
 
   resetForm({ values: values, isSubmitting: false, isValidating: false });
 };
@@ -77,7 +81,9 @@ const handleSubmit = (
     });
   };
 
+
   console.log("current p: ", p)
+
 
   // const handleDateDifference = (registrationDate:string) => {
   //    const dateObj = new Date();
@@ -89,8 +95,7 @@ const handleSubmit = (
   //   const currentDateArray = currentDate.split('-')
   //   const pastDateArray = registrationDate.split('-')
 
-  //   console.log(currentDateArray)
-  //   console.log(pastDateArray)
+  //  
   // }
 
   return (
@@ -133,10 +138,9 @@ const handleSubmit = (
       </form>
       <ContentContainer>
         <LeftColumn>
-          {/* dynamic filter display */}
           {medicine !== undefined && medicine?.items !== 0 && (
             <>
-              <StyledFilters />
+              <StyledFilters  data={filters}/>
               <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
                 <Icon name={"filters"} />
                 Rodyti Filtrus
@@ -148,13 +152,13 @@ const handleSubmit = (
                   setShowFilters(false);
                 }}
               >
-                <Filters />
+                <Filters data={filters}/>
               </PopUp>
             </>
           )}
         </LeftColumn>
         <RightColumn>
-          {isLoading ? <p>Loading...</p> : ""}
+          {isLoading ?  <Loader /> : ""}
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
               // handleDateDifference(item.date)

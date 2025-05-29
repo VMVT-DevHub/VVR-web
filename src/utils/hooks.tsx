@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { LocationResponse, MedicineDetail } from "../types";
+import { Documents, FiltersType, LocationResponse, MedicineDetail } from "../types";
 
 export const useMedicine = (id: string, language: string, uat: boolean) => {
   const { data, isLoading, refetch } = useQuery<MedicineDetail>({
@@ -20,6 +20,18 @@ export const useAllMedicines = (query: string, page: number, uat: boolean, langu
     queryFn: () => api.getAllMedicines(query, page, uat, language),
     retry: false,
     // enabled: !!query
+    refetchOnWindowFocus: false,
+  });
+
+  return { data, isLoading, refetch };
+};
+
+export const useFilters = (language: string) => {
+  const { data, isLoading, refetch } = useQuery<FiltersType>({
+    queryKey: ["filters", { language }],
+    queryFn: () => api.getFilters(language),
+    retry: false,
+    enabled: true,
     refetchOnWindowFocus: false,
   });
 
@@ -77,6 +89,18 @@ export const useDocDownload = (
 
   return { isFetching, refetch };
 };
+
+export const sortByLanguage = ( a:Documents, b:Documents) => {
+  if(a.lang == "lt")
+  {
+    return -1;
+  }
+  if(b.lang == "lt")
+  {
+    return 1;
+  }
+  return 0;
+}
 
 
 

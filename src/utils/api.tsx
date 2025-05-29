@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, ResponseType } from 'axios';
-import { LocationResponse, MedicineDetail } from '../types';
+import { FiltersType, LocationResponse, MedicineDetail } from '../types';
 import { sanitizeString } from './hooks';
 
 interface Get {
@@ -63,7 +63,12 @@ class Api {
     const queryString = uat ?   `api/med?q=${query}&page=${page}&lang=${language}&uat=true` : `api/med?q=${query}&page=${page}&limit=7&lang=${language}`
     return this.get<LocationResponse>({
       resource: queryString,
-      // resource: `/upd/med?lang=LT&uat=true`,
+    });
+  }
+
+  async getFilters(language: string): Promise<FiltersType> {
+    return this.get<FiltersType>({
+      resource: `api/med/filters?lang=${language}` ,
     });
   }
 

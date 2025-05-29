@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Icon from "../styles/icons";
 import { useState } from "react";
+import { FiltersType } from "../types";
 
 interface isDisplayedProps {
   category: boolean;
@@ -10,7 +11,7 @@ interface isDisplayedProps {
   date: boolean;
 }
 
-export const Filters = ({ className }: { className?: string}) => {
+export const Filters = ({ className, data }: { className?: string, data?: FiltersType}) => {
   const [isDisplayed, SetIsDisplayed] = useState<isDisplayedProps>({
     category: false,
     group: false,
@@ -26,6 +27,8 @@ export const Filters = ({ className }: { className?: string}) => {
     });
   };
 
+  console.log(data)
+
  
   return (
     <div className={className}>
@@ -36,7 +39,9 @@ export const Filters = ({ className }: { className?: string}) => {
         <CategoryTitle>Vaisto grupė</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.group} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.group ? <Categories></Categories> : ""}
+      {isDisplayed.group && <Categories>
+        {data?.doseForm.map(form => <p>{form[1]}</p>)}
+      </Categories>}
 
       <CategoryContainer onClick={() => toggleDisplay("form")}>
         <CategoryTitle>Farmacinė forma</CategoryTitle>
