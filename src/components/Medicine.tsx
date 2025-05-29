@@ -13,7 +13,6 @@ export interface MedicineProps {
 }
 
 export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: MedicineProps) => {
-
   return (
     <MedicineContainer onClick={onClick}>
       <TopRow>
@@ -28,17 +27,23 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
           </ImageContainer>
           <div>
             <Title>{title}</Title>
-            <Subtitle>Veikliosios medžiagos: {subtitle?.join(', ')}</Subtitle>
+            {subtitle && (
+              <Subtitle>
+                Veikliosios medžiagos:
+                {subtitle.length > 4
+                  ? subtitle?.slice(0, 4).join(", ") + "..."
+                  : subtitle?.join(", ")}
+              </Subtitle>
+            )}
           </div>
         </TopLeftContainer>
       </TopRow>
       <BottomRow>
         <TagContainer>
-        {tags?.map((tag) => (
-          <Tag key={tag}>{tag}</Tag>
-        ))}
+          {tags?.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
         </TagContainer>
-
       </BottomRow>
     </MedicineContainer>
   );

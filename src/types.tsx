@@ -154,7 +154,7 @@ interface CodeType {
   type: string;
 }
 
-interface Document{
+export interface Documents{
   category: CodeType;
   content: string;
   date: string
@@ -169,7 +169,7 @@ export interface MedicineDetail {
   id: number;
   code: string;
   date:string;
-  documents: Document[];
+  documents: Documents[];
   name?: string;
   names?: NameItem[];
   status?: CodeTypeLanguage;
@@ -219,4 +219,10 @@ export interface Ingredient {
   code: number;
   type: string;
   lang: boolean;
+}
+
+export interface FiltersType {
+  species: [number, string][];
+  doseForm: [number, string][];
+  legalCode: [number, string][];
 }

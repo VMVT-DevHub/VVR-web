@@ -28,6 +28,28 @@ export const RegistrationInfo = ({
   if (data == "undefined" || data == null || data.length == 0) return null;
   if (!data) return null;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let displayData:any;
+
+  if (typeof data == "string") {
+    displayData = data;
+  } else {
+    if (title == "Gamintojas (-ai)") {
+      displayData = data.map((item) => {
+        return (
+          <InfoContainer key={item}>
+            <div>
+              <Icon name={"dot"} />
+            </div>
+            {item}
+          </InfoContainer>
+        );
+      });
+    } else {
+        displayData = data.join(`, `);
+    }
+  }
+
   return (
     <ItemContainer>
       <div>
@@ -36,20 +58,7 @@ export const RegistrationInfo = ({
       <TextContainer $textSize={text}>
         <p>{title}</p>
         <div>
-          {typeof data == "string"
-            ? data
-            : title == "Gamintojas (-ai)"
-            ? data.map((item) => {
-                return (
-                  <InfoContainer key={item}>
-                    <div>
-                      <Icon name={"dot"} />
-                    </div>
-                    {item}
-                  </InfoContainer>
-                );
-              })
-            : data.join(`, `)}
+          {displayData}
         </div>
       </TextContainer>
     </ItemContainer>
