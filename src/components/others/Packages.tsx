@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Icon from "../../styles/icons";
 import {PackItem} from "../../types"
+import { useTranslation } from "react-i18next";
 
 interface PackagesProps {
   name: string;
@@ -23,7 +24,7 @@ export const Packages = ({
   weightType,
 }: PackagesProps) => {
 
-
+  const { t } = useTranslation()
   //   const handleStatus = (code:number | null | undefined) => {
   //   if(!code) return "not marketed";
   //   switch (code){
@@ -54,7 +55,7 @@ export const Packages = ({
         return(
           <Subtitle>
             {type}, {item.num} {item.name ? item.name : item.type} <Icon name="dot" />
-             Pakuotėje {quantity} vnt.
+             {t('medicineDetail.pack')} {quantity} {t('medicineDetail.quantity')}
           </Subtitle>
         )
       })}

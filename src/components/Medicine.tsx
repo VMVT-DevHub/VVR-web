@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Rx from "../styles/images/Rx.svg";
 import { device } from "../styles";
+import { useTranslation } from "react-i18next";
 
 export interface MedicineProps {
   id: string;
@@ -13,12 +14,15 @@ export interface MedicineProps {
 }
 
 export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: MedicineProps) => {
+
+  const { t } = useTranslation();
+
   return (
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
           <Code> {code}</Code>
-          {isNew && <NewSticker>Naujiena</NewSticker>}
+          {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
         </TopRightContainer>
 
         <TopLeftContainer>
@@ -29,7 +33,7 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
             <Title>{title}</Title>
             {subtitle && (
               <Subtitle>
-                Veikliosios medžiagos:
+                {t('medicines.ingredients')}
                 {subtitle.length > 4
                   ? subtitle?.slice(0, 4).join(", ") + "..."
                   : subtitle?.join(", ")}

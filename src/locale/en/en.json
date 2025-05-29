@@ -10,6 +10,36 @@
         "searchLoading": "Searching..",
         "required": "Required field"
     },
+     "medicineDetail": {
+        "goBack": "Go back",
+        "indication": "Indication",
+        "withdrawal": "Waiting period",
+        "packs": "Packs",
+        "medicineInfo": "Veterinary information",
+        "registerInfo": "Registration information",
+        "productInfo": "Product information",
+        "date": "Date of registration",
+        "number": "Registration number",
+        "holder": "Registration holder",
+        "status": "Registration status",
+        "legal": "Legal basis of registration",
+        "procType": "Procedure type",
+        "procNumber": "Procedure number",
+        "refCountry": "Reference Member State",
+        "otherCountries": "Related Member States",
+        "group": "Veterinary medicinal product group",
+        "ATCvet": "ATCvet code",
+        "manufacturer": "Manufacturer(s)",
+        "upd": "UPD ID No.",
+        "ingredients": "Active ingredient(s)",
+        "usageType": "Method(s) of use",
+        "type": "Pharmaceutical form",
+        "animals": "Target animal species",
+        "pack": "Contains",
+        "quantity": "units",
+        "view": "View",
+        "download": "Download"
+    },
     "footer":{
         "vmvt": "State Food and Veterinary Service",
         "meaning": "Meanings of pictograms",
@@ -20,9 +50,23 @@
     "medicines": {
         "previous": "Prev.",
         "next": "Next",
-        "notFound": "Nothing has been found. Please adjust the search field and try again."
+        "notFound": "Nothing has been found. Please adjust the search field and try again.",
+        "new": "New",
+        "ingredients": "Active ingredients: "
     },
     "validation": {
         "medicineLength": "The input must be empty or longer than 2 characters."
+    },
+     "error": {
+        "notFoundTitle": "Oops! Something went wrong.",
+        "notFoundLink": "Go back",
+        "noMedicineDetail": "Something went wrong!",
+        "noFiles": "No attached documents.",
+        "noPacks": "No package information available",
+        "noDescription": "No description available",
+        "noWithdrawal": "No withdrawal period",
+        "notForUsage": "Not used for the following: ",
+        "noWaitingPeriod": "No waiting period",
+        "notUsed": "Not used"
     }
 }

@@ -15,6 +15,8 @@ export const IngredientsInfo = ({
 }: registrationInfoProps) => {
   if (!data) return null;
 
+
+  console.log(data)
   return (
     <ItemContainer>
       <div>

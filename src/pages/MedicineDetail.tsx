@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { device } from "../styles";
 
 export const MedicineDetail = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
   const [isUPD, setIsUPD] = useState(localStorage.getItem("isUPD") === 'true' || false);
@@ -28,8 +28,7 @@ export const MedicineDetail = () => {
 
   if (isLoading) return <Loader />;
 
-  if (isLoading) return <p>Kraunasi...</p>;
-  if (!medicine) return <p>Kažkur įsivėlė klaida!</p>;
+  if (!medicine) return <p>{t('error.noMedicineDetail')}</p>;
 
   const animalTags = medicine.admProd
     ?.flatMap((prod) =>
@@ -59,7 +58,6 @@ export const MedicineDetail = () => {
     ?.map((item) => item.type).filter(item  => item !== null)
     || undefined;
 
-    // .join(", ") 
   const manufacturers = medicine.mfctOps?.map((item) => {
       const manufacturer = [];
       if(item.name) manufacturer.push(item.name);
@@ -113,17 +111,17 @@ export const MedicineDetail = () => {
       />
       <MedicineDetailContainer>
         <LeftColumn>
-          <Title>Indikacija (-os)</Title>
-          <p>Šiuo metu aprašymo nėra.</p>
+          <Title>{t('medicineDetail.indication')}</Title>
+          <p>{t('error.noDescription')}</p>
 
-          <Title>Išlauka</Title>
+          <Title>{t('medicineDetail.withdrawal')}</Title>
 
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) => {
               if (!route.species) {
                 return (
                   <p key={`${prodIndex}-${routeIndex}`}>
-                    Naudojimo būdui „{route.type}" netaikoma
+                    {t('error.notForUsage')} {route.type}
                   </p>
                 );
               }
@@ -137,7 +135,7 @@ export const MedicineDetail = () => {
                   <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
                     <UsageType>{route.type == "Vartoti per burną" ? "Naudoti per burną" : route.type}</UsageType>
                     <AnimalContainer key={`${prodIndex}-${routeIndex}`}>
-                      <p>Išlauka netaikoma</p>
+                      <p>{t('error.noWithdrawal')}</p>
                     </AnimalContainer>
                   </UsageTypeContainer>
                 );
@@ -170,9 +168,9 @@ export const MedicineDetail = () => {
                                   </div>
                                   <p>
                                     {isMinPossibleValue
-                                      ? "Laukti nereikia"
+                                      ? t('error.noWaitingPeriod')
                                       : isMaxPossibleValue
-                                      ? "Nenaudojama"
+                                      ? t('error.notUsed')
                                       : `${period.num} ${period.type}`}
                                   </p>
                                 </Produce>
@@ -187,37 +185,37 @@ export const MedicineDetail = () => {
             })
           )}
 
-          <Title>Veterinarinio vaisto informacija</Title>
+          <Title>{t('medicineDetail.medicineInfo')}</Title>
           <MedicineContainer>
-            <IngredientsInfo
+            {medicine.ingredients && <IngredientsInfo
               icon={"flask"}
-              title={"Veiklioji(-iosios) medžiaga(-os)"}
+              title={t('medicineDetail.ingredients')}
               data={medicine.ingredients}
-            />
+            />}
             {usageTypes && usageTypes.length > 0 && (
               <RegistrationInfo
                 icon={"scroll"}
-                title={"Naudojimo būdas(-ai)"}
+                title={t('medicineDetail.usageType')}
                 data={[...usageTypesSet]}
                 textSize="big"
               />
             )}
             <RegistrationInfo
               icon={"vaccine"}
-              title={"Vaisto forma"}
+              title={t('medicineDetail.type')}
               data={medicine.extension?.type}
               textSize="big"
             />
             {animalTags && animalTags.length > 0 && (
               <RegistrationInfo
                 icon={"animal"}
-                title={"Paskirties gyvūnų rūšys"}
+                title={t('medicineDetail.animals')}
                 data={[...animalTagsSet]}
                 textSize="big"
               />
             )}
           </MedicineContainer>
-          <Title>Pakuotės</Title>
+          <Title>{t('medicineDetail.packs')}</Title>
           {medicine.packs?.map((item) => {
             return (
               <Packages
@@ -231,26 +229,26 @@ export const MedicineDetail = () => {
                 weightType={item.items}
               />
             );
-          }) || "informacijos apie pakuotes nėra."}
+          }) || t('error.noPacks')}
         </LeftColumn>
 
         <RightColumn>
           <RegisteredInformation>
-            <Title>Registracijos informacija</Title>
+            <Title>{t('medicineDetail.registerInfo')}</Title>
             <RegistrationInfo
               icon={"calendar"}
-              title={"Registracijos data"}
+              title={t('medicineDetail.date')}
               data={medicine.date}
             />
             <RegistrationInfo
               icon={"barcode"}
-              title={"Registracijos numeris"}
+              title={t('medicineDetail.number')}
               data={medicine.code}
             />
             {medicine.holder && (
               <RegistrationInfo
                 icon={"pen"}
-                title={"Registruotojas"}
+                title={t('medicineDetail.holder')}
                 data={handleHolder(
                   medicine.holder?.name,
                   medicine.holder?.address,
@@ -260,75 +258,75 @@ export const MedicineDetail = () => {
             )}
             <RegistrationInfo
               icon={"calendar"}
-              title={"Registracijos statusas"}
+              title={t('medicineDetail.status')}
               data={medicine.status?.type}
             />
             {medicine.basis && (
               <RegistrationInfo
                 icon={"scales"}
-                title={"Registracijos teisinis pagrindas "}
+                title={t('medicineDetail.legal')}
                 data={medicine.basis?.type}
               />
             )}
             {medicine.case && (
               <RegistrationInfo
                 icon={"arrows"}
-                title={"Procedūros tipas"}
+                title={t('medicineDetail.procType')}
                 data={medicine.case?.type}
               />
             )}
             {medicine.reglCase && (
               <RegistrationInfo
                 icon={"hashtag"}
-                title={"Procedūros numeris"}
+                title={t('medicineDetail.procNumber')}
                 data={medicine.reglCase?.name}
               />
             )}
             {medicine.reglCase?.reglCountry && (
               <RegistrationInfo
                 icon={"globe"}
-                title={"Referencinė valstybė narė"}
+                title={t('medicineDetail.refCountry')}
                 data={medicine.reglCase?.reglCountry?.type}
               />
             )}
             {medicine.reglCase && (
               <RegistrationInfo
                 icon={"flag"}
-                title={"Susijusios valstybės narės"}
+                title={t('medicineDetail.otherCountries')}
                 data={secondaryCountries}
               />
             )}
             {medicine.legal && (
               <RegistrationInfo
                 icon={"pills"}
-                title={"Veterinarinio vaisto grupė"}
+                title={t('medicineDetail.group')}
                 data={medicine.legal?.type}
               />
             )}
             {medicine.classif && (
               <RegistrationInfo
                 icon={"qrcode"}
-                title={"ATCvet kodas"}
+                title={t('medicineDetail.ATCvet')}
                 data={medicine.classif?.map((item) => item.name)}
               />
             )}
             {medicine.mfctOps && (
               <RegistrationInfo
                 icon={"microscope"}
-                title={"Gamintojas (-ai)"}
+                title={t('medicineDetail.manufacturer')}
                 data={manufacturers}
               />
             )}
             <RegistrationInfo
               icon={"hashtag"}
-              title={"UPD ID Nr."}
+              title={t('medicineDetail.upd')}
               data={medicine.id?.toString()}
             />
           </RegisteredInformation>
 
           <ProductInfoTitle>
             <Icon name={"book"} />
-            <p>Produkto informacija</p>
+            <p>{t('medicineDetail.productInfo')}</p>
           </ProductInfoTitle>
 
           {medicine.documents ? (
@@ -346,7 +344,7 @@ export const MedicineDetail = () => {
               );
             })
           ) : (
-            <DownloadTitle>Pridėtų dokumentų nėra.</DownloadTitle>
+            <DownloadTitle>{t('error.noFiles')}</DownloadTitle>
           )}
         </RightColumn>
       </MedicineDetailContainer>

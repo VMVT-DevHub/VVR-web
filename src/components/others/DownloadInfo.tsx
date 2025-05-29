@@ -3,6 +3,7 @@ import Icon from "../../styles/icons";
 import { useDocDownload } from "../../utils/hooks";
 import { MoonLoader } from "react-spinners";
 import { theme } from "../../styles";
+import { useTranslation } from "react-i18next";
 
 interface DownloadInfoProps {
   key: string;
@@ -27,6 +28,8 @@ export const DownloadInfo = ({
   const { isFetching: isFetchingDownload, refetch: refetchDownload } =
     useDocDownload(doc_id, name, false, med_id);
 
+    const { t } = useTranslation()
+
   return (
     <DocumentDownloadContainer key={doc_id}>
       <DownloadTitle>
@@ -43,7 +46,7 @@ export const DownloadInfo = ({
           ) : (
             <Icon name="view" />
           )}
-          Peržiūrėti
+          {t('medicineDetail.view')}
         </StyledButton>
         <StyledButton
           onClick={() => refetchDownload()}
@@ -54,7 +57,7 @@ export const DownloadInfo = ({
           ) : (
             <Icon name="download" />
           )}
-          Atsisiųsti
+          {t('medicineDetail.download')}
         </StyledButton>
       </ButtonContainer>
     </DocumentDownloadContainer>

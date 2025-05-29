@@ -6,6 +6,7 @@ import Icon from "../styles/icons";
 import rx from "../styles/images/Rx.svg";
 import rxplus from "../styles/images/Rxplus.svg";
 import otc from "../styles/images/Otc.svg";
+import { useTranslation } from "react-i18next";
 
 export interface SearchSectionProps {
   title: string | undefined;
@@ -22,8 +23,8 @@ export const DetailTitle = ({
   tags,
   prescription
 }: SearchSectionProps) => {
-//   const { t } = useTranslation();
-const navigate = useNavigate();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const handlePrescription = (code:number | null | undefined) => {
     if(!code) return rx;
@@ -45,14 +46,14 @@ const navigate = useNavigate();
         <TextContainer>
           <StyledButton onClick={() => navigate(-1)}>
             <Icon name={"arrow-left"} />
-            Grįžti atgal
+            {t('medicineDetail.goBack')}
           </StyledButton>
           <TitleContainer>
             <Image><StyledImg src={handlePrescription(prescription)} alt="vaisto grupė" /></Image>
             <div>
               <Title>{title}</Title>
               <Subtitle>
-                Veikliosios medžiagos:{" "}
+                {t('medicineDetail.ingredients')}{': '}
                 {subtitle?.map((item, index) => {
                   if (index === subtitle.length - 1) {
                     return item;
