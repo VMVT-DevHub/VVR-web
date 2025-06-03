@@ -14,6 +14,10 @@ import { useEffect, useState } from "react";
 import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
+import { useMutation } from "@tanstack/react-query";
+import { FilterPOST } from "../types";
+import api from "../utils/api";
+import { handleDateDifference } from "../utils/functions";
 
 export const HomePage = () => {
   const { t, i18n } = useTranslation();
@@ -23,7 +27,6 @@ export const HomePage = () => {
 
   const q = searchParams.get("q") || ""; // q == query
   const p = searchParams.get("p") || 1; // p == page
-  const today = new Date();
 
   const [isUPD, setIsUPD] = useState(
     localStorage.getItem("isUPD") === "true" || false
@@ -38,6 +41,28 @@ export const HomePage = () => {
     }
   }, [q, p, setSearchParams]);
 
+  const [filterValues, setFilterValues] = useState<FilterPOST>({
+    page: Number(p),
+    limit: 7,
+    order: "",
+    desc: true,
+    search: q,
+    species: [],
+    legalCode: [],
+    doseForm: []
+  });
+
+ const {mutateAsync} = useMutation({
+  mutationFn: (values: FilterPOST) => api.setFilters(values),
+  onError: () => {},
+  onSuccess: async (data) => {
+    console.log(data)
+    // await queryClient.invalidateQueries(['declaration', id]);
+
+  },
+  retry: false,
+})
+
   const { data: medicine, isLoading } = useAllMedicines(
     q,
     Number(p),
@@ -48,7 +73,8 @@ export const HomePage = () => {
 
   console.log(filters);
 
-  console.log(medicine?.data);
+  // console.log(medicine?.data);
+  console.log(filterValues);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -77,7 +103,25 @@ export const HomePage = () => {
       p: "1",
     });
 
+    setFilterValues((prev) => ({
+      ...prev,
+      ["search"]: values.medicine
+    }))
+
     resetForm({ values: values, isSubmitting: false, isValidating: false });
+  };
+
+  const handleFilterChange = (
+    key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm">,
+    filter: string
+  ) => {
+    
+    setFilterValues((prev) => ({
+      ...prev,
+      [key]: prev[key].includes(Number(filter))
+        ? prev[key].filter((item) => item !== Number(filter))
+        : [...prev[key], Number(filter)],
+    }));
   };
 
   const handlePageChange = (newPage: number) => {
@@ -85,14 +129,14 @@ export const HomePage = () => {
       q,
       p: newPage.toString(),
     });
+
+    setFilterValues((prev) => ({
+      ...prev,
+      ["page"]: newPage
+    }))
   };
 
-  const handleDateDifference = (registrationDate: string) => {
-    const pastDate = new Date(registrationDate);
-    const monthLater = new Date(pastDate);
-    monthLater.setMonth(monthLater.getMonth() + 1);
-    return today < monthLater;
-  };
+ 
 
   return (
     <main>
@@ -135,11 +179,13 @@ export const HomePage = () => {
           }}
         />
       </form>
+      <StyledButton onClick={() => mutateAsync(filterValues)}>Fetch filters</StyledButton>
+
       <ContentContainer>
         <LeftColumn>
           {medicine !== undefined && medicine?.items !== 0 && (
             <>
-              <StyledFilters data={filters} />
+              <StyledFilters data={filters} setFilterValues={handleFilterChange}/>
               <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
                 <Icon name={"filters"} />
                 Rodyti Filtrus
@@ -151,16 +197,17 @@ export const HomePage = () => {
                   setShowFilters(false);
                 }}
               >
-                <Filters data={filters} />
+                <Filters data={filters} setFilterValues={handleFilterChange} />
+
               </PopUp>
             </>
           )}
+
         </LeftColumn>
         <RightColumn>
           {isLoading ? <Loader /> : ""}
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
-              //handleDateDifference(item.date)
               return (
                 <Medicine
                   key={item.id}
@@ -193,6 +240,12 @@ export const HomePage = () => {
     </main>
   );
 };
+
+const StyledButton = styled.button`
+  border: 1px solid grey;
+  border-radius: 8px;
+  margin-top: 8px;
+`
 const StyledFilters = styled(Filters)`
   display: block;
 

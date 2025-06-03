@@ -226,3 +226,14 @@ export interface FiltersType {
   doseForm: [number, string][];
   legalCode: [number, string][];
 }
+
+export interface FilterPOST {
+  page: number;
+  limit: number;
+  order: string;
+  desc: boolean;
+  search: string;
+  species: number[];
+  legalCode: number[];
+  doseForm: number[];
+}

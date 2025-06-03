@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { RegistrationInfo } from "../components/others/RegistrationInfo";
 import { IngredientsInfo } from "../components/others/IngredientsInfo";
 import Icon from "../styles/icons";
-import { sortByLanguage, useMedicine } from "../utils/hooks";
+import { useMedicine } from "../utils/hooks";
 import { DetailTitle } from "../components/DetailTitle";
 import { Packages } from "../components/others/Packages";
 import { useEffect, useState } from "react";
@@ -11,6 +11,7 @@ import { DownloadInfo } from "../components/others/DownloadInfo";
 import { Loader } from "../components/Loader";
 import { useTranslation } from "react-i18next";
 import { device } from "../styles";
+import { handleDateDifference, sortByLanguage } from "../utils/functions";
 
 export const MedicineDetail = () => {
   const { t, i18n } = useTranslation();
@@ -108,6 +109,7 @@ export const MedicineDetail = () => {
         tags={[...animalTagsSet]}
         subtitle={ingredients}
         prescription={medicine.legal?.code}
+        isNew={medicine.date ? handleDateDifference(medicine.date) : false}
       />
       <MedicineDetailContainer>
         <LeftColumn>
