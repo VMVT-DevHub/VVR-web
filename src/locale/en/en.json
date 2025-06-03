@@ -35,7 +35,7 @@
         "usageType": "Method(s) of use",
         "type": "Pharmaceutical form",
         "animals": "Target animal species",
-        "pack": "Contains",
+        "pack": "Contains ",
         "quantity": "units",
         "view": "View",
         "download": "Download"

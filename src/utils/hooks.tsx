@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { Documents, FiltersType, LocationResponse, MedicineDetail } from "../types";
+import { FiltersType, LocationResponse, MedicineDetail } from "../types";
+import { handlePreview } from "./functions";
 
 export const useMedicine = (id: string, language: string, uat: boolean) => {
   const { data, isLoading, refetch } = useQuery<MedicineDetail>({
@@ -38,36 +39,7 @@ export const useFilters = (language: string) => {
   return { data, isLoading, refetch };
 };
 
-export function sanitizeString(str: string) {
-  if (str.length > 100) {
-    return str.slice(0, 100);
-  }
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
 
-const handlePreview = (data: Blob, isPreview:boolean, name:string) => {
-  if (data) {
-    const href = URL.createObjectURL(data);
-    
-    if (isPreview) {
-      window.open(href, "_blank");
-    } else {
-      const link = document.createElement("a");
-      link.href = href;
-      link.download = name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      URL.revokeObjectURL(href);
-    }
-  }
-};
 
 export const useDocDownload = (
   doc_id: string,
@@ -90,17 +62,7 @@ export const useDocDownload = (
   return { isFetching, refetch };
 };
 
-export const sortByLanguage = ( a:Documents, b:Documents) => {
-  if(a.lang == "lt")
-  {
-    return -1;
-  }
-  if(b.lang == "lt")
-  {
-    return 1;
-  }
-  return 0;
-}
+
 
 
 

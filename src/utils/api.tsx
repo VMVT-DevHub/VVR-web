@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, ResponseType } from 'axios';
-import { FiltersType, LocationResponse, MedicineDetail } from '../types';
-import { sanitizeString } from './hooks';
+import { FilterPOST, FiltersType, LocationResponse, MedicineDetail } from '../types';
+import { sanitizeString } from './functions';
 
 interface Get {
   resource: string;
   id?: string | number;
   params?: Record<string, unknown>;
   responseType?: ResponseType;
+}
+
+interface Post {
+  resource: string;
+  [key: string]: any;
 }
 
 class Api {
@@ -49,6 +55,19 @@ class Api {
     return this.errorWrapper<T>(() =>
       this.AuthApiAxios.get(`/${resource}${id ? `/${id}` : ''}`, config)
     );
+  }
+
+  async post<T>({ resource, id, data }: Post): Promise<T> {
+    return this.errorWrapper<T>(() =>
+      this.AuthApiAxios.post(`/${resource}${id ? `/${id}` : ''}`, data)
+    );
+  }
+
+  async setFilters(params: FilterPOST): Promise<any> {
+    return this.post<any>({
+      resource: `api/med?lang=lt`,
+      data: params
+    });
   }
 
   async getMedicine(id: string, language: string, uat:boolean): Promise<MedicineDetail> {

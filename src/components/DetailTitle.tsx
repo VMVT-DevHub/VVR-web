@@ -14,6 +14,7 @@ export interface SearchSectionProps {
   code?:string;
   tags?: string[] | undefined  | string[][][];
   prescription?: number | null;
+  isNew: boolean;
 }
 
 export const DetailTitle = ({
@@ -21,7 +22,8 @@ export const DetailTitle = ({
   code,
   subtitle,
   tags,
-  prescription
+  prescription,
+  isNew
 }: SearchSectionProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -53,7 +55,7 @@ export const DetailTitle = ({
             <div>
               <Title>{title}</Title>
               <Subtitle>
-                {t('medicineDetail.ingredients')}{': '}
+                {subtitle && subtitle.length > 0 && (`${t('medicineDetail.ingredients')}: `)}
                 {subtitle?.map((item, index) => {
                   if (index === subtitle.length - 1) {
                     return item;
@@ -66,6 +68,7 @@ export const DetailTitle = ({
           </TitleContainer>
         </TextContainer>
         <Code>{code}</Code>
+        {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
       </TopRow>
       <BottomRow>
         <TagContainer>
@@ -82,6 +85,15 @@ export const DetailTitle = ({
     </SearchBarContainer>
   );
 };
+
+const NewSticker = styled.div`
+  background-color: ${({ theme }) => theme.colors.primary_light};
+  color: ${({ theme }) => theme.colors.secondary};
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 15px;
+`;
 const StyledImg = styled.img`
   width: 56px;
 `;
@@ -171,7 +183,7 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-
+    width: 72%;
 `;
 
 const Title = styled.h1`

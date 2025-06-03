@@ -1,20 +1,30 @@
 import styled from "styled-components";
 import Icon from "../styles/icons";
 import { useState } from "react";
-import { FiltersType } from "../types";
+import { FilterPOST, FiltersType } from "../types";
 
 interface isDisplayedProps {
   category: boolean;
   group: boolean;
+  species: boolean;
   form: boolean;
   producer: boolean;
   date: boolean;
 }
 
-export const Filters = ({ className, data }: { className?: string, data?: FiltersType}) => {
+export const Filters = ({
+  className,
+  data,
+  setFilterValues,
+}: {
+  className?: string;
+  data?: FiltersType;
+  setFilterValues: (key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm">, filter: string) => void;
+}) => {
   const [isDisplayed, SetIsDisplayed] = useState<isDisplayedProps>({
     category: false,
-    group: false,
+    group: true,
+    species: false,
     form: false,
     producer: false,
     date: false,
@@ -27,9 +37,25 @@ export const Filters = ({ className, data }: { className?: string, data?: Filter
     });
   };
 
-  console.log(data)
+  const handleGroups = (code: number) => {
+    switch (code) {
+      case 200000017698:
+        return [200000017698, "Receptinis"];
+      case 200000027079:
+        return [200000027079, "Tik vet. gydytojams"];
+      case 200000017695:
+        return [200000017695, "Be recepto"];
+      case 200000017699:
+        return [200000017699, "Receptinis su išimtimis"];
+      default:
+        return [200000017698, "Receptinis"];
+    }
+  };
 
- 
+  const doseFormShortened = data?.doseForm.map((group) =>
+    handleGroups(group[0])
+  );
+
   return (
     <div className={className}>
       <CategoryContainer>
@@ -39,15 +65,69 @@ export const Filters = ({ className, data }: { className?: string, data?: Filter
         <CategoryTitle>Vaisto grupė</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.group} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.group && <Categories>
-        {data?.doseForm.map(form => <p>{form[1]}</p>)}
-      </Categories>}
+      {isDisplayed.group && (
+        <form>
+          <Categories>
+            {doseFormShortened &&
+              doseFormShortened?.map((form) => (
+                <CheckboxRow key={form[0]}>
+                  <StyledCheckbox
+                    type="checkbox"
+                    id={form[0].toString()}
+                    onChange={(e) => setFilterValues("doseForm", e.target.id)}
+                  />
+                  <label htmlFor={form[0].toString()}>{form[1]}</label>
+                </CheckboxRow>
+              ))}
+          </Categories>
+        </form>
+      )}
 
       <CategoryContainer onClick={() => toggleDisplay("form")}>
         <CategoryTitle>Farmacinė forma</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.form} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.form ? <Categories></Categories> : ""}
+      {isDisplayed.form ? (
+        <form>
+          <Categories>
+            {data?.legalCode.map((code) => (
+              <CheckboxRow key={code[1]}>
+                <StyledCheckbox
+                  type="checkbox"
+                  id={code[0].toString()}
+                  onChange={(e) => setFilterValues("legalCode", e.target.id)}
+                />
+                <label htmlFor={code[0].toString()}>{code[1]}</label>
+              </CheckboxRow>
+            ))}
+          </Categories>
+        </form>
+      ) : (
+        ""
+      )}
+
+      <CategoryContainer onClick={() => toggleDisplay("species")}>
+        <CategoryTitle>Gyvūno rūšis</CategoryTitle>
+        <StyledIcon $isActive={!isDisplayed.species} name="arrow" />
+      </CategoryContainer>
+      {isDisplayed.species ? (
+        <form>
+          <Categories>
+            {data?.species.map((animal) => (
+              <CheckboxRow key={animal[0]}>
+                <StyledCheckbox
+                  type="checkbox"
+                  id={animal[0].toString()}
+                  onChange={(e) => setFilterValues("species", e.target.id)}
+                />
+                <label htmlFor={animal[0].toString()}>{animal[1]}</label>
+              </CheckboxRow>
+            ))}
+          </Categories>
+        </form>
+      ) : (
+        ""
+      )}
 
       <CategoryContainer onClick={() => toggleDisplay("producer")}>
         <CategoryTitle>Gamintojas / Registruotojas</CategoryTitle>
@@ -64,13 +144,41 @@ export const Filters = ({ className, data }: { className?: string, data?: Filter
   );
 };
 
-const Categories = styled.div``;
+const StyledCheckbox = styled.input`
+  accent-color: ${({theme}) => theme.colors.primary};
+  cursor:pointer;
+`
+const CheckboxRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+
+  & label{
+    cursor:pointer;
+    color:  ${({theme}) => theme.colors.grey};
+  }
+  & label:hover{
+    color:  ${({theme}) => theme.colors.primary};
+    font-weight: 500;
+  }
+  & input:checked + label {
+    color:  ${({theme}) => theme.colors.primary};
+    font-weight: 500;
+  }
+  
+`
+
+const Categories = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
 
 const CategoryContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32px 0 16px 12px;
+  padding: 32px 0 16px 0;
   cursor: pointer;
 `;
 const CategoryTitle = styled.p`
@@ -80,3 +188,7 @@ const CategoryTitle = styled.p`
 const StyledIcon = styled(Icon)<{ $isActive: boolean }>`
   transform: ${({ $isActive }) => ($isActive ? "rotateX(180deg)" : "")};
 `;
+
+
+
+
