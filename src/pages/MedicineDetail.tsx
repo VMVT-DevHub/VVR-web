@@ -56,7 +56,7 @@ export const MedicineDetail = () => {
   }
 
   const secondaryCountries = medicine.reglCase?.countries
-    ?.map((item) => item.type).filter(item  => item !== null)
+    ?.map((item) => item.type).filter(item  => item !== null).sort()
     || undefined;
 
   const manufacturers = medicine.mfctOps?.map((item) => {

@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { slugs } from "../utils/routes";
 import { PageSelector } from "../components/PageSelector";
 import { Filters } from "../components/Filters";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
@@ -24,6 +24,7 @@ export const HomePage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
+  const paginationRef = useRef<null | HTMLDivElement>(null);
 
   const q = searchParams.get("q") || ""; // q == query
   const p = searchParams.get("p") || 1; // p == page
@@ -31,6 +32,18 @@ export const HomePage = () => {
   const [isUPD, setIsUPD] = useState(
     localStorage.getItem("isUPD") === "true" || false
   );
+
+  useEffect(() => {
+    if (paginationRef.current) {
+      paginationRef.current.scrollIntoView(
+        {
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'nearest'
+        })
+    }
+  },
+  [p])
 
   useEffect(() => {
     if (isNaN(Number(p)) || Number(p) < 0) {
@@ -70,11 +83,6 @@ export const HomePage = () => {
     i18n.language
   );
   const { data: filters } = useFilters(i18n.language);
-
-  console.log(filters);
-
-  // console.log(medicine?.data);
-  console.log(filterValues);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -137,7 +145,10 @@ export const HomePage = () => {
   };
 
  
+ console.log(filters);
 
+  // console.log(medicine?.data);
+  console.log(filterValues);
   return (
     <main>
       <Formik
@@ -179,13 +190,18 @@ export const HomePage = () => {
           }}
         />
       </form>
-      <StyledButton onClick={() => mutateAsync(filterValues)}>Fetch filters</StyledButton>
+      <StyledButton onClick={() => mutateAsync(filterValues)}>
+        Fetch filters
+      </StyledButton>
 
       <ContentContainer>
         <LeftColumn>
-          {medicine !== undefined && medicine?.items !== 0 && (
+          {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
             <>
-              <StyledFilters data={filters} setFilterValues={handleFilterChange}/>
+              <StyledFilters
+                data={filters}
+                setFilterValues={handleFilterChange}
+              />
               <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
                 <Icon name={"filters"} />
                 Rodyti Filtrus
@@ -198,13 +214,12 @@ export const HomePage = () => {
                 }}
               >
                 <Filters data={filters} setFilterValues={handleFilterChange} />
-
               </PopUp>
             </>
-          )}
-
+          {/* )} */}
         </LeftColumn>
-        <RightColumn>
+        <RightColumn ref={paginationRef}>
+          {/* <div ref={paginationRef}></div> */}
           {isLoading ? <Loader /> : ""}
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
@@ -226,7 +241,13 @@ export const HomePage = () => {
               );
             })
           ) : (
-            <NotFound>{t("medicines.notFound")}</NotFound>
+            <NotFoundContainer>
+              <NotFound>{t("medicines.notFound")}</NotFound>
+              <StyledLink onClick={() => window.location.href="/"}>
+                <Icon name="arrow-left" />
+                {t("error.notFoundLink")}
+              </StyledLink>
+            </NotFoundContainer>
           )}
           {medicine !== undefined && medicine?.items !== 0 && (
             <PageSelector
@@ -240,6 +261,22 @@ export const HomePage = () => {
     </main>
   );
 };
+const NotFoundContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+const StyledLink = styled.a`
+    display: flex;
+    gap: 6px;
+    font-size: 1rem;
+    color: ${({ theme }) => theme.colors.primary_light};
+    margin-top: 8px;
+    cursor: pointer;
+    & :hover {
+        text-decoration: dashed;
+    }
+`
 
 const StyledButton = styled.button`
   border: 1px solid grey;

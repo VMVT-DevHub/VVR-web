@@ -16,7 +16,6 @@ export const IngredientsInfo = ({
   if (!data) return null;
 
 
-  console.log(data)
   return (
     <ItemContainer>
       <div>

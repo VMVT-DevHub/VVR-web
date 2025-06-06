@@ -44,7 +44,7 @@ export const theme: Theme = {
 export const GlobalStyle = createGlobalStyle`
  *{
     box-sizing: border-box;
-    font-family: "Work Sans", "Inter";
+    font-family: "Work Sans", "Inter", "Raleway";
     color: #142F4D;
   }
   html { 
@@ -70,11 +70,6 @@ export const GlobalStyle = createGlobalStyle`
   p {
     margin: 0;
     padding: 0;
-  }
-  a {
-    :hover{
-      color: inherit;
-    }
   }
   button {
     outline: none;
