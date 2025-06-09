@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { FiltersType, LocationResponse, MedicineDetail } from "../types";
+import { FilterPOST, FiltersType, MedicineResponse, MedicineDetail } from "../types";
 import { handlePreview } from "./functions";
 
 export const useMedicine = (id: string, language: string, uat: boolean) => {
@@ -15,8 +15,20 @@ export const useMedicine = (id: string, language: string, uat: boolean) => {
   return { data, isLoading, refetch };
 };
 
+export const useMedicines = (params: FilterPOST, uat:boolean) => {
+  const { data, isLoading, refetch } = useQuery<MedicineResponse>({
+    queryKey: ["medicinesTemp", { params, uat }],
+    queryFn: () => api.setFilters(params, uat),
+    retry: false,
+    // enabled: !!query
+    refetchOnWindowFocus: false,
+  });
+
+  return { data, isLoading, refetch };
+};
+
 export const useAllMedicines = (query: string, page: number, uat: boolean, language: string) => {
-  const { data, isLoading, refetch } = useQuery<LocationResponse>({
+  const { data, isLoading, refetch } = useQuery<MedicineResponse>({
     queryKey: ["medicines", { page, uat, query, language }],
     queryFn: () => api.getAllMedicines(query, page, uat, language),
     retry: false,

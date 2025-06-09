@@ -3,7 +3,7 @@ import { MedicineDetail } from "../pages/MedicineDetail"
 
 export const slugs = {
     medicineSearch: '/',
-    medicineDetail: (id:string) => `med/${id}`
+    medicineDetail: (id:string) => `vaistas/${id}`
 }
 
 export enum Ids {

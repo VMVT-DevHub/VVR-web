@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
 import { Formik, Form, FormikState } from "formik";
 import * as Yup from "yup";
-import { useAllMedicines, useFilters } from "../utils/hooks";
+import { useFilters, useMedicines } from "../utils/hooks";
 import { Medicine } from "../components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
@@ -14,9 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
-import { useMutation } from "@tanstack/react-query";
 import { FilterPOST } from "../types";
-import api from "../utils/api";
 import { handleDateDifference } from "../utils/functions";
 
 export const HomePage = () => {
@@ -35,15 +33,23 @@ export const HomePage = () => {
 
   useEffect(() => {
     if (paginationRef.current) {
-      paginationRef.current.scrollIntoView(
-        {
-          behavior: 'smooth',
-          block: 'end',
-          inline: 'nearest'
-        })
+      paginationRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "start",
+      });
     }
-  },
-  [p])
+  }, [p]);
+
+  const [filterValues, setFilterValues] = useState<FilterPOST>({
+    page: Number(p),
+    limit: 7,
+    desc: true,
+    search: q,
+    species: [],
+    legalCode: [],
+    doseForm: [],
+  });
 
   useEffect(() => {
     if (isNaN(Number(p)) || Number(p) < 0) {
@@ -54,34 +60,7 @@ export const HomePage = () => {
     }
   }, [q, p, setSearchParams]);
 
-  const [filterValues, setFilterValues] = useState<FilterPOST>({
-    page: Number(p),
-    limit: 7,
-    order: "",
-    desc: true,
-    search: q,
-    species: [],
-    legalCode: [],
-    doseForm: []
-  });
-
- const {mutateAsync} = useMutation({
-  mutationFn: (values: FilterPOST) => api.setFilters(values),
-  onError: () => {},
-  onSuccess: async (data) => {
-    console.log(data)
-    // await queryClient.invalidateQueries(['declaration', id]);
-
-  },
-  retry: false,
-})
-
-  const { data: medicine, isLoading } = useAllMedicines(
-    q,
-    Number(p),
-    isUPD,
-    i18n.language
-  );
+  const { data: medicine, isLoading } = useMedicines(filterValues, isUPD);
   const { data: filters } = useFilters(i18n.language);
 
   const medicineSchema = Yup.object().shape({
@@ -89,7 +68,6 @@ export const HomePage = () => {
       if (!value || value.length > 2) {
         return true;
       }
-      // arba galima padaryti su REGEX
       return this.createError({
         message: "validation.medicineLength",
       });
@@ -109,12 +87,13 @@ export const HomePage = () => {
     setSearchParams({
       q: values.medicine,
       p: "1",
+      // species: [filterValues.species.join('.')]
     });
 
     setFilterValues((prev) => ({
       ...prev,
-      ["search"]: values.medicine
-    }))
+      ["search"]: values.medicine,
+    }));
 
     resetForm({ values: values, isSubmitting: false, isValidating: false });
   };
@@ -123,13 +102,18 @@ export const HomePage = () => {
     key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm">,
     filter: string
   ) => {
-    
     setFilterValues((prev) => ({
       ...prev,
       [key]: prev[key].includes(Number(filter))
         ? prev[key].filter((item) => item !== Number(filter))
         : [...prev[key], Number(filter)],
     }));
+
+    //  setSearchParams({
+    //   q,
+    //   p: '1',
+    //   [key]: [filterValues[key].join('.')]
+    // });
   };
 
   const handlePageChange = (newPage: number) => {
@@ -140,17 +124,16 @@ export const HomePage = () => {
 
     setFilterValues((prev) => ({
       ...prev,
-      ["page"]: newPage
-    }))
+      ["page"]: newPage,
+    }));
   };
 
- 
- console.log(filters);
+  console.log(filters);
 
   // console.log(medicine?.data);
   console.log(filterValues);
   return (
-    <main>
+    <main ref={paginationRef}>
       <Formik
         initialValues={formValues}
         onSubmit={handleSubmit}
@@ -190,35 +173,31 @@ export const HomePage = () => {
           }}
         />
       </form>
-      <StyledButton onClick={() => mutateAsync(filterValues)}>
-        Fetch filters
-      </StyledButton>
-
       <ContentContainer>
         <LeftColumn>
           {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
-            <>
-              <StyledFilters
-                data={filters}
-                setFilterValues={handleFilterChange}
-              />
-              <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
-                <Icon name={"filters"} />
-                Rodyti Filtrus
-              </ShowFilters>
-              <PopUp
-                visible={showFilters}
-                title={"Filtrai"}
-                onClose={() => {
-                  setShowFilters(false);
-                }}
-              >
-                <Filters data={filters} setFilterValues={handleFilterChange} />
-              </PopUp>
-            </>
+          <>
+            <StyledFilters
+              data={filters}
+              setFilterValues={handleFilterChange}
+            />
+            <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
+              <Icon name={"filters"} />
+              Rodyti Filtrus
+            </ShowFilters>
+            <PopUp
+              visible={showFilters}
+              title={"Filtrai"}
+              onClose={() => {
+                setShowFilters(false);
+              }}
+            >
+              <Filters data={filters} setFilterValues={handleFilterChange} />
+            </PopUp>
+          </>
           {/* )} */}
         </LeftColumn>
-        <RightColumn ref={paginationRef}>
+        <RightColumn>
           {/* <div ref={paginationRef}></div> */}
           {isLoading ? <Loader /> : ""}
           {medicine?.items !== 0 ? (
@@ -243,7 +222,7 @@ export const HomePage = () => {
           ) : (
             <NotFoundContainer>
               <NotFound>{t("medicines.notFound")}</NotFound>
-              <StyledLink onClick={() => window.location.href="/"}>
+              <StyledLink onClick={() => (window.location.href = "/")}>
                 <Icon name="arrow-left" />
                 {t("error.notFoundLink")}
               </StyledLink>
@@ -265,24 +244,24 @@ const NotFoundContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 const StyledLink = styled.a`
-    display: flex;
-    gap: 6px;
-    font-size: 1rem;
-    color: ${({ theme }) => theme.colors.primary_light};
-    margin-top: 8px;
-    cursor: pointer;
-    & :hover {
-        text-decoration: dashed;
-    }
-`
-
-const StyledButton = styled.button`
-  border: 1px solid grey;
-  border-radius: 8px;
+  display: flex;
+  gap: 6px;
+  font-size: 1rem;
+  color: ${({ theme }) => theme.colors.primary_light};
   margin-top: 8px;
-`
+  cursor: pointer;
+  & :hover {
+    text-decoration: dashed;
+  }
+`;
+
+// const StyledButton = styled.button`
+//   border: 1px solid grey;
+//   border-radius: 8px;
+//   margin-top: 8px;
+// `
 const StyledFilters = styled(Filters)`
   display: block;
 
@@ -298,7 +277,6 @@ const ShowFilters = styled.button`
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.primary};
   font-weight: 500;
-  font-family: "Inter";
   font-size: 1rem;
   margin-bottom: 16px;
 

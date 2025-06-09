@@ -2,7 +2,7 @@ import { JSX } from "react";
 
 export type ChildrenType = string | JSX.Element | JSX.Element[];
 
-export interface LocationResponse {
+export interface MedicineResponse {
   items: number;
   total: number;
   page: number;
@@ -230,7 +230,6 @@ export interface FiltersType {
 export interface FilterPOST {
   page: number;
   limit: number;
-  order: string;
   desc: boolean;
   search: string;
   species: number[];

@@ -356,7 +356,6 @@ export const MedicineDetail = () => {
 
 const DownloadTitle = styled.div`
   margin-top: 4px;
-  font-family: "inter";
   font-size: 0.8rem;
   & p {
     font-weight: 500;
@@ -383,14 +382,11 @@ const Produce = styled.div`
   background-color: ${({ theme }) => theme.colors.secondary};
   padding: 12px;
   font-weight: 400;
-  font-family: inter;
   border-radius: 7px;
   & p {
     font-weight: 400;
-    font-family: inter;
   }
   & div {
-    font-family: inter;
     width: 80%;
   }
 `;
@@ -469,4 +465,5 @@ const MedicineDetailContainer = styled.main`
     }
 `;
 
-const Title = styled.h2``;
+const Title = styled.h2`
+`;

@@ -98,7 +98,6 @@ const PageContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   padding: 16px 32px  32px 32px;
-  font-family: "Inter";
   font-weight: 500;
   color: ${({ theme }) => theme.colors.primary};
   gap: 12px;

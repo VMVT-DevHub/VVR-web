@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, ResponseType } from 'axios';
-import { FilterPOST, FiltersType, LocationResponse, MedicineDetail } from '../types';
+import { FilterPOST, FiltersType, MedicineResponse, MedicineDetail } from '../types';
 import { sanitizeString } from './functions';
 
 interface Get {
@@ -63,9 +63,10 @@ class Api {
     );
   }
 
-  async setFilters(params: FilterPOST): Promise<any> {
+  async setFilters(params: FilterPOST, uat:boolean): Promise<any> {
+    const queryString = uat ? `api/med?lang=lt&uat=true` : `api/med?lang=lt`
     return this.post<any>({
-      resource: `api/med?lang=lt`,
+      resource: queryString,
       data: params
     });
   }
@@ -78,9 +79,9 @@ class Api {
     });
   }
 
-  async getAllMedicines(query:string, page:number, uat:boolean, language:string): Promise<LocationResponse> {
+  async getAllMedicines(query:string, page:number, uat:boolean, language:string): Promise<MedicineResponse> {
     const queryString = uat ?   `api/med?q=${query}&page=${page}&lang=${language}&uat=true` : `api/med?q=${query}&page=${page}&limit=7&lang=${language}`
-    return this.get<LocationResponse>({
+    return this.get<MedicineResponse>({
       resource: queryString,
     });
   }

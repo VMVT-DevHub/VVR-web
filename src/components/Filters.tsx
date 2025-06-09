@@ -37,6 +37,8 @@ export const Filters = ({
     });
   };
 
+  console.log(data)
+
   const handleGroups = (code: number) => {
     switch (code) {
       case 200000017698:
@@ -52,7 +54,7 @@ export const Filters = ({
     }
   };
 
-  const doseFormShortened = data?.doseForm.map((group) =>
+  const legalCodeShortened = data?.legalCode.map((group) =>
     handleGroups(group[0])
   );
 
@@ -68,13 +70,13 @@ export const Filters = ({
       {isDisplayed.group && (
         <form>
           <Categories>
-            {doseFormShortened &&
-              doseFormShortened?.map((form) => (
+            {legalCodeShortened &&
+              legalCodeShortened?.map((form) => (
                 <CheckboxRow key={form[0]}>
                   <StyledCheckbox
                     type="checkbox"
                     id={form[0].toString()}
-                    onChange={(e) => setFilterValues("doseForm", e.target.id)}
+                    onChange={(e) => setFilterValues("legalCode", e.target.id)}
                   />
                   <label htmlFor={form[0].toString()}>{form[1]}</label>
                 </CheckboxRow>
@@ -90,12 +92,12 @@ export const Filters = ({
       {isDisplayed.form ? (
         <form>
           <Categories>
-            {data?.legalCode.map((code) => (
+            {data?.doseForm.map((code) => (
               <CheckboxRow key={code[1]}>
                 <StyledCheckbox
                   type="checkbox"
                   id={code[0].toString()}
-                  onChange={(e) => setFilterValues("legalCode", e.target.id)}
+                  onChange={(e) => setFilterValues("doseForm", e.target.id)}
                 />
                 <label htmlFor={code[0].toString()}>{code[1]}</label>
               </CheckboxRow>
