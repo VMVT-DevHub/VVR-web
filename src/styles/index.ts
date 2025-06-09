@@ -44,7 +44,7 @@ export const theme: Theme = {
 export const GlobalStyle = createGlobalStyle`
  *{
     box-sizing: border-box;
-    font-family: "Work Sans", "Inter", "Raleway";
+    font-family: "Axiforma";
     color: #142F4D;
   }
   html { 
@@ -64,7 +64,7 @@ export const GlobalStyle = createGlobalStyle`
   }
   h2 {
     margin: 40px 0 24px 0;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 500;
   }
   p {

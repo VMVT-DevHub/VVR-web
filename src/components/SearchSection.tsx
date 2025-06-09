@@ -155,7 +155,6 @@ const InputSubtitle = styled.p`
   color: ${({ theme }) => theme.colors.description_blue};
   font-size: 0.75rem;
   font-weight: 400;
-  font-family: "Inter";
   margin-top: 8px;
 `;
 

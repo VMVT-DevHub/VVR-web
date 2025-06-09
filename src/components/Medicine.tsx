@@ -142,11 +142,10 @@ const Tag = styled.div`
   gap: 16px;
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 6px 12px;
+  padding: 6px 12px 3px 12px;
   border-radius: 15px;
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.grey};
-
 `;
 
 const Code = styled.div`

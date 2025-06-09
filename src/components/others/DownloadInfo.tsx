@@ -66,7 +66,6 @@ export const DownloadInfo = ({
 
 const DownloadTitle = styled.div`
   margin-top: 4px;
-  font-family: "inter";
   font-size: 0.8rem;
   & p {
     font-weight: 500;
