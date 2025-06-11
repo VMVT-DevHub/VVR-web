@@ -68,5 +68,15 @@
         "notForUsage": "Netaikoma naudojimo būdui(-ams): ",
         "noWaitingPeriod": "Laukti nereikia",
         "notUsed": "Nenaudojama"
+    },
+      "filters": {
+        "species": "Gyvūno rūšis",
+        "legalCode": "Vaisto grupė",
+        "doseForm": "Farmacinė forma",
+        "RX":"Receptinis",
+        "RXplus":"Receptinis su išimtimis",
+        "OTC":"Be recepto",
+        "vetsOnly":"Tik vet. gydytojams",
+        "RXhuman": "Receptinis neveterinarinis"
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
 import { Formik, Form, FormikState } from "formik";
@@ -24,8 +25,11 @@ export const HomePage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const paginationRef = useRef<null | HTMLDivElement>(null);
 
-  const q = searchParams.get("q") || ""; // q == query
-  const p = searchParams.get("p") || 1; // p == page
+  const query = searchParams.get("q") || "";
+  const page = searchParams.get("p") || 1; 
+  const species = searchParams.get("r")?.split('.').map(Number).filter(Number) || [];
+  const legalCode = searchParams.get("g")?.split('.').map(Number).filter(Number) || [];
+  const doseForm = searchParams.get("f")?.split('.').map(Number).filter(Number) || [];
 
   const [isUPD, setIsUPD] = useState(
     localStorage.getItem("isUPD") === "true" || false
@@ -39,29 +43,59 @@ export const HomePage = () => {
         inline: "start",
       });
     }
-  }, [p]);
+  }, [page]);
+
 
   const [filterValues, setFilterValues] = useState<FilterPOST>({
-    page: Number(p),
+    page: Number(page),
     limit: 7,
     desc: true,
-    search: q,
-    species: [],
-    legalCode: [],
-    doseForm: [],
+    search: query,
+    species: species,
+    legalCode: legalCode,
+    doseForm: doseForm,
   });
 
   useEffect(() => {
-    if (isNaN(Number(p)) || Number(p) < 0) {
-      setSearchParams({
-        q,
-        p: "1",
-      });
+    const filters = {
+      species: "r",
+      legalCode: "g",
+      doseForm: "f"
     }
-  }, [q, p, setSearchParams]);
 
-  const { data: medicine, isLoading } = useMedicines(filterValues, isUPD);
+    setSearchParams((searchParams) => {
+      Object.entries(filters).forEach(([filterKey, paramKey]) => {
+        const filterArray = filterValues[filterKey as keyof FilterPOST];
+
+        if (Array.isArray(filterArray) && filterArray?.length > 0) {
+          searchParams.set(paramKey, filterArray.join("."));
+        } else {
+          searchParams.delete(paramKey);
+        }
+      });
+      return searchParams;
+    });
+  
+  }, [filterValues.species, filterValues.legalCode, filterValues.doseForm]);
+
+  useEffect(() => {
+    if (isNaN(Number(page)) || Number(page) < 0) {
+       setSearchParams(searchParams => {
+          searchParams.set("p", "1");
+          return searchParams;
+        });
+        setFilterValues((prev) => ({
+        ...prev,
+        page: 1
+        }));
+    }
+  }, [page]);
+
+  const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
   const { data: filters } = useFilters(i18n.language);
+
+  console.log(filters)
+  console.log(medicine)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -74,7 +108,7 @@ export const HomePage = () => {
     }),
   });
 
-  const formValues = { medicine: q };
+  const formValues = { medicine: query };
 
   const handleSubmit = (
     values: typeof formValues,
@@ -84,10 +118,11 @@ export const HomePage = () => {
       resetForm: (nextState?: Partial<FormikState<typeof formValues>>) => void;
     }
   ) => {
-    setSearchParams({
-      q: values.medicine,
-      p: "1",
-      // species: [filterValues.species.join('.')]
+
+     setSearchParams(searchParams => {
+      searchParams.set("q", values.medicine);
+      searchParams.set("p", "1");
+      return searchParams;
     });
 
     setFilterValues((prev) => ({
@@ -104,22 +139,21 @@ export const HomePage = () => {
   ) => {
     setFilterValues((prev) => ({
       ...prev,
+      // page: 1,
       [key]: prev[key].includes(Number(filter))
         ? prev[key].filter((item) => item !== Number(filter))
         : [...prev[key], Number(filter)],
     }));
-
-    //  setSearchParams({
-    //   q,
-    //   p: '1',
-    //   [key]: [filterValues[key].join('.')]
-    // });
+     setSearchParams(searchParams => {
+      searchParams.set("p",'1');
+      return searchParams;
+    });
   };
 
   const handlePageChange = (newPage: number) => {
-    setSearchParams({
-      q,
-      p: newPage.toString(),
+    setSearchParams(searchParams => {
+      searchParams.set("p", newPage.toString());
+      return searchParams;
     });
 
     setFilterValues((prev) => ({
@@ -128,10 +162,6 @@ export const HomePage = () => {
     }));
   };
 
-  console.log(filters);
-
-  // console.log(medicine?.data);
-  console.log(filterValues);
   return (
     <main ref={paginationRef}>
       <Formik
@@ -179,6 +209,7 @@ export const HomePage = () => {
           <>
             <StyledFilters
               data={filters}
+              filterValues={filterValues}
               setFilterValues={handleFilterChange}
             />
             <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
@@ -192,7 +223,11 @@ export const HomePage = () => {
                 setShowFilters(false);
               }}
             >
-              <Filters data={filters} setFilterValues={handleFilterChange} />
+              <Filters
+                data={filters}
+                filterValues={filterValues}
+                setFilterValues={handleFilterChange}
+              />
             </PopUp>
           </>
           {/* )} */}
@@ -230,7 +265,7 @@ export const HomePage = () => {
           )}
           {medicine !== undefined && medicine?.items !== 0 && (
             <PageSelector
-              currentPage={Number(p)}
+              currentPage={Number(page)}
               total={medicine.total}
               setCurrentPage={handlePageChange}
             />

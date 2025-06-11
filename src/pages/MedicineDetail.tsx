@@ -26,6 +26,7 @@ export const MedicineDetail = () => {
     }
   }, [location]);
   const { data: medicine, isLoading } = useMedicine(id!, i18n.language, isUPD);
+  console.log(medicine)
 
   if (isLoading) return <Loader />;
 
@@ -98,8 +99,6 @@ export const MedicineDetail = () => {
       return result;
     })
     .filter((text) => text !== "") || undefined;
-
-  console.log(medicine);
 
   return (
     <>
@@ -218,10 +217,10 @@ export const MedicineDetail = () => {
             )}
           </MedicineContainer>
           <Title>{t('medicineDetail.packs')}</Title>
-          {medicine.packs?.map((item) => {
+          {medicine.packs?.map((item, index) => {
             return (
               <Packages
-                key={item.name}
+                id={index}
                 name={medicine.code}
                 info={item.name}
                 status={item.marketing?.type}

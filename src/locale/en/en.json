@@ -68,5 +68,15 @@
         "notForUsage": "Not used for the following: ",
         "noWaitingPeriod": "No waiting period",
         "notUsed": "Not used"
+    },
+    "filters": {
+        "species": "Animal species",
+        "legalCode": "Medicine group",
+        "doseForm": "Pharmaceutical dose form",
+        "RX":"Prescription",
+        "RXplus":"Prescription with exceptions",
+        "OTC":"Over-the-counter",
+        "vetsOnly":"Only for veterinarians",
+        "RXhuman": "Non-vet prescription"
     }
 }
