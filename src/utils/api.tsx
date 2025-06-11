@@ -63,8 +63,8 @@ class Api {
     );
   }
 
-  async setFilters(params: FilterPOST, uat:boolean): Promise<any> {
-    const queryString = uat ? `api/med?lang=lt&uat=true` : `api/med?lang=lt`
+  async setFilters(params: FilterPOST, uat:boolean, language:string): Promise<any> {
+    const queryString = uat ? `api/med?lang=${language}&uat=true` : `api/med?lang=${language}`
     return this.post<any>({
       resource: queryString,
       data: params

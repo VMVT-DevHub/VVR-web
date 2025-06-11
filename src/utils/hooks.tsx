@@ -15,10 +15,10 @@ export const useMedicine = (id: string, language: string, uat: boolean) => {
   return { data, isLoading, refetch };
 };
 
-export const useMedicines = (params: FilterPOST, uat:boolean) => {
+export const useMedicines = (params: FilterPOST, uat:boolean, language:string) => {
   const { data, isLoading, refetch } = useQuery<MedicineResponse>({
-    queryKey: ["medicinesTemp", { params, uat }],
-    queryFn: () => api.setFilters(params, uat),
+    queryKey: ["medicinesTemp", { params, uat, language }],
+    queryFn: () => api.setFilters(params, uat, language),
     retry: false,
     // enabled: !!query
     refetchOnWindowFocus: false,

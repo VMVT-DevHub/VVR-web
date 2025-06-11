@@ -2,30 +2,35 @@ import styled from "styled-components";
 import Icon from "../styles/icons";
 import { useState } from "react";
 import { FilterPOST, FiltersType } from "../types";
+import { useTranslation } from "react-i18next";
 
 interface isDisplayedProps {
-  category: boolean;
+  category?: boolean;
   group: boolean;
   species: boolean;
   form: boolean;
-  producer: boolean;
-  date: boolean;
+  producer?: boolean;
+  date?: boolean;
 }
 
 export const Filters = ({
   className,
   data,
+  filterValues,
   setFilterValues,
 }: {
   className?: string;
   data?: FiltersType;
+  filterValues: FilterPOST;
   setFilterValues: (key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm">, filter: string) => void;
 }) => {
+
+  const [t] = useTranslation()
   const [isDisplayed, SetIsDisplayed] = useState<isDisplayedProps>({
     category: false,
     group: true,
     species: false,
-    form: false,
+    form: true,
     producer: false,
     date: false,
   });
@@ -37,20 +42,26 @@ export const Filters = ({
     });
   };
 
-  console.log(data)
+  //  "RX":"Prescription",
+  //       "RXplus":"Prescription with exceptions",
+  //       "OTC":"Over-the-counter",
+  //       "vetsOnly":"Only for veterinarians"
+  //   }
 
   const handleGroups = (code: number) => {
     switch (code) {
       case 200000017698:
-        return [200000017698, "Receptinis"];
+        return [200000017698, t('filters.RX')];
       case 200000027079:
-        return [200000027079, "Tik vet. gydytojams"];
+        return [200000027079, t('filters.vetsOnly')];
       case 200000017695:
-        return [200000017695, "Be recepto"];
+        return [200000017695, t('filters.OTC')];
       case 200000017699:
-        return [200000017699, "Receptinis su išimtimis"];
+        return [200000017699, t('filters.RXplus')];
+      case 100000072084:
+        return [100000072084, t('filters.RXhuman')]
       default:
-        return [200000017698, "Receptinis"];
+        return [200000017698, t('filters.RX')];
     }
   };
 
@@ -60,48 +71,60 @@ export const Filters = ({
 
   return (
     <div className={className}>
-      <CategoryContainer>
+      {/* <CategoryContainer>
         <CategoryTitle>Kategorijos</CategoryTitle>
-      </CategoryContainer>
+      </CategoryContainer> */}
       <CategoryContainer onClick={() => toggleDisplay("group")}>
-        <CategoryTitle>Vaisto grupė</CategoryTitle>
+        <CategoryTitle>{t('filters.legalCode')}</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.group} name="arrow" />
       </CategoryContainer>
       {isDisplayed.group && (
         <form>
           <Categories>
             {legalCodeShortened &&
-              legalCodeShortened?.map((form) => (
-                <CheckboxRow key={form[0]}>
-                  <StyledCheckbox
-                    type="checkbox"
-                    id={form[0].toString()}
-                    onChange={(e) => setFilterValues("legalCode", e.target.id)}
-                  />
-                  <label htmlFor={form[0].toString()}>{form[1]}</label>
-                </CheckboxRow>
-              ))}
+              legalCodeShortened?.map((form) => {
+                const isChecked =
+                  filterValues.legalCode.includes(Number(form[0])) || false;
+                return (
+                  <CheckboxRow key={form[0]}>
+                    <StyledCheckbox
+                      type="checkbox"
+                      id={form[0].toString()}
+                      onChange={(e) =>
+                        setFilterValues("legalCode", e.target.id)
+                      }
+                      checked={isChecked}
+                    />
+                    <label htmlFor={form[0].toString()}>{form[1]}</label>
+                  </CheckboxRow>
+                );
+              })}
           </Categories>
         </form>
       )}
 
       <CategoryContainer onClick={() => toggleDisplay("form")}>
-        <CategoryTitle>Farmacinė forma</CategoryTitle>
+        <CategoryTitle>{t('filters.doseForm')}</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.form} name="arrow" />
       </CategoryContainer>
       {isDisplayed.form ? (
         <form>
           <Categories>
-            {data?.doseForm.map((code) => (
-              <CheckboxRow key={code[1]}>
-                <StyledCheckbox
-                  type="checkbox"
-                  id={code[0].toString()}
-                  onChange={(e) => setFilterValues("doseForm", e.target.id)}
-                />
-                <label htmlFor={code[0].toString()}>{code[1]}</label>
-              </CheckboxRow>
-            ))}
+            {data?.doseForm.map((code) => {
+              const isChecked =
+                filterValues.doseForm.includes(Number(code[0])) || false;
+              return (
+                <CheckboxRow key={code[1]}>
+                  <StyledCheckbox
+                    type="checkbox"
+                    id={code[0].toString()}
+                    onChange={(e) => setFilterValues("doseForm", e.target.id)}
+                    checked={isChecked}
+                  />
+                  <label htmlFor={code[0].toString()}>{code[1]}</label>
+                </CheckboxRow>
+              );
+            })}
           </Categories>
         </form>
       ) : (
@@ -109,29 +132,34 @@ export const Filters = ({
       )}
 
       <CategoryContainer onClick={() => toggleDisplay("species")}>
-        <CategoryTitle>Gyvūno rūšis</CategoryTitle>
+        <CategoryTitle>{t('filters.species')}</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.species} name="arrow" />
       </CategoryContainer>
       {isDisplayed.species ? (
         <form>
           <Categories>
-            {data?.species.map((animal) => (
-              <CheckboxRow key={animal[0]}>
-                <StyledCheckbox
-                  type="checkbox"
-                  id={animal[0].toString()}
-                  onChange={(e) => setFilterValues("species", e.target.id)}
-                />
-                <label htmlFor={animal[0].toString()}>{animal[1]}</label>
-              </CheckboxRow>
-            ))}
+            {data?.species.map((animal) => {
+              const isChecked =
+                filterValues.species.includes(Number(animal[0])) || false;
+              return (
+                <CheckboxRow key={animal[0]}>
+                  <StyledCheckbox
+                    type="checkbox"
+                    id={animal[0].toString()}
+                    onChange={(e) => setFilterValues("species", e.target.id)}
+                    checked={isChecked}
+                  />
+                  <label htmlFor={animal[0].toString()}>{animal[1]}</label>
+                </CheckboxRow>
+              );
+            })}
           </Categories>
         </form>
       ) : (
         ""
       )}
 
-      <CategoryContainer onClick={() => toggleDisplay("producer")}>
+      {/* <CategoryContainer onClick={() => toggleDisplay("producer")}>
         <CategoryTitle>Gamintojas / Registruotojas</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.producer} name="arrow" />
       </CategoryContainer>
@@ -141,7 +169,7 @@ export const Filters = ({
         <CategoryTitle>Registravimo laikotarpis</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.date} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.date ? <Categories></Categories> : ""}
+      {isDisplayed.date ? <Categories></Categories> : ""} */}
     </div>
   );
 };

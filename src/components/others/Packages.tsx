@@ -4,6 +4,7 @@ import {PackItem} from "../../types"
 import { useTranslation } from "react-i18next";
 
 interface PackagesProps {
+  id: number;
   name: string;
   info: string;
   status?: string;
@@ -15,6 +16,7 @@ interface PackagesProps {
 
 // Everything that's commented here is responsible for status tags on packs, currently not needed.
 export const Packages = ({
+  id,
   name,
   info,
   // status,
@@ -42,10 +44,8 @@ export const Packages = ({
   //         return "not marketed";
   //     }
   // }
-  
-
   return (
-    <PackageContainer>
+    <PackageContainer key={id}>
       <TopRow>
         <Title>{name}</Title>
         {/* <Tag $statusColor={handleStatus(status_code)}>{status}</Tag> */}

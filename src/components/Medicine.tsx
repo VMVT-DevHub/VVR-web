@@ -21,8 +21,8 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
-          <Code> {code}</Code>
           {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
+          <Code> {code}</Code>
         </TopRightContainer>
 
         <TopLeftContainer>
@@ -83,15 +83,16 @@ const TopLeftContainer = styled.div`
 
 const TopRightContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: start;
+  flex-direction: column;
+  align-items: end;
   justify-content: end;
   gap: 8px;
   order: 2;
   @media ${device.mobileXL} {
     order: 1;
-  width: 100%;
-
+    width: 100%;
+    flex-direction: row;
+    align-items: start;
   }
   width: 35%;
 `;
@@ -119,7 +120,7 @@ const ImageContainer = styled.div`
 `;
 const Title = styled.div`
   font-weight: 600;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 `;
 const Subtitle = styled.div`
   font-weight: 400;
