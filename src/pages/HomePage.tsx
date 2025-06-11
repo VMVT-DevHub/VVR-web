@@ -30,6 +30,7 @@ export const HomePage = () => {
   const species = searchParams.get("r")?.split('.').map(Number).filter(Number) || [];
   const legalCode = searchParams.get("g")?.split('.').map(Number).filter(Number) || [];
   const doseForm = searchParams.get("f")?.split('.').map(Number).filter(Number) || [];
+  const reglCase = searchParams.get("rc")?.split('.').map(Number).filter(Number) || [];
 
   const [isUPD, setIsUPD] = useState(
     localStorage.getItem("isUPD") === "true" || false
@@ -54,14 +55,16 @@ export const HomePage = () => {
     species: species,
     legalCode: legalCode,
     doseForm: doseForm,
+    reglCase: reglCase
   });
 
   useEffect(() => {
     const filters = {
       species: "r",
       legalCode: "g",
-      doseForm: "f"
-    }
+      doseForm: "f",
+      reglCase: "rc"
+    };
 
     setSearchParams((searchParams) => {
       Object.entries(filters).forEach(([filterKey, paramKey]) => {
@@ -75,8 +78,7 @@ export const HomePage = () => {
       });
       return searchParams;
     });
-  
-  }, [filterValues.species, filterValues.legalCode, filterValues.doseForm]);
+  }, [filterValues.species, filterValues.legalCode, filterValues.doseForm, filterValues.reglCase]);
 
   useEffect(() => {
     if (isNaN(Number(page)) || Number(page) < 0) {
@@ -134,12 +136,11 @@ export const HomePage = () => {
   };
 
   const handleFilterChange = (
-    key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm">,
+    key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
     filter: string
   ) => {
     setFilterValues((prev) => ({
       ...prev,
-      // page: 1,
       [key]: prev[key].includes(Number(filter))
         ? prev[key].filter((item) => item !== Number(filter))
         : [...prev[key], Number(filter)],
