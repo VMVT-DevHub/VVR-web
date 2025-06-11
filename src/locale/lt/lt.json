@@ -73,6 +73,7 @@
         "species": "Gyvūno rūšis",
         "legalCode": "Vaisto grupė",
         "doseForm": "Farmacinė forma",
+        "procedure": "Registracijos procedūra",
         "RX":"Receptinis",
         "RXplus":"Receptinis su išimtimis",
         "OTC":"Be recepto",

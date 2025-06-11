@@ -16,7 +16,6 @@ interface PackagesProps {
 
 // Everything that's commented here is responsible for status tags on packs, currently not needed.
 export const Packages = ({
-  id,
   name,
   info,
   // status,
@@ -45,7 +44,7 @@ export const Packages = ({
   //     }
   // }
   return (
-    <PackageContainer key={id}>
+    <PackageContainer key={name}>
       <TopRow>
         <Title>{name}</Title>
         {/* <Tag $statusColor={handleStatus(status_code)}>{status}</Tag> */}

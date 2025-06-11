@@ -107,6 +107,7 @@ export interface PackItem {
 }
 
 export interface Pack {
+  id?:string;
   name: string;
   language: CodeTypeLanguage;
   marketing: {
@@ -225,6 +226,7 @@ export interface FiltersType {
   species: [number, string][];
   doseForm: [number, string][];
   legalCode: [number, string][];
+  reglCase: [number, string][];
 }
 
 export interface FilterPOST {
@@ -235,4 +237,5 @@ export interface FilterPOST {
   species: number[];
   legalCode: number[];
   doseForm: number[];
+  reglCase: number[];
 }

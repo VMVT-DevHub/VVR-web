@@ -221,7 +221,7 @@ export const MedicineDetail = () => {
             return (
               <Packages
                 id={index}
-                name={medicine.code}
+                name={item.id || medicine.code}
                 info={item.name}
                 status={item.marketing?.type}
                 status_code={item.marketing?.code}

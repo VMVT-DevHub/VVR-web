@@ -73,6 +73,7 @@
         "species": "Animal species",
         "legalCode": "Medicine group",
         "doseForm": "Pharmaceutical dose form",
+        "procedure": "Registration procedure",
         "RX":"Prescription",
         "RXplus":"Prescription with exceptions",
         "OTC":"Over-the-counter",

@@ -21,8 +21,8 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
-          {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
           <Code> {code}</Code>
+          {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
         </TopRightContainer>
 
         <TopLeftContainer>

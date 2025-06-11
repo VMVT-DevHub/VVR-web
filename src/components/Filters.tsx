@@ -10,7 +10,7 @@ interface isDisplayedProps {
   species: boolean;
   form: boolean;
   producer?: boolean;
-  date?: boolean;
+  procedure?: boolean;
 }
 
 export const Filters = ({
@@ -22,7 +22,7 @@ export const Filters = ({
   className?: string;
   data?: FiltersType;
   filterValues: FilterPOST;
-  setFilterValues: (key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm">, filter: string) => void;
+  setFilterValues: (key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">, filter: string) => void;
 }) => {
 
   const [t] = useTranslation()
@@ -30,9 +30,9 @@ export const Filters = ({
     category: false,
     group: true,
     species: false,
-    form: true,
+    form: false,
     producer: false,
-    date: false,
+    procedure: true,
   });
 
   const toggleDisplay = (item: string) => {
@@ -41,12 +41,6 @@ export const Filters = ({
       [item]: !isDisplayed[item as keyof isDisplayedProps],
     });
   };
-
-  //  "RX":"Prescription",
-  //       "RXplus":"Prescription with exceptions",
-  //       "OTC":"Over-the-counter",
-  //       "vetsOnly":"Only for veterinarians"
-  //   }
 
   const handleGroups = (code: number) => {
     switch (code) {
@@ -101,6 +95,34 @@ export const Filters = ({
               })}
           </Categories>
         </form>
+      )}
+
+      <CategoryContainer onClick={() => toggleDisplay("procedure")}>
+        <CategoryTitle>{t('filters.procedure')}</CategoryTitle>
+        <StyledIcon $isActive={!isDisplayed.procedure} name="arrow" />
+      </CategoryContainer>
+      {isDisplayed.procedure ? (
+        <form>
+          <Categories>
+            {data?.reglCase.map((code) => {
+              const isChecked =
+                filterValues.reglCase.includes(Number(code[0])) || false;
+              return (
+                <CheckboxRow key={code[1]}>
+                  <StyledCheckbox
+                    type="checkbox"
+                    id={code[0].toString()}
+                    onChange={(e) => setFilterValues("reglCase", e.target.id)}
+                    checked={isChecked}
+                  />
+                  <label htmlFor={code[0].toString()}>{code[1]}</label>
+                </CheckboxRow>
+              );
+            })}
+          </Categories>
+        </form>
+      ) : (
+        ""
       )}
 
       <CategoryContainer onClick={() => toggleDisplay("form")}>
@@ -163,13 +185,9 @@ export const Filters = ({
         <CategoryTitle>Gamintojas / Registruotojas</CategoryTitle>
         <StyledIcon $isActive={!isDisplayed.producer} name="arrow" />
       </CategoryContainer>
-      {isDisplayed.producer ? <Categories></Categories> : ""}
+      {isDisplayed.producer ? <Categories></Categories> : ""} */}
 
-      <CategoryContainer onClick={() => toggleDisplay("date")}>
-        <CategoryTitle>Registravimo laikotarpis</CategoryTitle>
-        <StyledIcon $isActive={!isDisplayed.date} name="arrow" />
-      </CategoryContainer>
-      {isDisplayed.date ? <Categories></Categories> : ""} */}
+      
     </div>
   );
 };
