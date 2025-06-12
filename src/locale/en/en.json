@@ -38,7 +38,9 @@
         "pack": "Contains ",
         "quantity": "units",
         "view": "View",
-        "download": "Download"
+        "download": "Download",
+        "showMore": "Show more",
+        "showLess": "Show less"
     },
     "footer":{
         "vmvt": "State Food and Veterinary Service",

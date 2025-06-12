@@ -38,7 +38,9 @@
         "pack": "Pakuotėje ",
         "quantity": "vnt.",
         "view": "Peržiūrėti",
-        "download": "Atsisiųsti"
+        "download": "Atsisiųsti",
+        "showMore": "Rodyti daugiau",
+        "showLess": "Rodyti mažiau"
     },
     "footer":{
         "vmvt": "Valstybinė maisto ir veterinarijos tarnyba",

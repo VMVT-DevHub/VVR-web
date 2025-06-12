@@ -12,12 +12,15 @@ import { Loader } from "../components/Loader";
 import { useTranslation } from "react-i18next";
 import { device } from "../styles";
 import { handleDateDifference, sortByLanguage } from "../utils/functions";
+import { Documents, Pack } from "../types";
 
 export const MedicineDetail = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams();
   const location = useLocation();
   const [isUPD, setIsUPD] = useState(localStorage.getItem("isUPD") === 'true' || false);
+  const [showMorePacks, setShowMorePacks] = useState(false);
+  const [showMoreDocuments, setShowMoreDocuments] = useState(false);
 
   useEffect(() => {
     const updFromState = location.state?.isUPD;
@@ -70,6 +73,16 @@ export const MedicineDetail = () => {
     }
   ).filter(item => item !== null) || undefined;
 
+  const handleFiltering = (item:Pack | Documents, index:number, showMoreItems:boolean) => {
+    if(!showMoreItems)
+    {
+      return index < 4
+    }
+    else if(showMoreItems)
+    {
+      return item
+    }
+  }
 
   const handleHolder = (name:string | undefined, address:string | undefined, country:string | undefined) => {
     const holder = [];
@@ -112,17 +125,17 @@ export const MedicineDetail = () => {
       />
       <MedicineDetailContainer>
         <LeftColumn>
-          <Title>{t('medicineDetail.indication')}</Title>
-          <p>{t('error.noDescription')}</p>
+          <Title>{t("medicineDetail.indication")}</Title>
+          <p>{t("error.noDescription")}</p>
 
-          <Title>{t('medicineDetail.withdrawal')}</Title>
+          <Title>{t("medicineDetail.withdrawal")}</Title>
 
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) => {
               if (!route.species) {
                 return (
                   <p key={`${prodIndex}-${routeIndex}`}>
-                    {t('error.notForUsage')} {route.type}
+                    {t("error.notForUsage")} {route.type}
                   </p>
                 );
               }
@@ -134,16 +147,24 @@ export const MedicineDetail = () => {
               if (!hasAnyWithdrawalPeriods) {
                 return (
                   <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
-                    <UsageType>{route.type == "Vartoti per burną" ? "Naudoti per burną" : route.type}</UsageType>
+                    <UsageType>
+                      {route.type == "Vartoti per burną"
+                        ? "Naudoti per burną"
+                        : route.type}
+                    </UsageType>
                     <AnimalContainer key={`${prodIndex}-${routeIndex}`}>
-                      <p>{t('error.noWithdrawal')}</p>
+                      <p>{t("error.noWithdrawal")}</p>
                     </AnimalContainer>
                   </UsageTypeContainer>
                 );
               }
               return (
                 <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
-                  <UsageType>{route.type == "Vartoti per burną" ? "Naudoti per burną" : route.type}</UsageType>
+                  <UsageType>
+                    {route.type == "Vartoti per burną"
+                      ? "Naudoti per burną"
+                      : route.type}
+                  </UsageType>
                   {route.species
                     .filter((species) => species.withdrawalPeriod)
                     .map((species, speciesIndex) => (
@@ -169,9 +190,9 @@ export const MedicineDetail = () => {
                                   </div>
                                   <p>
                                     {isMinPossibleValue
-                                      ? t('error.noWaitingPeriod')
+                                      ? t("error.noWaitingPeriod")
                                       : isMaxPossibleValue
-                                      ? t('error.notUsed')
+                                      ? t("error.notUsed")
                                       : `${period.num} ${period.type}`}
                                   </p>
                                 </Produce>
@@ -186,70 +207,83 @@ export const MedicineDetail = () => {
             })
           )}
 
-          <Title>{t('medicineDetail.medicineInfo')}</Title>
+          <Title>{t("medicineDetail.medicineInfo")}</Title>
           <MedicineContainer>
-            {medicine.ingredients && <IngredientsInfo
-              icon={"flask"}
-              title={t('medicineDetail.ingredients')}
-              data={medicine.ingredients}
-            />}
+            {medicine.ingredients && (
+              <IngredientsInfo
+                icon={"flask"}
+                title={t("medicineDetail.ingredients")}
+                data={medicine.ingredients}
+              />
+            )}
             {usageTypes && usageTypes.length > 0 && (
               <RegistrationInfo
                 icon={"scroll"}
-                title={t('medicineDetail.usageType')}
+                title={t("medicineDetail.usageType")}
                 data={[...usageTypesSet]}
                 textSize="big"
               />
             )}
             <RegistrationInfo
               icon={"vaccine"}
-              title={t('medicineDetail.type')}
+              title={t("medicineDetail.type")}
               data={medicine.extension?.type}
               textSize="big"
             />
             {animalTags && animalTags.length > 0 && (
               <RegistrationInfo
                 icon={"animal"}
-                title={t('medicineDetail.animals')}
+                title={t("medicineDetail.animals")}
                 data={[...animalTagsSet]}
                 textSize="big"
               />
             )}
           </MedicineContainer>
-          <Title>{t('medicineDetail.packs')}</Title>
-          {medicine.packs?.map((item, index) => {
-            return (
-              <Packages
-                id={index}
-                name={item.id || medicine.code}
-                info={item.name}
-                status={item.marketing?.type}
-                status_code={item.marketing?.code}
-                type={item.quantity?.type}
-                quantity={item.quantity?.num}
-                weightType={item.items}
-              />
-            );
-          }) || t('error.noPacks')}
+          <Title>{t("medicineDetail.packs")}</Title>
+          {medicine.packs
+            ?.filter((item, index) =>
+              handleFiltering(item, index, showMorePacks)
+            )
+            .map((item, index) => {
+              return (
+                <Packages
+                  id={index}
+                  name={item.id || medicine.code}
+                  info={item.name}
+                  status={item.marketing?.type}
+                  status_code={item.marketing?.code}
+                  type={item.quantity?.type}
+                  quantity={item.quantity?.num}
+                  weightType={item.items}
+                />
+              );
+            }) || t("error.noPacks")}
+          {medicine.packs && medicine.packs.length > 4 && (
+            <button onClick={() => setShowMorePacks((prev) => !prev)}>
+              {showMorePacks
+                ? t("medicineDetail.showLess")
+                : t("medicineDetail.showMore")}
+            </button>
+          )}
         </LeftColumn>
 
         <RightColumn>
           <RegisteredInformation>
-            <Title>{t('medicineDetail.registerInfo')}</Title>
+            <Title>{t("medicineDetail.registerInfo")}</Title>
             <RegistrationInfo
               icon={"calendar"}
-              title={t('medicineDetail.date')}
+              title={t("medicineDetail.date")}
               data={medicine.date}
             />
             <RegistrationInfo
               icon={"barcode"}
-              title={t('medicineDetail.number')}
+              title={t("medicineDetail.number")}
               data={medicine.code}
             />
             {medicine.holder && (
               <RegistrationInfo
                 icon={"pen"}
-                title={t('medicineDetail.holder')}
+                title={t("medicineDetail.holder")}
                 data={handleHolder(
                   medicine.holder?.name,
                   medicine.holder?.address,
@@ -259,93 +293,105 @@ export const MedicineDetail = () => {
             )}
             <RegistrationInfo
               icon={"calendar"}
-              title={t('medicineDetail.status')}
+              title={t("medicineDetail.status")}
               data={medicine.status?.type}
             />
             {medicine.basis && (
               <RegistrationInfo
                 icon={"scales"}
-                title={t('medicineDetail.legal')}
+                title={t("medicineDetail.legal")}
                 data={medicine.basis?.type}
               />
             )}
             {medicine.case && (
               <RegistrationInfo
                 icon={"arrows"}
-                title={t('medicineDetail.procType')}
+                title={t("medicineDetail.procType")}
                 data={medicine.case?.type}
               />
             )}
             {medicine.reglCase && (
               <RegistrationInfo
                 icon={"hashtag"}
-                title={t('medicineDetail.procNumber')}
+                title={t("medicineDetail.procNumber")}
                 data={medicine.reglCase?.name}
               />
             )}
             {medicine.reglCase?.reglCountry && (
               <RegistrationInfo
                 icon={"globe"}
-                title={t('medicineDetail.refCountry')}
+                title={t("medicineDetail.refCountry")}
                 data={medicine.reglCase?.reglCountry?.type}
               />
             )}
             {medicine.reglCase && (
               <RegistrationInfo
                 icon={"flag"}
-                title={t('medicineDetail.otherCountries')}
+                title={t("medicineDetail.otherCountries")}
                 data={secondaryCountries}
               />
             )}
             {medicine.legal && (
               <RegistrationInfo
                 icon={"pills"}
-                title={t('medicineDetail.group')}
+                title={t("medicineDetail.group")}
                 data={medicine.legal?.type}
               />
             )}
             {medicine.classif && (
               <RegistrationInfo
                 icon={"qrcode"}
-                title={t('medicineDetail.ATCvet')}
+                title={t("medicineDetail.ATCvet")}
                 data={medicine.classif?.map((item) => item.name)}
               />
             )}
             {medicine.mfctOps && (
               <RegistrationInfo
                 icon={"microscope"}
-                title={t('medicineDetail.manufacturer')}
+                title={t("medicineDetail.manufacturer")}
                 data={manufacturers}
               />
             )}
             <RegistrationInfo
               icon={"hashtag"}
-              title={t('medicineDetail.upd')}
+              title={t("medicineDetail.upd")}
               data={medicine.id?.toString()}
             />
           </RegisteredInformation>
 
           <ProductInfoTitle>
             <Icon name={"book"} />
-            <p>{t('medicineDetail.productInfo')}</p>
+            <p>{t("medicineDetail.productInfo")}</p>
           </ProductInfoTitle>
 
           {medicine.documents ? (
-            medicine.documents.sort( sortByLanguage ).map((item) => {
-              return (
-                <DownloadInfo
-                  key={item.id}
-                  med_id={id!}
-                  doc_id={item.id}
-                  name={item.name}
-                  title={item.type?.type}
-                  lang={item.lang?.toUpperCase()}
-                  date={item.date?.split("T")[0]}
-                />
-              );
-            })
+            medicine.documents
+              .sort(sortByLanguage)
+              .filter((item, index) =>
+                handleFiltering(item, index, showMoreDocuments)
+              )
+              .map((item) => {
+                return (
+                  <DownloadInfo
+                    key={item.id}
+                    med_id={id!}
+                    doc_id={item.id}
+                    name={item.name}
+                    title={item.type?.type}
+                    lang={item.lang?.toUpperCase()}
+                    date={item.date?.split("T")[0]}
+                  />
+                );
+              })
           ) : (
-            <DownloadTitle>{t('error.noFiles')}</DownloadTitle>
+            <DownloadTitle>{t("error.noFiles")}</DownloadTitle>
+          )}
+          {medicine.documents && medicine.documents.length > 4 && (
+            <button onClick={() => setShowMoreDocuments((prev) => !prev)}>
+              {showMoreDocuments
+                ? t("medicineDetail.showLess")
+                : t("medicineDetail.showMore")}
+            </button>
           )}
         </RightColumn>
       </MedicineDetailContainer>
