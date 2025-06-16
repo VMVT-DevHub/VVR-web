@@ -96,8 +96,8 @@ export const HomePage = () => {
   const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
   const { data: filters } = useFilters(i18n.language);
 
-  console.log(filters)
-  console.log(medicine)
+
+  console.log("medicine: ", medicine)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -188,22 +188,7 @@ export const HomePage = () => {
           );
         }}
       </Formik>
-      <form>
-        <br></br>
-        <label htmlFor="upd">Ar naudoti UPD test?</label>
-        <input
-          id="upd"
-          name="upd"
-          type={"checkbox"}
-          checked={isUPD}
-          onChange={(e) => {
-            return (
-              setIsUPD(e.target.checked),
-              localStorage.setItem("isUPD", e.target.checked.toString())
-            );
-          }}
-        />
-      </form>
+      
       <ContentContainer>
         <LeftColumn>
           {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
@@ -232,10 +217,25 @@ export const HomePage = () => {
             </PopUp>
           </>
           {/* )} */}
+          <form>
+        <br></br>
+        <label htmlFor="upd">Ar naudoti UPD test?</label>
+        <input
+          id="upd"
+          name="upd"
+          type={"checkbox"}
+          checked={isUPD}
+          onChange={(e) => {
+            return (
+              setIsUPD(e.target.checked),
+              localStorage.setItem("isUPD", e.target.checked.toString())
+            );
+          }}
+        />
+      </form>
         </LeftColumn>
         <RightColumn>
-          {/* <div ref={paginationRef}></div> */}
-          {isLoading ? <Loader /> : ""}
+          {isLoading ? <Loader /> : medicine === undefined && <ErrorMessage><p>{t('error.noMedicine')}</p></ErrorMessage>}
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
               return (
@@ -277,6 +277,10 @@ export const HomePage = () => {
     </main>
   );
 };
+const ErrorMessage = styled.div`
+  width: 450px;
+  margin: 0 auto;
+`
 const NotFoundContainer = styled.div`
   display: flex;
   flex-direction: column;

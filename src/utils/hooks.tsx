@@ -17,7 +17,7 @@ export const useMedicine = (id: string, language: string, uat: boolean) => {
 
 export const useMedicines = (params: FilterPOST, uat:boolean, language:string) => {
   const { data, isLoading, refetch } = useQuery<MedicineResponse>({
-    queryKey: ["medicinesTemp", { params, uat, language }],
+    queryKey: ["medicines", { params, uat, language }],
     queryFn: () => api.setFilters(params, uat, language),
     retry: false,
     // enabled: !!query
@@ -29,7 +29,7 @@ export const useMedicines = (params: FilterPOST, uat:boolean, language:string) =
 
 export const useAllMedicines = (query: string, page: number, uat: boolean, language: string) => {
   const { data, isLoading, refetch } = useQuery<MedicineResponse>({
-    queryKey: ["medicines", { page, uat, query, language }],
+    queryKey: ["medicinesUnused", { page, uat, query, language }],
     queryFn: () => api.getAllMedicines(query, page, uat, language),
     retry: false,
     // enabled: !!query

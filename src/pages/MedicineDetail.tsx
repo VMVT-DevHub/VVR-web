@@ -29,7 +29,6 @@ export const MedicineDetail = () => {
     }
   }, [location]);
   const { data: medicine, isLoading } = useMedicine(id!, i18n.language, isUPD);
-  console.log(medicine)
 
   if (isLoading) return <Loader />;
 
