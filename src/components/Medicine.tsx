@@ -10,10 +10,11 @@ export interface MedicineProps {
   code: string;
   isNew?: boolean;
   tags?: string[];
+  packRange: string;
   onClick?: () => void;
 }
 
-export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: MedicineProps) => {
+export const Medicine = ({ code, title, subtitle, isNew, tags, packRange, onClick}: MedicineProps) => {
 
   const { t } = useTranslation();
 
@@ -21,7 +22,7 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, onClick}: Medicin
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
-          <Code> {code}</Code>
+          <Code> {code}{packRange && `/`+packRange}</Code>
           {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
         </TopRightContainer>
 
@@ -78,7 +79,8 @@ const TopLeftContainer = styled.div`
   @media ${device.mobileL} {
     order: 2;
   }
-
+  flex: 1 1 0;
+  min-width: 0;
 `;
 
 const TopRightContainer = styled.div`
@@ -86,6 +88,7 @@ const TopRightContainer = styled.div`
   flex-direction: column;
   align-items: end;
   justify-content: end;
+ 
   gap: 8px;
   order: 2;
   @media ${device.mobileXL} {
@@ -94,7 +97,7 @@ const TopRightContainer = styled.div`
     flex-direction: row;
     align-items: start;
   }
-  width: 35%;
+  flex: 0 0 auto;
 `;
 
 const TopRow = styled.div`

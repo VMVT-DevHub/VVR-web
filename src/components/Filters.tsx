@@ -108,7 +108,7 @@ export const Filters = ({
               const isChecked =
                 filterValues.reglCase.includes(Number(code[0])) || false;
               return (
-                <CheckboxRow key={code[1]}>
+                <CheckboxRow key={code[0]}>
                   <StyledCheckbox
                     type="checkbox"
                     id={code[0].toString()}
@@ -136,7 +136,7 @@ export const Filters = ({
               const isChecked =
                 filterValues.doseForm.includes(Number(code[0])) || false;
               return (
-                <CheckboxRow key={code[1]}>
+                <CheckboxRow key={code[0]}>
                   <StyledCheckbox
                     type="checkbox"
                     id={code[0].toString()}
