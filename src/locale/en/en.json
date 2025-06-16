@@ -63,6 +63,7 @@
         "notFoundTitle": "Oops! Something went wrong.",
         "notFoundLink": "Go back",
         "noMedicineDetail": "Something went wrong!",
+        "noMedicine": "Something went wrong! Please edit your search input and try again.",
         "noFiles": "No attached documents.",
         "noPacks": "No package information available",
         "noDescription": "No description available",
