@@ -63,6 +63,9 @@ export const MedicineDetail = () => {
     ?.map((item) => item.type).filter(item  => item !== null).sort()
     || undefined;
 
+
+  const medicineCode = medicine.packRange && medicine.code ? medicine.code + "/" + medicine.packRange : medicine.code;
+
   const manufacturers = medicine.mfctOps?.map((item) => {
       const manufacturer = [];
       if(item.name) manufacturer.push(item.name);
@@ -278,7 +281,7 @@ export const MedicineDetail = () => {
             <RegistrationInfo
               icon={"barcode"}
               title={t("medicineDetail.number")}
-              data={medicine.code}
+              data={medicineCode}
             />
             {medicine.holder && (
               <RegistrationInfo

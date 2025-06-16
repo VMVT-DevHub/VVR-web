@@ -246,6 +246,7 @@ export const HomePage = () => {
                   code={item.code}
                   title={item.name}
                   isNew={handleDateDifference(item.date)}
+                  packRange={item.packRange}
                   tags={item.species}
                   onClick={() =>
                     navigate(slugs.medicineDetail(item.id), {

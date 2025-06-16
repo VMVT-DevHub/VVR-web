@@ -6,10 +6,10 @@ export interface MedicineResponse {
   items: number;
   total: number;
   page: number;
-  data: LocationItem[];
+  data: MedicineItems[];
 }
 
-export interface LocationItem {
+export interface MedicineItems {
   id: string;
   holder: string;
   date:string;
@@ -19,6 +19,7 @@ export interface LocationItem {
   name: string;
   status: string;
   legal: string;
+  packRange: string;
 }
 
 interface NameItem {
@@ -181,6 +182,7 @@ export interface MedicineDetail {
     type: string;
     lang: boolean;
   };
+  packRange: string;
   legal?: CodeTypeLanguage;
   basis?: CodeTypeLanguage;
   holder?: Organization;
