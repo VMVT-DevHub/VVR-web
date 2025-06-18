@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
 import { Formik, Form, FormikState } from "formik";
 import * as Yup from "yup";
-import { useFilters, useMedicines } from "../utils/hooks";
+import { useFilters, useFilterGroups, useMedicines } from "../utils/hooks";
 import { Medicine } from "../components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
@@ -95,9 +95,10 @@ export const HomePage = () => {
 
   const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
   const { data: filters } = useFilters(i18n.language);
+  const { data: filterGroups } = useFilterGroups(i18n.language);
 
 
-  console.log("medicine: ", medicine)
+  console.log(filterGroups)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {

@@ -602,7 +602,7 @@ const Icon = ({ name, className }: IconProps) => {
           />
         </svg>
       );
-      case "arrow-left":
+    case "arrow-left":
         return (
           <svg
             width="16"
