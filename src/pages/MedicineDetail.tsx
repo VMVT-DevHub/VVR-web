@@ -75,6 +75,14 @@ export const MedicineDetail = () => {
     }
   ).filter(item => item !== null) || undefined;
 
+  const activeIngredients =
+    medicine.ingredients &&
+    medicine.ingredients.filter((item) => item.code === 100000072072);
+
+    const sideIngredients =
+    medicine.ingredients &&
+    medicine.ingredients.filter((item) => item.code !== 100000072072);
+
   const handleFiltering = (item:Pack | Documents, index:number, showMoreItems:boolean) => {
     if(!showMoreItems)
     {
@@ -114,6 +122,8 @@ export const MedicineDetail = () => {
       return result;
     })
     .filter((text) => text !== "") || undefined;
+
+    console.log(medicine)
 
   return (
     <>
@@ -211,11 +221,26 @@ export const MedicineDetail = () => {
 
           <Title>{t("medicineDetail.medicineInfo")}</Title>
           <MedicineContainer>
-            {medicine.ingredients && (
+            {activeIngredients && activeIngredients.length > 0 && (
               <IngredientsInfo
                 icon={"flask"}
-                title={t("medicineDetail.ingredients")}
-                data={medicine.ingredients}
+                title={
+                  activeIngredients.length > 1
+                    ? t("medicineDetail.ingredients")
+                    : t("medicineDetail.ingredient")
+                }
+                data={activeIngredients}
+              />
+            )}
+            {sideIngredients && sideIngredients.length > 0 && (
+              <IngredientsInfo
+                icon={"pills"}
+                title={
+                  sideIngredients.length > 1
+                    ? t("medicineDetail.sideIngredients")
+                    : t("medicineDetail.sideIngredient")
+                }
+                data={sideIngredients}
               />
             )}
             {usageTypes && usageTypes.length > 0 && (

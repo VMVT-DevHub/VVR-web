@@ -51,7 +51,17 @@ export const useFilters = (language: string) => {
   return { data, isLoading, refetch };
 };
 
+export const useFilterGroups = (language: string) => {
+  const { data, isLoading, refetch } = useQuery<FiltersType>({
+    queryKey: ["filterGroups", { language }],
+    queryFn: () => api.getFilterGroups(language),
+    retry: false,
+    enabled: true,
+    refetchOnWindowFocus: false,
+  });
 
+  return { data, isLoading, refetch };
+};
 
 export const useDocDownload = (
   doc_id: string,

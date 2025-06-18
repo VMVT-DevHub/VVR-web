@@ -45,7 +45,7 @@ export const IngredientsInfo = ({
                   <Icon name={"dot"} />
                 </div>
                 <div>
-                  {name}
+                  {name} {item.type && item.code !== 100000072072 && `(${item.type})`}
                   {numeratorNum &&
                     numeratorName &&
                     denominatorNum &&

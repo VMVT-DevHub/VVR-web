@@ -22,7 +22,7 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, packRange, onClic
     <MedicineContainer onClick={onClick}>
       <TopRow>
         <TopRightContainer>
-          <Code> {code}{packRange && `/`+packRange}</Code>
+          <Code> <p>{code}</p><p>{packRange && packRange}</p></Code>
           {isNew && <NewSticker>{t('medicines.new')}</NewSticker>}
         </TopRightContainer>
 
@@ -137,7 +137,7 @@ const NewSticker = styled.div`
   color: ${({ theme }) => theme.colors.secondary};
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: 5px 12px 3px 12px;
   border-radius: 15px;
 `;
 
@@ -146,7 +146,7 @@ const Tag = styled.div`
   gap: 16px;
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 6px 12px 3px 12px;
+  padding: 5px 12px 3px 12px;
   border-radius: 15px;
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.grey};
@@ -155,10 +155,16 @@ const Tag = styled.div`
 const Code = styled.div`
   font-size: 0.75rem;
   font-weight: 400;
-  padding: 4px 12px;
+  padding: 5px 12px 3px 12px;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.primary_dark};
-  
-  `;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  @media ${device.mobileXL} {
+    flex-direction: row;
+    gap: 8px;
+  }
+`;

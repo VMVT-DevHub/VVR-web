@@ -93,6 +93,12 @@ class Api {
     });
   }
 
+  async getFilterGroups(language: string): Promise<FiltersType> {
+    return this.get<FiltersType>({
+      resource: `api/med/filter/groups?lang=${language}` ,
+    });
+  }
+
   async getDocuments(med_id: string, doc_id:string): Promise<Blob> {
     return this.get<Blob>({
       resource: `doc/${med_id}/${doc_id}?preview`,

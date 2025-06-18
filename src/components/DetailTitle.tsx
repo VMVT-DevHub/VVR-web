@@ -119,7 +119,7 @@ const NewSticker = styled.div`
   color: ${({ theme }) => theme.colors.secondary};
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: 5px 12px 3px 12px;
   border-radius: 15px;
 `;
 const StyledImg = styled.img`
@@ -148,7 +148,7 @@ const TagContainer = styled.div`
 const Code = styled.div`
   font-size: 0.75rem;
   font-weight: 400;
-  padding: 4px 12px;
+  padding: 5px 12px 3px 12px;
   border-radius: 15px;
   background-color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
@@ -159,7 +159,7 @@ const Tag = styled.div`
   gap: 16px;
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 6px 12px 4px 12px;
+  padding: 5px 12px 3px 12px;
   border-radius: 15px;
   border: 1px solid ${({ theme }) => theme.colors.grey_light};
   color: ${({ theme }) => theme.colors.grey};
