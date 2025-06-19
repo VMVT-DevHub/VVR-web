@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Icon from "../styles/icons";
 import { useState } from "react";
-import { FilterPOST, FiltersType } from "../types";
+import { FilterGroups, FilterPOST, FiltersType } from "../types";
 import { useTranslation } from "react-i18next";
 
 interface isDisplayedProps {
@@ -16,11 +16,13 @@ interface isDisplayedProps {
 export const Filters = ({
   className,
   data,
+  filterGroups,
   filterValues,
   setFilterValues,
 }: {
   className?: string;
   data?: FiltersType;
+  filterGroups?: FilterGroups[];
   filterValues: FilterPOST;
   setFilterValues: (key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">, filter: string) => void;
 }) => {
@@ -59,9 +61,9 @@ export const Filters = ({
     }
   };
 
-  const legalCodeShortened = data?.legalCode.map((group) =>
+  const legalCodeShortened = data?.legalCode?.map((group) =>
     handleGroups(group[0])
-  );
+  ) || [];
 
   return (
     <div className={className}>
@@ -75,7 +77,7 @@ export const Filters = ({
       {isDisplayed.group && (
         <form>
           <Categories>
-            {legalCodeShortened &&
+            {data?.legalCode &&
               legalCodeShortened?.map((form) => {
                 const isChecked =
                   filterValues.legalCode.includes(Number(form[0])) || false;
@@ -104,7 +106,7 @@ export const Filters = ({
       {isDisplayed.procedure ? (
         <form>
           <Categories>
-            {data?.reglCase.map((code) => {
+            {data?.reglCase && data?.reglCase.map((code) => {
               const isChecked =
                 filterValues.reglCase.includes(Number(code[0])) || false;
               return (
@@ -132,7 +134,7 @@ export const Filters = ({
       {isDisplayed.form ? (
         <form>
           <Categories>
-            {data?.doseForm.map((code) => {
+            {data?.doseForm && data?.doseForm.map((code) => {
               const isChecked =
                 filterValues.doseForm.includes(Number(code[0])) || false;
               return (
@@ -160,7 +162,7 @@ export const Filters = ({
       {isDisplayed.species ? (
         <form>
           <Categories>
-            {data?.species.map((animal) => {
+            {data?.species && data?.species.map((animal) => {
               const isChecked =
                 filterValues.species.includes(Number(animal[0])) || false;
               return (

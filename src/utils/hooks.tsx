@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { FilterPOST, FiltersType, MedicineResponse, MedicineDetail } from "../types";
+import { FilterPOST, FiltersType, MedicineResponse, MedicineDetail, FilterGroups } from "../types";
 import { handlePreview } from "./functions";
 
 export const useMedicine = (id: string, language: string, uat: boolean) => {
@@ -52,7 +52,7 @@ export const useFilters = (language: string) => {
 };
 
 export const useFilterGroups = (language: string) => {
-  const { data, isLoading, refetch } = useQuery<FiltersType>({
+  const { data, isLoading, refetch } = useQuery<FilterGroups[]>({
     queryKey: ["filterGroups", { language }],
     queryFn: () => api.getFilterGroups(language),
     retry: false,
