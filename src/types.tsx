@@ -231,22 +231,23 @@ export interface FiltersType {
   reglCase: [number, string][];
 }
 
+interface Groups {
+  groups: Groups[];
+  id: number;
+  name: string;
+  terms: number[];
+  parent: number;
+}
+
 export interface FilterGroups {
   id: number;
   name: string;
   terms: number[];
-  groups: [
-    {
-      id: number;
-      name: string;
-      terms: number[];
-      groups: string[];
-      parent: number;
-    }
-  ];
+  groups: Groups[];
   parent: number;
-  list: string;
+  list?: string;
 }
+
 
 export interface FilterPOST {
   page: number;

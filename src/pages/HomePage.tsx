@@ -98,7 +98,6 @@ export const HomePage = () => {
   const { data: filterGroups } = useFilterGroups(i18n.language);
 
 
-  console.log(filterGroups)
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -196,6 +195,7 @@ export const HomePage = () => {
           <>
             <StyledFilters
               data={filters}
+              filterGroups={filterGroups}
               filterValues={filterValues}
               setFilterValues={handleFilterChange}
             />
@@ -212,6 +212,7 @@ export const HomePage = () => {
             >
               <Filters
                 data={filters}
+                filterGroups={filterGroups}
                 filterValues={filterValues}
                 setFilterValues={handleFilterChange}
               />
