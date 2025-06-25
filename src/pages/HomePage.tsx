@@ -16,7 +16,7 @@ import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
 import { FilterPOST } from "../types";
-import { handleDateDifference } from "../utils/functions";
+import { handleDateDifference, isSubset } from "../utils/functions";
 
 export const HomePage = () => {
   const { t, i18n } = useTranslation();
@@ -97,8 +97,6 @@ export const HomePage = () => {
   const { data: filters } = useFilters(i18n.language);
   const { data: filterGroups } = useFilterGroups(i18n.language);
 
-
-
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
       if (!value || value.length > 2) {
@@ -137,18 +135,46 @@ export const HomePage = () => {
 
   const handleFilterChange = (
     key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
-    filter: string
+    filter: number[]
   ) => {
-    setFilterValues((prev) => ({
-      ...prev,
-      [key]: prev[key].includes(Number(filter))
-        ? prev[key].filter((item) => item !== Number(filter))
-        : [...prev[key], Number(filter)],
-    }));
+
+    if (filter.length == 1) {
+      filter.forEach((filter) => {
+        setFilterValues((prev) => ({
+          ...prev,
+          [key]: prev[key].includes(filter)
+            ? prev[key].filter((item) => item !== filter)
+            : [...prev[key], filter],
+        }));
+      });
+    } else {
+      if (!isSubset(filterValues[key], filter)) {
+        filter.forEach((filter) => {
+          setFilterValues((prev) => {
+            const filterSet = new Set([...prev[key], filter]);
+            return {
+              ...prev,
+              [key]: Array.from(filterSet),
+            };
+          });
+        });
+      } else {
+        filter.forEach((filter) => {
+          setFilterValues((prev) => {
+            return {
+              ...prev,
+              [key]: prev[key].filter((item) => item !== filter),
+            };
+          });
+        });
+      }
+    }
+    
      setSearchParams(searchParams => {
       searchParams.set("p",'1');
       return searchParams;
     });
+    
   };
 
   const handlePageChange = (newPage: number) => {

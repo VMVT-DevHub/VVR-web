@@ -51,3 +51,16 @@ export function sanitizeString(str: string) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+
+export const isSubset = (array1:number[], array2:number[]) => {
+  const hashSet = new Set(array1)
+
+  for(const num of array2)
+  {
+    if(!hashSet.has(num))
+    {
+      return false;
+    }
+  }
+  return true;
+}
