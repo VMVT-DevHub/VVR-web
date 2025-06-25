@@ -123,8 +123,6 @@ export const MedicineDetail = () => {
     })
     .filter((text) => text !== "") || undefined;
 
-    console.log(medicine)
-
   return (
     <>
       <DetailTitle

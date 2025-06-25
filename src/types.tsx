@@ -245,7 +245,16 @@ export interface FilterGroups {
   terms: number[];
   groups: Groups[];
   parent: number;
-  list?: string;
+  list?: keyof FiltersType;
+}
+
+ export interface ProcessedFilterGroup {
+  id: number;
+  name: string;
+  terms: [number, string][];
+  groups: ProcessedFilterGroup[];
+  parent: number;
+  list?: keyof FiltersType;
 }
 
 
