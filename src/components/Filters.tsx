@@ -34,6 +34,9 @@ export const Filters = ({
   const [isDisplayed, SetIsDisplayed] = useState<any>({
     group: true,
     procedure: true,
+    "Gyvūno rūšys": true,
+    "Farmacinė forma": true,
+    "Naudojimo būdas": true,
   });
   const [isParentDisplayed, SetIsParentDisplayed] = useState<any>({});
 
@@ -50,6 +53,7 @@ export const Filters = ({
     });
   };
 
+  console.log(isDisplayed)
   const processFilterGroups = (
     filterGroups: FilterGroups[] | undefined,
     inheritedList?: keyof FiltersType
@@ -83,6 +87,7 @@ export const Filters = ({
       };
     });
   };
+  
 
   //maps filter names to IDs
   const processedFilterGroupData = useMemo(
@@ -90,6 +95,20 @@ export const Filters = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [filterGroups, data]
   );
+
+  const selectAllChildTerms = (parent:ProcessedFilterGroup[], termArray:number[]) => {
+    parent.map((element) => {
+      if(element.terms && element.terms.length > 0)
+      {
+        termArray.push(...element.terms.map(item => item[0]))
+      }
+      if(element.groups)
+      {
+        selectAllChildTerms(element.groups, termArray)
+      }
+    })
+    return termArray;
+  }
 
   //Dinamically renders information from /filter/groups api.
   //It recurses over itself to infinite depth, made up from 3 levels:
@@ -106,19 +125,22 @@ export const Filters = ({
   ) => {
     return filterGroups.map((element, i) => {
       const currentList = element.list || inheritedList;
-      const codeArray = element.terms.map((item) => item[0]);
+      const termArray = [
+        ...element.terms.map((item) => item[0]),
+        ...(element && selectAllChildTerms(element.groups, [])),
+      ];
+
       const parentIsChecked =
-        (currentList &&
-          isSubset(filterValues[currentList], codeArray) &&
+        (currentList && termArray.length > 0 &&
+          isSubset(filterValues[currentList], termArray) &&
           filterValues[currentList].length !== 0) ||
         false;
-
       return (
         <Categories key={i}>
           {element.list ? (
             <CategoryContainer onClick={() => toggleDisplay(element.name)}>
               <CategoryTitle>{element.name}</CategoryTitle>
-              <StyledIcon $isActive={!isDisplayed[element.name]} name="arrow" />
+              <StyledIcon $isActive={isDisplayed[element.name]} name="arrow" />
             </CategoryContainer>
           ) : (
             <>
@@ -127,27 +149,24 @@ export const Filters = ({
                   type="checkbox"
                   id={element.id.toString()}
                   onChange={() => {
-                    const groupTerms = element.terms.map((code) => {
-                      return code[0];
-                    });
-                    if (currentList) setFilterValues(currentList, groupTerms);
+                    if (currentList) setFilterValues(currentList, termArray);
                   }}
                   checked={parentIsChecked}
                 />
                 <StyledLabel htmlFor={element.id.toString()}>
                   {element.name}
                 </StyledLabel>
-                <button
-                  type="button"
-                  onClick={() => toggleParentDisplay(element.name)}
-                >
-                  {element.terms.length > 0 && (
+                {element.terms.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => toggleParentDisplay(element.name)}
+                  >
                     <StyledIcon
                       $isActive={!isParentDisplayed[element.name]}
                       name="arrow"
                     />
-                  )}
-                </button>
+                  </button>
+                )}
               </CheckboxRow>
 
               {isParentDisplayed[element.name] && element.terms && (
@@ -280,7 +299,6 @@ export const Filters = ({
   );
 };
 const StyledLabel = styled.label`
-  font-weight: 600;
 `;
 const StyledCheckbox = styled.input`
   accent-color: ${({ theme }) => theme.colors.primary};

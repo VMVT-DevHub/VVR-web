@@ -63,7 +63,8 @@ export const MedicineDetail = () => {
     || undefined;
 
 
-  const medicineCode = medicine.packRange && medicine.code ? medicine.code + "/" + medicine.packRange : medicine.code;
+  const medicineCode = medicine.packRange && medicine.code ? [medicine.code, medicine.packRange] : medicine.code;
+
 
   const manufacturers = medicine.mfctOps?.map((item) => {
       const manufacturer = [];
@@ -363,7 +364,7 @@ export const MedicineDetail = () => {
                 data={medicine.legal?.type}
               />
             )}
-            {medicine.classif && (
+            {medicine.classif && medicine.classif[0].name && (
               <RegistrationInfo
                 icon={"qrcode"}
                 title={t("medicineDetail.ATCvet")}

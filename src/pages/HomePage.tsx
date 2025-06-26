@@ -49,7 +49,7 @@ export const HomePage = () => {
 
   const [filterValues, setFilterValues] = useState<FilterPOST>({
     page: Number(page),
-    limit: 7,
+    limit: 15,
     desc: true,
     search: query,
     species: species,

@@ -13,7 +13,7 @@
      "medicineDetail": {
         "goBack": "Go back",
         "indication": "Indication",
-        "withdrawal": "Waiting period",
+        "withdrawal": "Withdrawal periods",
         "packs": "Packs",
         "medicineInfo": "Veterinary information",
         "registerInfo": "Registration information",
@@ -70,7 +70,7 @@
         "noFiles": "No attached documents.",
         "noPacks": "No package information available",
         "noDescription": "No description available",
-        "noWithdrawal": "No withdrawal period",
+        "noWithdrawal": "Not applicable",
         "notForUsage": "Not used for the following: ",
         "noWaitingPeriod": "No waiting period",
         "notUsed": "Not used"
