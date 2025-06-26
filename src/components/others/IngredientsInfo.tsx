@@ -34,7 +34,7 @@ export const IngredientsInfo = ({
             const denominatorNum = item.substance?.denominator?.num ?? "";
             const denominatorName =
               item.substance?.denominator?.name ||
-              item.substance?.numerator?.type ||
+              item.substance?.denominator?.type ||
               "";
 
             if (!name) return null;

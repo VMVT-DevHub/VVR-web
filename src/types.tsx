@@ -231,7 +231,7 @@ export interface FiltersType {
   reglCase: [number, string][];
 }
 
-interface Groups {
+export interface Groups {
   groups: Groups[];
   id: number;
   name: string;
@@ -243,7 +243,7 @@ export interface FilterGroups {
   id: number;
   name: string;
   terms: number[];
-  groups: Groups[];
+  groups: FilterGroups[];
   parent: number;
   list?: keyof FiltersType;
 }

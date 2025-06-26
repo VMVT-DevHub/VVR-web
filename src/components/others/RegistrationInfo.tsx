@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Icon from "../../styles/icons";
+import { t } from "i18next";
 
 export interface registrationInfoProps {
   icon: string;
@@ -34,12 +35,12 @@ export const RegistrationInfo = ({
   if (typeof data == "string") {
     displayData = data;
   } else {
-    if (title == "Gamintojas (-ai)") {
+    if (title == t('medicineDetail.manufacturer') || title == t('medicineDetail.number')) {
       displayData = data.map((item) => {
         return (
           <InfoContainer key={item}>
             <div>
-              <Icon name={"dot"} />
+              {/* <Icon name={"dot"} /> */}
             </div>
             {item}
           </InfoContainer>
@@ -57,18 +58,19 @@ export const RegistrationInfo = ({
       </div>
       <TextContainer $textSize={text}>
         <p>{title}</p>
-        <div>
+        <DisplayContainer>
           {displayData}
-        </div>
+        </DisplayContainer>
       </TextContainer>
     </ItemContainer>
   );
 };
+const DisplayContainer = styled.div`
+  white-space: 'pre-wrap';
+`
 const InfoContainer = styled.div`
     display: flex;
     align-items: flex-start;
-    gap: 7px;
-    margin-bottom: 6px;
     font-weight: 600;
 
 `
