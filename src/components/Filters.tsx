@@ -8,7 +8,6 @@ import {
   FiltersType,
   ProcessedFilterGroup,
 } from "../types";
-import { useTranslation } from "react-i18next";
 import { isSubset } from "../utils/functions";
 
 export const Filters = ({
@@ -30,10 +29,7 @@ export const Filters = ({
     filter: number[]
   ) => void;
 }) => {
-  const [t] = useTranslation();
   const [isDisplayed, SetIsDisplayed] = useState<any>({
-    group: true,
-    procedure: true,
     "Gyvūno rūšys": true,
     "Farmacinė forma": true,
     "Naudojimo būdas": true,
@@ -53,7 +49,6 @@ export const Filters = ({
     });
   };
 
-  console.log(isDisplayed)
   const processFilterGroups = (
     filterGroups: FilterGroups[] | undefined,
     inheritedList?: keyof FiltersType
@@ -67,7 +62,8 @@ export const Filters = ({
         element.terms?.map((code): [number, string] => {
           if (currentList && data) {
             const found = data[currentList]?.find((item) => item[0] === code);
-            return [code, found ? String(found[1]) : `Unknown ${code}`];
+            const altName = found && (found.length > 2 ? String(found[2]) : String(found[1])) || ''
+            return [code, found ? altName : `Unknown ${code}`];
           }
           return [code, `No list context for ${code}`];
         }) || [];
@@ -138,10 +134,12 @@ export const Filters = ({
       return (
         <Categories key={i}>
           {element.list ? (
-            <CategoryContainer onClick={() => toggleDisplay(element.name)}>
+            <CategoryContainer onClick={() => toggleDisplay(element.name)} $isActive={isDisplayed[element.name]}>
               <CategoryTitle>{element.name}</CategoryTitle>
               <StyledIcon $isActive={isDisplayed[element.name]} name="arrow" />
+              
             </CategoryContainer>
+            
           ) : (
             <>
               <CheckboxRow>
@@ -196,7 +194,32 @@ export const Filters = ({
               )}
             </>
           )}
-
+          {isDisplayed[element.name] || element.list && element.terms && (
+                <Categories style={{ marginLeft: `${depth}px` }}>
+                  {element.terms.map((term) => {
+                    const isChecked = currentList
+                      ? filterValues[currentList].includes(term[0])
+                      : false;
+                    return (
+                      <CheckboxRow key={term[0]}>
+                        <StyledCheckbox
+                          type="checkbox"
+                          id={term[0].toString()}
+                          onChange={(e) => {
+                            if (currentList)
+                              setFilterValues(currentList, [
+                                Number(e.target.id),
+                              ]);
+                          }}
+                          checked={isChecked}
+                        />
+                        <label htmlFor={term[0].toString()}>{term[1]}</label>
+                      </CheckboxRow>
+                    );
+                  })}
+                </Categories>
+              )}
+          
           {isDisplayed[element.name] ||
             (element.groups && (
               <div style={{ marginLeft: `${depth}px` }}>
@@ -208,91 +231,8 @@ export const Filters = ({
     });
   };
 
-  const handleGroups = (code: number) => {
-    switch (code) {
-      case 200000017698:
-        return [200000017698, t("filters.RX")];
-      case 200000027079:
-        return [200000027079, t("filters.vetsOnly")];
-      case 200000017695:
-        return [200000017695, t("filters.OTC")];
-      case 200000017699:
-        return [200000017699, t("filters.RXplus")];
-      case 100000072084:
-        return [100000072084, t("filters.RXhuman")];
-      default:
-        return [200000017698, t("filters.RX")];
-    }
-  };
-
-  const legalCodeShortened =
-    data?.legalCode?.map((group) => handleGroups(group[0])) || [];
-
   return (
     <div className={className}>
-      {/* <CategoryContainer>
-        <CategoryTitle>Kategorijos</CategoryTitle>
-      </CategoryContainer> */}
-      <CategoryContainer onClick={() => toggleDisplay("group")}>
-        <CategoryTitle>{t("filters.legalCode")}</CategoryTitle>
-        <StyledIcon $isActive={!isDisplayed.group} name="arrow" />
-      </CategoryContainer>
-      {isDisplayed.group && (
-        <form>
-          <Categories>
-            {data?.legalCode &&
-              legalCodeShortened?.map((form) => {
-                const isChecked =
-                  filterValues.legalCode.includes(Number(form[0])) || false;
-                return (
-                  <CheckboxRow key={form[0]}>
-                    <StyledCheckbox
-                      type="checkbox"
-                      id={form[0].toString()}
-                      onChange={(e) =>
-                        setFilterValues("legalCode", [Number(e.target.id)])
-                      }
-                      checked={isChecked}
-                    />
-                    <label htmlFor={form[0].toString()}>{form[1]}</label>
-                  </CheckboxRow>
-                );
-              })}
-          </Categories>
-        </form>
-      )}
-
-      <CategoryContainer onClick={() => toggleDisplay("procedure")}>
-        <CategoryTitle>{t("filters.procedure")}</CategoryTitle>
-        <StyledIcon $isActive={!isDisplayed.procedure} name="arrow" />
-      </CategoryContainer>
-      {isDisplayed.procedure ? (
-        <form>
-          <Categories>
-            {data?.reglCase &&
-              data?.reglCase.map((code) => {
-                const isChecked =
-                  filterValues.reglCase.includes(Number(code[0])) || false;
-                return (
-                  <CheckboxRow key={code[0]}>
-                    <StyledCheckbox
-                      type="checkbox"
-                      id={code[0].toString()}
-                      onChange={(e) =>
-                        setFilterValues("reglCase", [Number(e.target.id)])
-                      }
-                      checked={isChecked}
-                    />
-                    <label htmlFor={code[0].toString()}>{code[1]}</label>
-                  </CheckboxRow>
-                );
-              })}
-          </Categories>
-        </form>
-      ) : (
-        ""
-      )}
-
       {processedFilterGroupData &&
         renderFilterGroups(processedFilterGroupData, 0)}
     </div>
@@ -329,11 +269,12 @@ const Categories = styled.div`
   gap: 12px;
 `;
 
-const CategoryContainer = styled.div`
+const CategoryContainer = styled.div<{ $isActive: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32px 0 16px 0;
+  margin-bottom: 8px;
+  margin-bottom: ${({ $isActive }) => ($isActive ? "20px" : "0px")};
   cursor: pointer;
 `;
 const CategoryTitle = styled.p`

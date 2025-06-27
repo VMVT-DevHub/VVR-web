@@ -8,7 +8,8 @@
         "inputPlaceholder": "Search text",
         "search": "Search",
         "searchLoading": "Searching..",
-        "required": "Required field"
+        "required": "Required field",
+        "showFilters": "Show filters"
     },
      "medicineDetail": {
         "goBack": "Go back",

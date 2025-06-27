@@ -227,7 +227,7 @@ export const HomePage = () => {
             />
             <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
               <Icon name={"filters"} />
-              Rodyti Filtrus
+              {t('homePage.showFilters')}
             </ShowFilters>
             <PopUp
               visible={showFilters}
@@ -333,7 +333,6 @@ const StyledLink = styled.a`
 // `
 const StyledFilters = styled(Filters)`
   display: block;
-
   @media ${device.mobileL} {
     display: none;
   }

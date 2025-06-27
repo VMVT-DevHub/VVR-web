@@ -61,6 +61,7 @@ interface Tissue {
   code: number;
   type: string;
   lang: boolean;
+  alt?: string;
 }
 
 interface WithdrawalPeriod {
@@ -77,6 +78,7 @@ interface Species {
   code: number;
   type: string;
   lang: boolean;
+  alt?:string;
 }
 
 interface Route {
@@ -166,6 +168,17 @@ export interface Documents{
   type: CodeType;
 }
 
+export interface Indication{
+  species: [
+    {
+      code: number;
+      type: string;
+      alt?: string;
+    }
+  ],
+  text: string[];
+}
+
 
 export interface MedicineDetail {
   id: number;
@@ -182,6 +195,7 @@ export interface MedicineDetail {
     type: string;
     lang: boolean;
   };
+  indications?:Indication[];
   packRange: string;
   legal?: CodeTypeLanguage;
   basis?: CodeTypeLanguage;
@@ -225,10 +239,10 @@ export interface Ingredient {
 }
 
 export interface FiltersType {
-  species: [number, string][];
-  doseForm: [number, string][];
-  legalCode: [number, string][];
-  reglCase: [number, string][];
+  species: [number, string, string?][];
+  doseForm: [number, string, string?][];
+  legalCode: [number, string, string?][];
+  reglCase: [number, string, string?][];
 }
 
 export interface Groups {
