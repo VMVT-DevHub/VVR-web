@@ -8,7 +8,8 @@
         "inputPlaceholder": "Paieškos tekstas",
         "search": "Ieškoti",
         "searchLoading": "Ieškoma..",
-        "required": "Privalomas laukas"
+        "required": "Privalomas laukas",
+        "showFilters": "Rodyti filtrus"
     },
     "medicineDetail": {
         "goBack": "Grįžti atgal",

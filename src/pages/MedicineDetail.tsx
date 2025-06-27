@@ -12,7 +12,7 @@ import { Loader } from "../components/Loader";
 import { useTranslation } from "react-i18next";
 import { device } from "../styles";
 import { handleDateDifference, sortByLanguage } from "../utils/functions";
-import { Documents, Pack } from "../types";
+import { Documents, Indication, Pack } from "../types";
 
 export const MedicineDetail = () => {
   const { t, i18n } = useTranslation();
@@ -21,6 +21,7 @@ export const MedicineDetail = () => {
   const [isUPD, setIsUPD] = useState(localStorage.getItem("isUPD") === 'true' || false);
   const [showMorePacks, setShowMorePacks] = useState(false);
   const [showMoreDocuments, setShowMoreDocuments] = useState(false);
+  const [showMoreIndications, setShowMoreIndications] = useState(false);
 
   useEffect(() => {
     const updFromState = location.state?.isUPD;
@@ -51,7 +52,6 @@ export const MedicineDetail = () => {
 
   const usageTypesSet = new Set(usageTypes);
 
-  //this should be done through api, temp solution
   if(usageTypesSet.has("Vartoti per burną"))
   {
     usageTypesSet.delete("Vartoti per burną")
@@ -64,7 +64,6 @@ export const MedicineDetail = () => {
 
 
   const medicineCode = medicine.packRange && medicine.code ? [medicine.code, medicine.packRange] : medicine.code;
-
 
   const manufacturers = medicine.mfctOps?.map((item) => {
       const manufacturer = [];
@@ -84,14 +83,11 @@ export const MedicineDetail = () => {
     medicine.ingredients &&
     medicine.ingredients.filter((item) => item.code !== 100000072072);
 
-  const handleFiltering = (item:Pack | Documents, index:number, showMoreItems:boolean) => {
-    if(!showMoreItems)
-    {
-      return index < 4
-    }
-    else if(showMoreItems)
-    {
-      return item
+  const handleFiltering = (item:Pack | Documents | Indication, index:number, showMoreItems:boolean) => {
+    if (!showMoreItems) {
+      return index < 4; 
+    } else if (showMoreItems) {
+      return item;
     }
   }
 
@@ -137,7 +133,31 @@ export const MedicineDetail = () => {
       <MedicineDetailContainer>
         <LeftColumn>
           <Title>{t("medicineDetail.indication")}</Title>
-          <p>{t("error.noDescription")}</p>
+          {medicine.indications ? medicine.indications?.filter((item, index) =>
+              handleFiltering(item, index, showMoreIndications)
+            ).map((indication) => {
+            if(!indication.species) return;
+            const animals = indication.species.map((animal) => animal.alt || animal.type)
+            return (
+              <AnimalContainer>
+                <Animal>
+                  {animals.join(", ")}
+                </Animal>
+                <ProduceContainer>
+                  {indication.text.map((text) => {
+                    return <Produce>{text}</Produce>;
+                  })}
+                </ProduceContainer>
+              </AnimalContainer>
+            );
+          }) : <p>{t("error.noDescription")}</p>}
+          {medicine.indications && medicine.indications.length > 4 && (
+            <button onClick={() => setShowMoreIndications((prev) => !prev)}>
+              {showMoreIndications
+                ? t("medicineDetail.showLess")
+                : t("medicineDetail.showMore")}
+            </button>
+          )}
 
           <Title>{t("medicineDetail.withdrawal")}</Title>
 
@@ -182,7 +202,7 @@ export const MedicineDetail = () => {
                       <AnimalContainer
                         key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
                       >
-                        <Animal>{species.type}</Animal>
+                        <Animal>{species.alt ? species.alt : species.type}</Animal>
                         <ProduceContainer>
                           {species.withdrawalPeriod.map(
                             (period, periodIndex) => {
@@ -194,7 +214,11 @@ export const MedicineDetail = () => {
                                   key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
                                 >
                                   <div>
-                                    {period.tissue?.type}
+                                    {period.tissue?.code == 100000125717
+                                      ? ""
+                                      : period.tissue?.alt
+                                      ? period.tissue?.type
+                                      : period.tissue?.type}
                                     {period.descr && (
                                       <Description> {period.descr}</Description>
                                     )}
@@ -273,6 +297,7 @@ export const MedicineDetail = () => {
             .map((item, index) => {
               return (
                 <Packages
+                  key={item.id}
                   id={index}
                   name={item.id || medicine.code}
                   info={item.name}
@@ -456,9 +481,10 @@ const Produce = styled.div`
   border-radius: 7px;
   & p {
     font-weight: 400;
+    font-size: 0.9rem;
   }
   & div {
-    width: 80%;
+    width: 75%;
   }
 `;
 
@@ -469,7 +495,7 @@ const Description = styled.p`
 const ProduceContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 `;
 const AnimalContainer = styled.div`
   padding: 12px;
