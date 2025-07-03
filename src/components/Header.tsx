@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 export const Header = () => {
   const { t, i18n } = useTranslation();
@@ -19,7 +18,7 @@ export const Header = () => {
 
   return (
     <HeaderContainer>
-      <StyledLink to="/">{t('homePage.header')}</StyledLink>
+      <StyledLink onClick={() => (window.location.href = "/")}>{t('homePage.header')}</StyledLink>
       <LocaleContainer>
         {languages.map((lng) => (
           <LanguageOption
@@ -34,8 +33,11 @@ export const Header = () => {
     </HeaderContainer>
   );
 };
-const StyledLink = styled(Link)`
-  text-decoration: none;
+const StyledLink = styled.a`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
 `
 const LanguageOption = styled.span<{ selected: boolean }>`
   font-size: 0.875rem;
@@ -54,7 +56,7 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   background-color: ${({ theme }) => theme.colors.white};
-  padding: 20px;
+  padding: 20px 0;
   font-weight: 500;
 `;
 

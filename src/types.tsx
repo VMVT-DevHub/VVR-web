@@ -19,6 +19,7 @@ export interface MedicineItems {
   name: string;
   status: string;
   legal: string;
+  legalCode: number;
   packRange: string;
 }
 
@@ -237,6 +238,16 @@ export interface Ingredient {
   type: string;
   lang: boolean;
 }
+export interface Filters {
+  terms: {
+    species: [number, string, string?][];
+    doseForm: [number, string, string?][];
+    legalCode: [number, string, string?][];
+    reglCase: [number, string, string?][];
+  }
+  groups: FilterGroups[]
+}
+
 
 export interface FiltersType {
   species: [number, string, string?][];
@@ -257,7 +268,7 @@ export interface FilterGroups {
   id: number;
   name: string;
   terms: number[];
-  groups: FilterGroups[];
+  groups?: FilterGroups[];
   parent: number;
   list?: keyof FiltersType;
 }
@@ -273,12 +284,17 @@ export interface FilterGroups {
 
 
 export interface FilterPOST {
+  limit: 15,
+  desc: true,
   page: number;
-  limit: number;
-  desc: boolean;
   search: string;
   species: number[];
   legalCode: number[];
   doseForm: number[];
   reglCase: number[];
+  filter: {
+    id: number;
+    groups?: number[];
+    terms?: number[]
+  }[]
 }

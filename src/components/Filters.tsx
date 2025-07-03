@@ -8,7 +8,7 @@ import {
   FiltersType,
   ProcessedFilterGroup,
 } from "../types";
-import { isSubset } from "../utils/functions";
+import { isFilterSelected } from "../utils/functions";
 
 export const Filters = ({
   className,
@@ -26,13 +26,17 @@ export const Filters = ({
       FilterPOST,
       "species" | "legalCode" | "doseForm" | "reglCase"
     >,
+    rootID:number,
+    groupID:number,
     filter: number[]
   ) => void;
 }) => {
   const [isDisplayed, SetIsDisplayed] = useState<any>({
-    "Gyvūno rūšys": true,
-    "Farmacinė forma": true,
-    "Naudojimo būdas": true,
+    "Vaisto grupė": true,
+    "Registracijos procedūra": true,
+    "Gyvūno rūšys": false,
+    "Farmacinė forma": false,
+    "Naudojimo būdas": false,
   });
   const [isParentDisplayed, SetIsParentDisplayed] = useState<any>({});
 
@@ -69,7 +73,7 @@ export const Filters = ({
         }) || [];
 
       const processedGroups =
-        element.groups?.length > 0
+        element.groups && element.groups.length > 0
           ? processFilterGroups(element.groups, currentList)
           : [];
 
@@ -114,122 +118,121 @@ export const Filters = ({
   // 3. if(element.terms), child, is one checkbox the parent covers.
   // There should only be one master, but a child can be a parent.
 
-  const renderFilterGroups = (
-    filterGroups: ProcessedFilterGroup[],
-    depth: number,
-    inheritedList?: keyof FiltersType
-  ) => {
-    return filterGroups.map((element, i) => {
-      const currentList = element.list || inheritedList;
-      const termArray = [
-        ...element.terms.map((item) => item[0]),
-        ...(element && selectAllChildTerms(element.groups, [])),
-      ];
 
-      const parentIsChecked =
-        (currentList && termArray.length > 0 &&
-          isSubset(filterValues[currentList], termArray) &&
-          filterValues[currentList].length !== 0) ||
-        false;
-      return (
-        <Categories key={i}>
-          {element.list ? (
+const renderFilterGroups = (
+  filterGroups: ProcessedFilterGroup[],
+  depth: number,
+  inheritedList?: keyof FiltersType,
+  inheritedRootId?: number,
+) => {
+  return filterGroups.map((element, i) => {
+    const currentList = element.list || inheritedList;
+    const rootID = element.list ? element.id : inheritedRootId;
+    const termArray = [
+      ...element.terms.map((item) => item[0]),
+      ...(element && selectAllChildTerms(element.groups, [])),
+    ];
+
+
+    const parentIsChecked = rootID ? isFilterSelected(rootID, element.id, termArray, filterValues) : false;
+
+    return (
+      <Categories key={i}>
+        {element.list ? (
+          <>
             <CategoryContainer onClick={() => toggleDisplay(element.name)} $isActive={isDisplayed[element.name]}>
               <CategoryTitle>{element.name}</CategoryTitle>
               <StyledIcon $isActive={isDisplayed[element.name]} name="arrow" />
-              
             </CategoryContainer>
             
-          ) : (
-            <>
-              <CheckboxRow>
-                <StyledCheckbox
-                  type="checkbox"
-                  id={element.id.toString()}
-                  onChange={() => {
-                    if (currentList) setFilterValues(currentList, termArray);
-                  }}
-                  checked={parentIsChecked}
-                />
-                <StyledLabel htmlFor={element.id.toString()}>
-                  {element.name}
-                </StyledLabel>
-                {element.terms.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => toggleParentDisplay(element.name)}
-                  >
-                    <StyledIcon
-                      $isActive={!isParentDisplayed[element.name]}
-                      name="arrow"
-                    />
-                  </button>
-                )}
-              </CheckboxRow>
+            {isDisplayed[element.name] && (
+              <Categories style={{ marginLeft: `${depth + 10}px` }}>
+                {element.terms.map((term) => {
 
-              {isParentDisplayed[element.name] && element.terms && (
-                <Categories style={{ marginLeft: `${depth}px` }}>
-                  {element.terms.map((term) => {
-                    const isChecked = currentList
-                      ? filterValues[currentList].includes(term[0])
-                      : false;
-                    return (
-                      <CheckboxRow key={term[0]}>
-                        <StyledCheckbox
-                          type="checkbox"
-                          id={term[0].toString()}
-                          onChange={(e) => {
-                            if (currentList)
-                              setFilterValues(currentList, [
-                                Number(e.target.id),
-                              ]);
-                          }}
-                          checked={isChecked}
-                        />
-                        <label htmlFor={term[0].toString()}>{term[1]}</label>
-                      </CheckboxRow>
-                    );
-                  })}
-                </Categories>
+                    const isChecked = rootID ? isFilterSelected(rootID, null, [term[0]], filterValues) : false;
+                  return (
+                    <CheckboxRow key={term[0]}>
+                      <StyledCheckbox
+                        type="checkbox"
+                        id={term[0].toString()}
+                        onChange={(e) => {
+                          if (currentList && rootID)
+                            setFilterValues(currentList, rootID, element.id, [
+                              Number(e.target.id),
+                            ]);
+                        }}
+                        checked={isChecked}
+                      />
+                      <label htmlFor={term[0].toString()}>{term[1]}</label>
+                    </CheckboxRow>
+                  );
+                })}
+                
+                {element.groups && renderFilterGroups(element.groups, depth + 10, currentList, rootID)}
+              </Categories>
+            )}
+          </>
+        ) : (
+          <>
+            <CheckboxRow>
+              <StyledCheckbox
+                type="checkbox"
+                id={element.id.toString()}
+                onChange={() => {
+                  if (currentList && rootID) setFilterValues(currentList, rootID, element.id, termArray);
+                }}
+                checked={parentIsChecked}
+              />
+              <StyledLabel htmlFor={element.id.toString()}>
+                {element.name}
+              </StyledLabel>
+              {(element.terms.length > 0 || element.groups.length > 0) && (
+                <button
+                  type="button"
+                  onClick={() => toggleParentDisplay(element.name)}
+                >
+                  <StyledIcon
+                    $isActive={!isParentDisplayed[element.name]}
+                    name="arrow"
+                  />
+                </button>
               )}
-            </>
-          )}
-          {isDisplayed[element.name] || element.list && element.terms && (
-                <Categories style={{ marginLeft: `${depth}px` }}>
-                  {element.terms.map((term) => {
-                    const isChecked = currentList
-                      ? filterValues[currentList].includes(term[0])
-                      : false;
-                    return (
-                      <CheckboxRow key={term[0]}>
-                        <StyledCheckbox
-                          type="checkbox"
-                          id={term[0].toString()}
-                          onChange={(e) => {
-                            if (currentList)
-                              setFilterValues(currentList, [
-                                Number(e.target.id),
-                              ]);
-                          }}
-                          checked={isChecked}
-                        />
-                        <label htmlFor={term[0].toString()}>{term[1]}</label>
-                      </CheckboxRow>
-                    );
-                  })}
-                </Categories>
-              )}
-          
-          {isDisplayed[element.name] ||
-            (element.groups && (
-              <div style={{ marginLeft: `${depth}px` }}>
-                {renderFilterGroups(element.groups, depth + 10, currentList)}
-              </div>
-            ))}
-        </Categories>
-      );
-    });
-  };
+            </CheckboxRow>
+
+            {isParentDisplayed[element.name] && (
+              <Categories style={{ marginLeft: `${depth + 10}px` }}>
+                {element.terms.map((term) => {
+                  const isChecked = filterValues?.filter.some(item => 
+                    item.terms && item.terms.includes(term[0])
+                  ) || false;
+                  return (
+                    <CheckboxRow key={term[0]}>
+                      <StyledCheckbox
+                        type="checkbox"
+                        id={term[0].toString()}
+                        onChange={(e) => {
+                          if (currentList && rootID)
+                            setFilterValues(currentList,  rootID, element.id, [
+                              Number(e.target.id),
+                            ]);
+                        }}
+                        checked={isChecked}
+                      />
+                      <label htmlFor={term[0].toString()}>{term[1]}</label>
+                    </CheckboxRow>
+                  );
+                })}
+                
+                {element.groups && renderFilterGroups(element.groups, depth + 10, currentList, rootID)}
+              </Categories>
+            )}
+          </>
+        )}
+      </Categories>
+    );
+  });
+};
+
 
   return (
     <div className={className}>
@@ -255,11 +258,9 @@ const CheckboxRow = styled.div`
   }
   & label:hover {
     color: ${({ theme }) => theme.colors.primary};
-    font-weight: 500;
   }
   & input:checked + label {
     color: ${({ theme }) => theme.colors.primary};
-    font-weight: 500;
   }
 `;
 
@@ -273,8 +274,8 @@ const CategoryContainer = styled.div<{ $isActive: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  margin-bottom: ${({ $isActive }) => ($isActive ? "20px" : "0px")};
+  margin-bottom: ${({ $isActive }) => ($isActive ? "0px" : "16px")};
+  margin-top: 8px;
   cursor: pointer;
 `;
 const CategoryTitle = styled.p`

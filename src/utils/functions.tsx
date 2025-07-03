@@ -1,4 +1,7 @@
-import { Documents } from "../types";
+import { Documents, FilterPOST } from "../types";
+import rx from "../styles/images/Rx.svg";
+import rxplus from "../styles/images/Rxplus.svg";
+import otc from "../styles/images/Otc.svg";
 
  export const handleDateDifference = (registrationDate: string) => {
     const today = new Date();
@@ -29,12 +32,20 @@ export const handlePreview = (data: Blob, isPreview:boolean, name:string) => {
 };
 
 export const sortByLanguage = ( a:Documents, b:Documents) => {
-  if(a.lang == "lt")
-  {
+  if (a.lang === "lt" && b.lang !== "lt") {
     return -1;
   }
-  if(b.lang == "lt")
-  {
+  if (b.lang === "lt" && a.lang !== "lt") {
+    return 1;
+  }
+
+  if (a.lang === "lt" && b.lang === "lt") {
+    return 0;
+  }
+  if (a.lang === "en" && b.lang !== "en" && b.lang !== "lt") {
+    return -1;
+  }
+  if (b.lang === "en" && a.lang !== "en" && a.lang !== "lt") {
     return 1;
   }
   return 0;
@@ -64,3 +75,29 @@ export const isSubset = (array1:number[], array2:number[]) => {
   }
   return true;
 }
+export const isFilterSelected = (rootID: number, groupID: number | null, terms: number[], filterValues:FilterPOST) => {
+  const rootFilter = filterValues.filter.find(item => item.id === rootID);
+  if (!rootFilter) return false;
+
+  if (groupID !== null) {
+    // Check if group is selected
+    return rootFilter.groups?.includes(groupID) || false;
+  } else {
+    // Check if all terms are selected
+    const selectedTerms = rootFilter.terms || [];
+    return terms.length > 0 && isSubset(selectedTerms, terms);
+  }
+};
+export const handlePrescription = (code: number | null | undefined) => {
+    if (!code) return rx;
+    switch (code) {
+      case 200000017698:
+        return rx;
+      case 200000017695:
+        return otc;
+      case 200000017699:
+        return rxplus;
+      default:
+        return rx;
+    }
+  };

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
 import { Formik, Form, FormikState } from "formik";
 import * as Yup from "yup";
-import { useFilters, useFilterGroups, useMedicines } from "../utils/hooks";
+import { useFilters, useMedicines } from "../utils/hooks";
 import { Medicine } from "../components/Medicine";
 import styled from "styled-components";
 import { device } from "../styles";
@@ -16,7 +16,10 @@ import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
 import { FilterPOST } from "../types";
-import { handleDateDifference, isSubset } from "../utils/functions";
+import { handleDateDifference } from "../utils/functions";
+import rx from "../styles/images/Rx.svg";
+import rxplus from "../styles/images/Rxplus.svg";
+import otc from "../styles/images/Otc.svg";
 
 export const HomePage = () => {
   const { t, i18n } = useTranslation();
@@ -55,7 +58,8 @@ export const HomePage = () => {
     species: species,
     legalCode: legalCode,
     doseForm: doseForm,
-    reglCase: reglCase
+    reglCase: reglCase,
+    filter:[]
   });
 
   useEffect(() => {
@@ -94,8 +98,7 @@ export const HomePage = () => {
   }, [page]);
 
   const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
-  const { data: filters } = useFilters(i18n.language);
-  const { data: filterGroups } = useFilterGroups(i18n.language);
+  const { filters, filterGroups } = useFilters(i18n.language);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -108,6 +111,7 @@ export const HomePage = () => {
     }),
   });
 
+  console.log(filterValues)
   const formValues = { medicine: query };
 
   const handleSubmit = (
@@ -134,48 +138,142 @@ export const HomePage = () => {
   };
 
   const handleFilterChange = (
-    key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
-    filter: number[]
-  ) => {
+  key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
+  rootID: number,
+  groupID: number,
+  filter: number[]
+) => {
+  const rootExists = filterValues.filter.findIndex(item => item.id === rootID);
+  const groupExists = filterValues.filter.findIndex(item => item.groups?.includes(groupID))
 
-    if (filter.length == 1) {
-      filter.forEach((filter) => {
-        setFilterValues((prev) => ({
+  console.log(groupExists)
+  if (filter.length === 1) {
+    const term = filter[0];
+    
+    setFilterValues((prev) => {
+      if (rootExists !== -1) {
+        const updatedFilter = [...prev.filter];
+        const existingTerms = updatedFilter[rootExists].terms || [];
+        
+        updatedFilter[rootExists] = {
+          ...updatedFilter[rootExists],
+          terms: existingTerms.includes(term)
+            ? existingTerms.filter(t => t !== term)
+            : [...existingTerms, term]
+        };
+        
+        return {
           ...prev,
-          [key]: prev[key].includes(filter)
-            ? prev[key].filter((item) => item !== filter)
-            : [...prev[key], filter],
-        }));
-      });
-    } else {
-      if (!isSubset(filterValues[key], filter)) {
-        filter.forEach((filter) => {
-          setFilterValues((prev) => {
-            const filterSet = new Set([...prev[key], filter]);
-            return {
-              ...prev,
-              [key]: Array.from(filterSet),
-            };
-          });
-        });
+          filter: updatedFilter
+        };
       } else {
-        filter.forEach((filter) => {
-          setFilterValues((prev) => {
-            return {
-              ...prev,
-              [key]: prev[key].filter((item) => item !== filter),
-            };
-          });
-        });
+        return {
+          ...prev,
+          filter: [...prev.filter, {
+            id: rootID,
+            terms: [term]
+          }]
+        };
       }
-    }
-    
-     setSearchParams(searchParams => {
-      searchParams.set("p",'1');
-      return searchParams;
     });
+  } else {
+    setFilterValues((prev) => {
+      if (rootExists !== -1) {
+        const updatedFilter = [...prev.filter];
+        const existingGroups = updatedFilter[rootExists].groups || [];
+        
+        updatedFilter[rootExists] = {
+          ...updatedFilter[rootExists],
+          groups: existingGroups.includes(groupID)
+            ? existingGroups.filter(g => g !== groupID)
+            : [...existingGroups, groupID]
+        };
+        
+        return {
+          ...prev,
+          filter: updatedFilter
+        };
+      } else {
+        return {
+          ...prev,
+          filter: [...prev.filter, {
+            id: rootID,
+            groups: [groupID]
+          }]
+        };
+      }
+    });
+  }
+
+  setSearchParams(searchParams => {
+    searchParams.set("p", '1');
+    return searchParams;
+  });
+};
+
+  // const handleFilterChange = (
+  //   key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
+  //   rootID: number,
+  //   groupID: number,
+  //   filter: number[]
+  // ) => {
+
+   
+  //   const rootExists = filterValues.filter.findIndex(item => item.id == rootID )
+
+  //   if(filter.length == 1)
+  //   {
+  //    if(rootExists !== -1)
+  //    {
+  //       setFilterValues((prev) => ({
+  //       ...prev,
+  //       filter: [...prev.filter,{
+  //         id: rootID,
+  //         terms: [...filter]
+  //       }]
+  //     }))
+  //    }
+      
+  //   }
+
+  //   if (filter.length == 1) {
+  //     filter.forEach((filter) => {
+  //       setFilterValues((prev) => ({
+  //         ...prev,
+  //         [key]: prev[key].includes(filter)
+  //           ? prev[key].filter((item) => item !== filter)
+  //           : [...prev[key], filter],
+  //       }));
+  //     });
+  //   } else {
+  //     if (!isSubset(filterValues[key], filter)) {
+  //       filter.forEach((filter) => {
+  //         setFilterValues((prev) => {
+  //           const filterSet = new Set([...prev[key], filter]);
+  //           return {
+  //             ...prev,
+  //             [key]: Array.from(filterSet),
+  //           };
+  //         });
+  //       });
+  //     } else {
+  //       filter.forEach((filter) => {
+  //         setFilterValues((prev) => {
+  //           return {
+  //             ...prev,
+  //             [key]: prev[key].filter((item) => item !== filter),
+  //           };
+  //         });
+  //       });
+  //     }
+  //   }
     
-  };
+  //    setSearchParams(searchParams => {
+  //     searchParams.set("p",'1');
+  //     return searchParams;
+  //   });
+    
+  // };
 
   const handlePageChange = (newPage: number) => {
     setSearchParams(searchParams => {
@@ -267,21 +365,30 @@ export const HomePage = () => {
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
               return (
-                <Medicine
+                  <a
                   key={item.id}
-                  id={item.id}
-                  subtitle={item.ingredients}
-                  code={item.code}
-                  title={item.name}
-                  isNew={handleDateDifference(item.date)}
-                  packRange={item.packRange}
-                  tags={item.species}
-                  onClick={() =>
+                  href={slugs.medicineDetail(item.id)}
+                  onClick={(e) => {
+                    e.preventDefault();
                     navigate(slugs.medicineDetail(item.id), {
                       state: { isUPD },
-                    })
-                  }
-                />
+                    });
+                  }}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <Medicine
+                    key={item.id}
+                    id={item.id}
+                    subtitle={item.ingredients}
+                    code={item.code}
+                    title={item.name}
+                    isNew={handleDateDifference(item.date)}
+                    packRange={item.packRange}
+                    tags={item.species}
+                    legalCode={item.legalCode}
+                  />
+                </a>
+
               );
             })
           ) : (
@@ -302,9 +409,53 @@ export const HomePage = () => {
           )}
         </RightColumn>
       </ContentContainer>
+      <>
+        <Explanation>{t("footer.meaning")}</Explanation>
+      <TopRow>
+        <Entry>
+          <StyledImg src={rx} alt="RX" />
+          <Paragraph>{t("footer.prescription")}</Paragraph>
+        </Entry>
+        <Entry>
+          <StyledImg src={otc} alt="OTC" />
+          <Paragraph>{t("footer.nonprescription")}</Paragraph>
+        </Entry>
+        <Entry>
+          <StyledImg src={rxplus} alt="RxPlus"/>
+          <Paragraph>{t("footer.vetPrescription")}</Paragraph>
+        </Entry>
+      </TopRow>
+        </>
     </main>
   );
+
 };
+
+const Paragraph = styled.p`
+  color: ${({ theme }) => theme.colors.grey};
+`;
+const StyledImg = styled.img`
+  width: 24px;
+`;
+const Explanation = styled.p`
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.primary};
+`;
+const TopRow = styled.div`
+  display: flex;
+  gap: 16px;
+  @media ${device.mobileL} {
+    flex-direction: column;
+  }
+  margin-bottom: 16px;
+`;
+const Entry = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 const ErrorMessage = styled.div`
   width: 450px;
   margin: 0 auto;

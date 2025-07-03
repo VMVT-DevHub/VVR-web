@@ -83,9 +83,9 @@ export const MedicineDetail = () => {
     medicine.ingredients &&
     medicine.ingredients.filter((item) => item.code !== 100000072072);
 
-  const handleFiltering = (item:Pack | Documents | Indication, index:number, showMoreItems:boolean) => {
+  const handleFiltering = (item:Pack | Documents | Indication, index:number, showMoreItems:boolean, amount:number) => {
     if (!showMoreItems) {
-      return index < 4; 
+      return index < amount; 
     } else if (showMoreItems) {
       return item;
     }
@@ -134,7 +134,7 @@ export const MedicineDetail = () => {
         <LeftColumn>
           <Title>{t("medicineDetail.indication")}</Title>
           {medicine.indications ? medicine.indications?.filter((item, index) =>
-              handleFiltering(item, index, showMoreIndications)
+              handleFiltering(item, index, showMoreIndications, 4)
             ).map((indication) => {
             if(!indication.species) return;
             const animals = indication.species.map((animal) => animal.alt || animal.type)
@@ -292,7 +292,7 @@ export const MedicineDetail = () => {
           <Title>{t("medicineDetail.packs")}</Title>
           {medicine.packs
             ?.filter((item, index) =>
-              handleFiltering(item, index, showMorePacks)
+              handleFiltering(item, index, showMorePacks, 4)
             )
             .map((item, index) => {
               return (
@@ -419,7 +419,7 @@ export const MedicineDetail = () => {
             medicine.documents
               .sort(sortByLanguage)
               .filter((item, index) =>
-                handleFiltering(item, index, showMoreDocuments)
+                handleFiltering(item, index, showMoreDocuments, 2)
               )
               .map((item) => {
                 return (
@@ -437,7 +437,7 @@ export const MedicineDetail = () => {
           ) : (
             <DownloadTitle>{t("error.noFiles")}</DownloadTitle>
           )}
-          {medicine.documents && medicine.documents.length > 4 && (
+          {medicine.documents && medicine.documents.length > 2 && (
             <button onClick={() => setShowMoreDocuments((prev) => !prev)}>
               {showMoreDocuments
                 ? t("medicineDetail.showLess")
@@ -557,6 +557,8 @@ const RightColumn = styled.section`
 const MedicineDetailContainer = styled.main`
   display: flex;
   gap: 32px;
+  margin-bottom: 50px;
+
   @media ${device.mobileL} {
       flex-direction: column;
     }
