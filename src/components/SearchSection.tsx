@@ -41,6 +41,7 @@ export const SearchSection = ({
       <BottomRow>
         <SearchBar $subtitle={!!subtitle}>
           <TextInput
+            type="search"
             placeholder={t("homePage.inputPlaceholder")}
             disabled={disabled}
             value={value}
@@ -93,6 +94,7 @@ const Button = styled.button<{ disabled: boolean }>`
   @media ${device.mobileL} {
       padding: 18px 30px;
   }
+  
 `;
 
 const TextInput = styled.input<{ disabled: boolean }>`
@@ -109,6 +111,17 @@ const TextInput = styled.input<{ disabled: boolean }>`
     outline: none;
     border: 3px solid ${({ theme }) => theme.colors.primary_light};
     box-shadow: 5px 5px 5px 7px ${({ theme }) => `${theme.colors.primary}33`};
+  }
+  &::-webkit-search-cancel-button{
+    position:relative;
+    /* right:148px;   
+    @media ${device.mobileL} {
+          right:85px;   
+
+    }  */
+  }
+  @media ${device.mobileL} {
+      padding: 18px 30px;
   }
 `;
 

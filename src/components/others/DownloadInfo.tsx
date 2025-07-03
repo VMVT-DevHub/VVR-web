@@ -21,7 +21,6 @@ export const DownloadInfo = ({
   name,
   title,
   lang,
-  date,
 }: DownloadInfoProps) => {
   const { isFetching: isFetchingPreview, refetch: refetchPreview } =
     useDocDownload(doc_id, name, true, med_id);
@@ -33,8 +32,8 @@ export const DownloadInfo = ({
   return (
     <DocumentDownloadContainer key={doc_id}>
       <DownloadTitle>
-        <p>{title}</p>
-        {lang} {date}
+        <p>{lang}: {title}</p>
+        
       </DownloadTitle>
       <ButtonContainer>
         <StyledButton

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig, ResponseType } from 'axios';
-import { FilterPOST, FiltersType, MedicineResponse, MedicineDetail, FilterGroups } from '../types';
+import { FilterPOST, MedicineResponse, MedicineDetail, Filters } from '../types';
 import { sanitizeString } from './functions';
 
 interface Get {
@@ -87,15 +87,9 @@ class Api {
     });
   }
 
-  async getFilters(language: string): Promise<FiltersType> {
-    return this.get<FiltersType>({
+  async getFilters(language: string): Promise<Filters> {
+    return this.get<Filters>({
       resource: `api/med/filters?lang=${language}` ,
-    });
-  }
-
-  async getFilterGroups(language: string): Promise<FilterGroups[]> {
-    return this.get<FilterGroups[]>({
-      resource: `api/med/filter/groups?lang=${language}` ,
     });
   }
 

@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import Rx from "../styles/images/Rx.svg";
 import { device } from "../styles";
 import { useTranslation } from "react-i18next";
+import { handlePrescription } from "../utils/functions";
 
 export interface MedicineProps {
   id: string;
@@ -10,11 +10,12 @@ export interface MedicineProps {
   code: string;
   isNew?: boolean;
   tags?: string[];
+  legalCode?: number;
   packRange: string;
   onClick?: () => void;
 }
 
-export const Medicine = ({ code, title, subtitle, isNew, tags, packRange, onClick}: MedicineProps) => {
+export const Medicine = ({ code, title, subtitle, isNew, tags, legalCode, packRange , onClick}: MedicineProps) => {
 
   const { t } = useTranslation();
 
@@ -28,7 +29,10 @@ export const Medicine = ({ code, title, subtitle, isNew, tags, packRange, onClic
 
         <TopLeftContainer>
           <ImageContainer>
-            <img src={Rx} alt="Rx" />
+           <img
+              src={handlePrescription(legalCode)}
+              alt="vaisto grupė"
+            />
           </ImageContainer>
           <div>
             <Title>{title}</Title>

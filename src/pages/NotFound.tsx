@@ -31,7 +31,7 @@ const StyledLink = styled(Link)`
     gap: 6px;
     font-size: 1rem;
     color: ${({ theme }) => theme.colors.primary_light};
-    & :hover {
-        text-decoration: dashed;
+    &:hover {
+        text-decoration: underline;
     }
 `

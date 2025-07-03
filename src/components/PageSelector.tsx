@@ -14,7 +14,7 @@ export const PageSelector = ({
 }: PageSelectorProps) => {
   
   const [pageLayout, setPageLayout] = useState<number[]>([1, 2, 3, 4, 5]);
-  const totalPages = Math.ceil(total / 15);
+  const totalPages = Math.ceil(total / 10);
   const { t } = useTranslation();
 
   useEffect(() => {

@@ -44,7 +44,6 @@ export const Default = ({ children }: DefaultLayoutProps) => {
 };
 
 const InnerContainer = styled.div`
-  margin-bottom: 50px;
 `
 
 const MainContainer = styled.div`
