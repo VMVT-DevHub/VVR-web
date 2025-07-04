@@ -16,7 +16,7 @@ import { PopUp } from "../components/layouts/PopUp";
 import Icon from "../styles/icons";
 import { Loader } from "../components/Loader";
 import { FilterPOST } from "../types";
-import { handleDateDifference } from "../utils/functions";
+import { handleDateDifference, isSubset } from "../utils/functions";
 import rx from "../styles/images/Rx.svg";
 import rxplus from "../styles/images/Rxplus.svg";
 import otc from "../styles/images/Otc.svg";
@@ -39,15 +39,15 @@ export const HomePage = () => {
     localStorage.getItem("isUPD") === "true" || false
   );
 
-  useEffect(() => {
-    if (paginationRef.current) {
-      paginationRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "start",
-      });
-    }
-  }, [page]);
+  // useEffect(() => {
+  //   if (paginationRef.current) {
+  //     paginationRef.current.scrollIntoView({
+  //       behavior: "smooth",
+  //       block: "start",
+  //       inline: "start",
+  //     });
+  //   }
+  // }, [page]);
 
 
   const [filterValues, setFilterValues] = useState<FilterPOST>({
@@ -110,8 +110,6 @@ export const HomePage = () => {
       });
     }),
   });
-
-  console.log(filterValues)
   const formValues = { medicine: query };
 
   const handleSubmit = (
@@ -138,142 +136,136 @@ export const HomePage = () => {
   };
 
   const handleFilterChange = (
-  key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
-  rootID: number,
-  groupID: number,
-  filter: number[]
-) => {
-  const rootExists = filterValues.filter.findIndex(item => item.id === rootID);
-  const groupExists = filterValues.filter.findIndex(item => item.groups?.includes(groupID))
+    rootID: number,
+    groupID: number,
+    filter: number[],
+    groupFilter?: number[]
+  ) => {
+    const rootExists = filterValues.filter.findIndex(
+      (item) => item.id === rootID
+    );
+    const groupAlreadySelected =
+      filterValues.filter.filter((item) => item.groups?.includes(groupID))
+        .length > 0;
 
-  console.log(groupExists)
-  if (filter.length === 1) {
-    const term = filter[0];
-    
-    setFilterValues((prev) => {
-      if (rootExists !== -1) {
-        const updatedFilter = [...prev.filter];
-        const existingTerms = updatedFilter[rootExists].terms || [];
-        
-        updatedFilter[rootExists] = {
-          ...updatedFilter[rootExists],
-          terms: existingTerms.includes(term)
-            ? existingTerms.filter(t => t !== term)
-            : [...existingTerms, term]
-        };
-        
-        return {
-          ...prev,
-          filter: updatedFilter
-        };
-      } else {
-        return {
-          ...prev,
-          filter: [...prev.filter, {
-            id: rootID,
-            terms: [term]
-          }]
-        };
-      }
-    });
-  } else {
-    setFilterValues((prev) => {
-      if (rootExists !== -1) {
-        const updatedFilter = [...prev.filter];
-        const existingGroups = updatedFilter[rootExists].groups || [];
-        
-        updatedFilter[rootExists] = {
-          ...updatedFilter[rootExists],
-          groups: existingGroups.includes(groupID)
-            ? existingGroups.filter(g => g !== groupID)
-            : [...existingGroups, groupID]
-        };
-        
-        return {
-          ...prev,
-          filter: updatedFilter
-        };
-      } else {
-        return {
-          ...prev,
-          filter: [...prev.filter, {
-            id: rootID,
-            groups: [groupID]
-          }]
-        };
-      }
-    });
-  }
-
-  setSearchParams(searchParams => {
-    searchParams.set("p", '1');
-    return searchParams;
-  });
-};
-
-  // const handleFilterChange = (
-  //   key: keyof Pick<FilterPOST, "species" | "legalCode" | "doseForm" | "reglCase">,
-  //   rootID: number,
-  //   groupID: number,
-  //   filter: number[]
-  // ) => {
-
-   
-  //   const rootExists = filterValues.filter.findIndex(item => item.id == rootID )
-
-  //   if(filter.length == 1)
-  //   {
-  //    if(rootExists !== -1)
-  //    {
-  //       setFilterValues((prev) => ({
-  //       ...prev,
-  //       filter: [...prev.filter,{
-  //         id: rootID,
-  //         terms: [...filter]
-  //       }]
-  //     }))
-  //    }
+    if (filter.length === 1) {//one term
       
-  //   }
+      const term = filter[0];
 
-  //   if (filter.length == 1) {
-  //     filter.forEach((filter) => {
-  //       setFilterValues((prev) => ({
-  //         ...prev,
-  //         [key]: prev[key].includes(filter)
-  //           ? prev[key].filter((item) => item !== filter)
-  //           : [...prev[key], filter],
-  //       }));
-  //     });
-  //   } else {
-  //     if (!isSubset(filterValues[key], filter)) {
-  //       filter.forEach((filter) => {
-  //         setFilterValues((prev) => {
-  //           const filterSet = new Set([...prev[key], filter]);
-  //           return {
-  //             ...prev,
-  //             [key]: Array.from(filterSet),
-  //           };
-  //         });
-  //       });
-  //     } else {
-  //       filter.forEach((filter) => {
-  //         setFilterValues((prev) => {
-  //           return {
-  //             ...prev,
-  //             [key]: prev[key].filter((item) => item !== filter),
-  //           };
-  //         });
-  //       });
-  //     }
-  //   }
-    
-  //    setSearchParams(searchParams => {
-  //     searchParams.set("p",'1');
-  //     return searchParams;
-  //   });
-    
-  // };
+      setFilterValues((prev) => {
+        if (rootExists !== -1) {//if object exists
+
+          const updatedFilter = [...prev.filter];
+          const existingTerms = updatedFilter[rootExists].terms || [];
+          const existingGroups = updatedFilter[rootExists].groups || [];
+
+          if (groupAlreadySelected && groupFilter) {// a term in group is unchecked
+            //1. remove group
+            updatedFilter[rootExists] = {
+              ...updatedFilter[rootExists],
+              groups: existingGroups.filter((g) => g !== groupID),
+            };
+            //2. push group terms minus current term
+            updatedFilter[rootExists] = {
+              ...updatedFilter[rootExists],
+              terms: [
+                ...existingTerms,
+                ...groupFilter.filter((t) => t !== term),
+              ],
+            };
+          }
+          else { // regular term toggle
+            if (groupFilter && isSubset([...existingTerms, term],
+               groupFilter)) { // does this term finish group
+              //1. add group
+              updatedFilter[rootExists] = {
+                ...updatedFilter[rootExists],
+                groups: [...existingGroups, groupID],
+              };
+              //2. remove terms
+              updatedFilter[rootExists] = {
+                ...updatedFilter[rootExists],
+                terms: existingTerms.filter((t) => !groupFilter.includes(t)),
+              };
+            } else {
+              updatedFilter[rootExists] = {
+                ...updatedFilter[rootExists],
+                terms: existingTerms.includes(term)
+                  ? existingTerms.filter((t) => t !== term)
+                  : [...existingTerms, term],
+              };
+            }
+          }
+
+          return {
+            ...prev,
+            filter: updatedFilter,
+          };
+        } else {
+          //object doesnt exist, create one
+          return {
+            ...prev,
+            filter: [
+              ...prev.filter,
+              {
+                id: rootID,
+                terms: [term],
+              },
+            ],
+          };
+        }
+      });
+    } else {//groups
+      setFilterValues((prev) => {
+        if (rootExists !== -1) { //if object exists
+         
+          const updatedFilter = [...prev.filter];
+          const existingTerms = updatedFilter[rootExists].terms || [];
+          const existingGroups = updatedFilter[rootExists].groups || [];
+
+          const termsToRemove = filter.filter((term) =>
+            existingTerms.includes(term)
+          );
+
+          if (termsToRemove.length > 0) {// if there are stray terms from this group, remove them
+            updatedFilter[rootExists] = {
+              ...updatedFilter[rootExists],
+              terms: existingTerms.filter((t) => !filter.includes(t)),
+            };
+          }
+
+          updatedFilter[rootExists] = {
+            ...updatedFilter[rootExists],
+            groups: existingGroups.includes(groupID)
+              ? existingGroups.filter((g) => g !== groupID)
+              : [...existingGroups, groupID],
+          };
+
+          return {
+            ...prev,
+            filter: updatedFilter,
+          };
+        } else {//object doesnt exist, create one
+          return {
+            ...prev,
+            filter: [
+              ...prev.filter,
+              {
+                id: rootID,
+                groups: [groupID],
+              },
+            ],
+          };
+        }
+      });
+    }
+
+    setSearchParams((searchParams) => {
+      searchParams.set("p", "1");
+      return searchParams;
+    });
+  };
+
 
   const handlePageChange = (newPage: number) => {
     setSearchParams(searchParams => {
@@ -535,3 +527,5 @@ const RightColumn = styled.div`
     width: 100%;
   }
 `;
+
+
