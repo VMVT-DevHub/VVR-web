@@ -22,19 +22,16 @@ export const Filters = ({
   filterGroups?: FilterGroups[];
   filterValues: FilterPOST;
   setFilterValues: (
-    key: keyof Pick<
-      FilterPOST,
-      "species" | "legalCode" | "doseForm" | "reglCase"
-    >,
     rootID:number,
     groupID:number,
-    filter: number[]
+    filter: number[],
+    groupFilter?: number[]
   ) => void;
 }) => {
   const [isDisplayed, SetIsDisplayed] = useState<any>({
-    "Vaisto grupė": true,
-    "Registracijos procedūra": true,
-    "Gyvūno rūšys": false,
+    "Vaisto grupė": false,
+    "Registracijos procedūra": false,
+    "Gyvūno rūšys": true,
     "Farmacinė forma": false,
     "Naudojimo būdas": false,
   });
@@ -135,7 +132,6 @@ const renderFilterGroups = (
 
 
     const parentIsChecked = rootID ? isFilterSelected(rootID, element.id, termArray, filterValues) : false;
-
     return (
       <Categories key={i}>
         {element.list ? (
@@ -149,15 +145,17 @@ const renderFilterGroups = (
               <Categories style={{ marginLeft: `${depth + 10}px` }}>
                 {element.terms.map((term) => {
 
-                    const isChecked = rootID ? isFilterSelected(rootID, null, [term[0]], filterValues) : false;
+                     const isChecked = filterValues?.filter.some(item => 
+                    item.terms && item.terms.includes(term[0]) || item.groups && item.groups?.includes(element.id)
+                  ) || false;
                   return (
                     <CheckboxRow key={term[0]}>
                       <StyledCheckbox
                         type="checkbox"
                         id={term[0].toString()}
                         onChange={(e) => {
-                          if (currentList && rootID)
-                            setFilterValues(currentList, rootID, element.id, [
+                            if (currentList && rootID)
+                            setFilterValues(rootID, element.id, [
                               Number(e.target.id),
                             ]);
                         }}
@@ -179,7 +177,7 @@ const renderFilterGroups = (
                 type="checkbox"
                 id={element.id.toString()}
                 onChange={() => {
-                  if (currentList && rootID) setFilterValues(currentList, rootID, element.id, termArray);
+                  if (currentList && rootID) setFilterValues(rootID, element.id, termArray);
                 }}
                 checked={parentIsChecked}
               />
@@ -203,7 +201,7 @@ const renderFilterGroups = (
               <Categories style={{ marginLeft: `${depth + 10}px` }}>
                 {element.terms.map((term) => {
                   const isChecked = filterValues?.filter.some(item => 
-                    item.terms && item.terms.includes(term[0])
+                    item.terms && item.terms.includes(term[0]) || item.groups && item.groups?.includes(element.id)
                   ) || false;
                   return (
                     <CheckboxRow key={term[0]}>
@@ -211,10 +209,11 @@ const renderFilterGroups = (
                         type="checkbox"
                         id={term[0].toString()}
                         onChange={(e) => {
+                          // console.log(element.id, termArray)
                           if (currentList && rootID)
-                            setFilterValues(currentList,  rootID, element.id, [
+                            setFilterValues(rootID, element.id, [
                               Number(e.target.id),
-                            ]);
+                            ], termArray);
                         }}
                         checked={isChecked}
                       />
