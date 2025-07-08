@@ -52,7 +52,7 @@ export const HomePage = () => {
 
   const [filterValues, setFilterValues] = useState<FilterPOST>({
     page: Number(page),
-    limit: 15,
+    limit: 10,
     desc: true,
     search: query,
     species: species,
@@ -98,7 +98,7 @@ export const HomePage = () => {
   }, [page]);
 
   const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
-  const { filters, filterGroups } = useFilters(i18n.language);
+  const { filters, filterGroups } = useFilters(i18n.language, isUPD);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -139,7 +139,9 @@ export const HomePage = () => {
     rootID: number,
     groupID: number,
     filter: number[],
-    groupFilter?: number[]
+    groupFilter?: number[],
+    groupArray?: number[],
+    
   ) => {
     const rootExists = filterValues.filter.findIndex(
       (item) => item.id === rootID
@@ -148,12 +150,13 @@ export const HomePage = () => {
       filterValues.filter.filter((item) => item.groups?.includes(groupID))
         .length > 0;
 
-    if (filter.length === 1) {//one term
+
+    console.log("root", rootID, "group:", groupID,"main terms", filter, "group terms:", groupFilter, "nested groups:", groupArray)
+    if (filter.length === 1 && !groupArray) {//one term
       
       const term = filter[0];
-
       setFilterValues((prev) => {
-        if (rootExists !== -1) {//if object exists
+        if (rootExists !== -1 ) {//if object exists
 
           const updatedFilter = [...prev.filter];
           const existingTerms = updatedFilter[rootExists].terms || [];
@@ -201,8 +204,7 @@ export const HomePage = () => {
             ...prev,
             filter: updatedFilter,
           };
-        } else {
-          //object doesnt exist, create one
+        } else {//object doesnt exist, create one
           return {
             ...prev,
             filter: [
@@ -221,11 +223,51 @@ export const HomePage = () => {
          
           const updatedFilter = [...prev.filter];
           const existingTerms = updatedFilter[rootExists].terms || [];
-          const existingGroups = updatedFilter[rootExists].groups || [];
+          let existingGroups = updatedFilter[rootExists].groups || [];
 
           const termsToRemove = filter.filter((term) =>
             existingTerms.includes(term)
           );
+          if(groupArray && groupArray.length > 0) //if group has subgroups
+          {
+           
+            if(existingGroups.includes(groupID)) //if parent exists, untoggling
+            {
+              groupArray.forEach((group)=> {//remove subgroups
+                if(existingGroups.includes(group))
+                {
+                    existingGroups= existingGroups.filter((g) => g !== group)
+                }
+              })
+              existingGroups = existingGroups.filter((g) => g !== groupID)
+              updatedFilter[rootExists] = {
+                ...updatedFilter[rootExists],
+                groups: existingGroups,
+               };
+            }
+            else 
+            {
+              groupArray.forEach((group)=> {
+                if(!existingGroups.includes(group))
+                {
+                    existingGroups= [...existingGroups, group]
+                }
+              })
+              updatedFilter[rootExists] = {
+              ...updatedFilter[rootExists],
+              groups: [...existingGroups, groupID],
+            };
+            }
+          }
+          else //no subgroups
+          {
+            updatedFilter[rootExists] = {
+              ...updatedFilter[rootExists],
+              groups: existingGroups.includes(groupID)
+                ? existingGroups.filter((g) => g !== groupID)
+                : [...existingGroups, groupID],
+            };
+          }
 
           if (termsToRemove.length > 0) {// if there are stray terms from this group, remove them
             updatedFilter[rootExists] = {
@@ -233,26 +275,24 @@ export const HomePage = () => {
               terms: existingTerms.filter((t) => !filter.includes(t)),
             };
           }
-
-          updatedFilter[rootExists] = {
-            ...updatedFilter[rootExists],
-            groups: existingGroups.includes(groupID)
-              ? existingGroups.filter((g) => g !== groupID)
-              : [...existingGroups, groupID],
-          };
-
           return {
             ...prev,
             filter: updatedFilter,
           };
         } else {//object doesnt exist, create one
+          let allGroups;
+          if (groupArray && groupArray.length > 0) { //if group has subgroups, add them
+            allGroups = [groupID, ...groupArray];
+          } else {
+            allGroups = [groupID];
+          }
           return {
             ...prev,
             filter: [
               ...prev.filter,
               {
                 id: rootID,
-                groups: [groupID],
+                groups: allGroups,
               },
             ],
           };

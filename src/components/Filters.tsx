@@ -25,12 +25,14 @@ export const Filters = ({
     rootID:number,
     groupID:number,
     filter: number[],
-    groupFilter?: number[]
+    groupFilter?: number[],
+    groups?:number[],
+    parentGroups?: number[],
   ) => void;
 }) => {
   const [isDisplayed, SetIsDisplayed] = useState<any>({
-    "Vaisto grupė": false,
-    "Registracijos procedūra": false,
+    "Vaisto grupė": true,
+    "Registracijos procedūra": true,
     "Gyvūno rūšys": true,
     "Farmacinė forma": false,
     "Naudojimo būdas": false,
@@ -64,10 +66,10 @@ export const Filters = ({
           if (currentList && data) {
             const found = data[currentList]?.find((item) => item[0] === code);
             const altName = found && (found.length > 2 ? String(found[2]) : String(found[1])) || ''
-            return [code, found ? altName : `Unknown ${code}`];
+            return [code, found ? altName : `Unknown`];
           }
           return [code, `No list context for ${code}`];
-        }) || [];
+        }).filter(item => item[1] !== "Unknown") || [];
 
       const processedGroups =
         element.groups && element.groups.length > 0
@@ -93,19 +95,33 @@ export const Filters = ({
     [filterGroups, data]
   );
 
-  const selectAllChildTerms = (parent:ProcessedFilterGroup[], termArray:number[]) => {
-    parent.map((element) => {
-      if(element.terms && element.terms.length > 0)
-      {
-        termArray.push(...element.terms.map(item => item[0]))
-      }
-      if(element.groups)
-      {
-        selectAllChildTerms(element.groups, termArray)
-      }
-    })
-    return termArray;
-  }
+  // const selectAllChildTerms = (parent:ProcessedFilterGroup[], termArray:number[]) => {
+  //   parent.map((element) => {
+  //     if(element.terms && element.terms.length > 0)
+  //     {
+  //       termArray.push(...element.terms.map(item => item[0]))
+  //     }
+  //     if(element.groups)
+  //     {
+  //       selectAllChildTerms(element.groups, termArray)
+  //     }
+  //   })
+  //   return termArray;
+  // }
+
+  // const selectAllChildGroups = (parent:ProcessedFilterGroup[], groupArray:number[]) => {
+  //   parent.map((element) => {
+  //     if(element.terms && element.terms.length > 0)
+  //     {
+  //       groupArray.push(...element.terms.map(item => item[0]))
+  //     }
+  //     if(element.groups)
+  //     {
+  //       selectAllChildGroups(element.groups, groupArray)
+  //     }
+  //   })
+  //   return groupArray;
+  // }
 
   //Dinamically renders information from /filter/groups api.
   //It recurses over itself to infinite depth, made up from 3 levels:
@@ -125,13 +141,18 @@ const renderFilterGroups = (
   return filterGroups.map((element, i) => {
     const currentList = element.list || inheritedList;
     const rootID = element.list ? element.id : inheritedRootId;
+    // const termArray = [
+    //   ...element.terms.map((item) => item[0]),
+    //   ...(element && selectAllChildTerms(element.groups, [])),
+    // ];
     const termArray = [
-      ...element.terms.map((item) => item[0]),
-      ...(element && selectAllChildTerms(element.groups, [])),
+      ...element.terms.map((item) => item[0])
+      
     ];
-
+    const groupArray = [...element.groups.map(group => group.id)]
 
     const parentIsChecked = rootID ? isFilterSelected(rootID, element.id, termArray, filterValues) : false;
+
     return (
       <Categories key={i}>
         {element.list ? (
@@ -177,7 +198,7 @@ const renderFilterGroups = (
                 type="checkbox"
                 id={element.id.toString()}
                 onChange={() => {
-                  if (currentList && rootID) setFilterValues(rootID, element.id, termArray);
+                  if (currentList && rootID) setFilterValues(rootID, element.id, termArray,undefined, groupArray );
                 }}
                 checked={parentIsChecked}
               />
@@ -209,11 +230,10 @@ const renderFilterGroups = (
                         type="checkbox"
                         id={term[0].toString()}
                         onChange={(e) => {
-                          // console.log(element.id, termArray)
                           if (currentList && rootID)
                             setFilterValues(rootID, element.id, [
                               Number(e.target.id),
-                            ], termArray);
+                            ], termArray, undefined);
                         }}
                         checked={isChecked}
                       />

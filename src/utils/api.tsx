@@ -87,9 +87,10 @@ class Api {
     });
   }
 
-  async getFilters(language: string): Promise<Filters> {
+  async getFilters(language: string, uat:boolean): Promise<Filters> {
+    const queryString = uat ? `api/med/filters?lang=${language}&uat=true` : `api/med/filters?lang=${language}`
     return this.get<Filters>({
-      resource: `api/med/filters?lang=${language}` ,
+      resource: queryString ,
     });
   }
 

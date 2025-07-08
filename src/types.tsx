@@ -7,6 +7,15 @@ export interface MedicineResponse {
   total: number;
   page: number;
   data: MedicineItems[];
+  query:{
+     filter:{
+      id: number;
+      groups?: number[];
+      terms?: number[];
+    }[];
+    id:string;
+    search:string;
+  }
 }
 
 export interface MedicineItems {
@@ -284,7 +293,7 @@ export interface FilterGroups {
 
 
 export interface FilterPOST {
-  limit: 15,
+  limit: number,
   desc: true,
   page: number;
   search: string;
