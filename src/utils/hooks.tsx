@@ -39,10 +39,10 @@ export const useAllMedicines = (query: string, page: number, uat: boolean, langu
   return { data, isLoading, refetch };
 };
 
-export const useFilters = (language: string) => {
+export const useFilters = (language: string, uat:boolean) => {
   const { data, isLoading, refetch } = useQuery<Filters>({
-    queryKey: ["filters", { language }],
-    queryFn: () => api.getFilters(language),
+    queryKey: ["filters", { language, uat }],
+    queryFn: () => api.getFilters(language, uat),
     retry: false,
     enabled: true,
     refetchOnWindowFocus: false,

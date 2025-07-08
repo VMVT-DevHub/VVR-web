@@ -64,8 +64,8 @@ export function sanitizeString(str: string) {
 }
 
 export const isSubset = (array1:number[], array2:number[]) => {
-  const hashSet = new Set(array1)
-
+  const hashSet = new Set(array1) // the longer one
+//array2 is the subset
   for(const num of array2)
   {
     if(!hashSet.has(num))
@@ -80,10 +80,8 @@ export const isFilterSelected = (rootID: number, groupID: number | null, terms: 
   if (!rootFilter) return false;
 
   if (groupID !== null) {
-    // Check if group is selected
     return rootFilter.groups?.includes(groupID) || false;
   } else {
-    // Check if all terms are selected
     const selectedTerms = rootFilter.terms || [];
     return terms.length > 0 && isSubset(selectedTerms, terms);
   }

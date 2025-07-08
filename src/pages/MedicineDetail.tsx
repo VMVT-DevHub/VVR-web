@@ -133,24 +133,30 @@ export const MedicineDetail = () => {
       <MedicineDetailContainer>
         <LeftColumn>
           <Title>{t("medicineDetail.indication")}</Title>
-          {medicine.indications ? medicine.indications?.filter((item, index) =>
-              handleFiltering(item, index, showMoreIndications, 4)
-            ).map((indication) => {
-            if(!indication.species) return;
-            const animals = indication.species.map((animal) => animal.alt || animal.type)
-            return (
-              <AnimalContainer>
-                <Animal>
-                  {animals.join(", ")}
-                </Animal>
-                <ProduceContainer>
-                  {indication.text.map((text) => {
-                    return <Produce>{text}</Produce>;
-                  })}
-                </ProduceContainer>
-              </AnimalContainer>
-            );
-          }) : <p>{t("error.noDescription")}</p>}
+          {medicine.indications ? (
+            medicine.indications
+              ?.filter((item, index) =>
+                handleFiltering(item, index, showMoreIndications, 4)
+              )
+              .map((indication) => {
+                if (!indication.species) return;
+                const animals = indication.species.map(
+                  (animal) => animal.alt || animal.type
+                );
+                return (
+                  <AnimalContainer>
+                    <Animal>{animals.join(", ")}</Animal>
+                    <ProduceContainer>
+                      {indication.text.map((text) => {
+                        return <Produce>{text}</Produce>;
+                      })}
+                    </ProduceContainer>
+                  </AnimalContainer>
+                );
+              })
+          ) : (
+            <p>{t("error.noDescription")}</p>
+          )}
           {medicine.indications && medicine.indications.length > 4 && (
             <button onClick={() => setShowMoreIndications((prev) => !prev)}>
               {showMoreIndications
@@ -202,7 +208,9 @@ export const MedicineDetail = () => {
                       <AnimalContainer
                         key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
                       >
-                        <Animal>{species.alt ? species.alt : species.type}</Animal>
+                        <Animal>
+                          {species.alt ? species.alt : species.type}
+                        </Animal>
                         <ProduceContainer>
                           {species.withdrawalPeriod.map(
                             (period, periodIndex) => {
@@ -410,46 +418,62 @@ export const MedicineDetail = () => {
             />
           </RegisteredInformation>
 
-          <ProductInfoTitle>
-            <Icon name={"book"} />
-            <p>{t("medicineDetail.productInfo")}</p>
-          </ProductInfoTitle>
+          <DocumentDownloadContainer>
+            <ProductInfoTitle>
+              <Icon name={"book"} />
+              <p>{t("medicineDetail.productInfo")}</p>
+            </ProductInfoTitle>
 
-          {medicine.documents ? (
-            medicine.documents
-              .sort(sortByLanguage)
-              .filter((item, index) =>
-                handleFiltering(item, index, showMoreDocuments, 2)
-              )
-              .map((item) => {
-                return (
-                  <DownloadInfo
-                    key={item.id}
-                    med_id={id!}
-                    doc_id={item.id}
-                    name={item.name}
-                    title={item.type?.type}
-                    lang={item.lang?.toUpperCase()}
-                    date={item.date?.split("T")[0]}
-                  />
-                );
-              })
-          ) : (
-            <DownloadTitle>{t("error.noFiles")}</DownloadTitle>
-          )}
-          {medicine.documents && medicine.documents.length > 2 && (
-            <button onClick={() => setShowMoreDocuments((prev) => !prev)}>
-              {showMoreDocuments
-                ? t("medicineDetail.showLess")
-                : t("medicineDetail.showMore")}
-            </button>
-          )}
+            {medicine.documents ? (
+              medicine.documents
+                .sort(sortByLanguage)
+                .filter((item, index) =>
+                  handleFiltering(item, index, showMoreDocuments, 2)
+                )
+                .map((item) => {
+                  return (
+                    <DownloadInfo
+                      key={item.id}
+                      med_id={id!}
+                      doc_id={item.id}
+                      name={item.name}
+                      title={item.type?.type}
+                      lang={item.lang?.toUpperCase()}
+                      date={item.date?.split("T")[0]}
+                    />
+                  );
+                })
+            ) : (
+              <DownloadTitle>{t("error.noFiles")}</DownloadTitle>
+            )}
+            {medicine.documents && medicine.documents.length > 2 && (
+              <DownloadMoreButton onClick={() => setShowMoreDocuments((prev) => !prev)}>
+                {showMoreDocuments
+                  ? t("medicineDetail.showLess")
+                  : t("medicineDetail.showMore")}
+              </DownloadMoreButton>
+            )}
+          </DocumentDownloadContainer>
         </RightColumn>
       </MedicineDetailContainer>
     </>
   );
 };
 
+const DownloadMoreButton = styled.button`
+   @media ${device.mobileL} {
+      font-size: 1rem;
+      margin: 0 auto;
+      margin-top: 8px;
+    }
+`
+
+const DocumentDownloadContainer = styled.div`
+  @media ${device.mobileL} {
+      order: 1;
+      margin-bottom: 16px;
+    }
+`
 const DownloadTitle = styled.div`
   margin-top: 4px;
   font-size: 0.8rem;
@@ -530,6 +554,9 @@ const RegisteredInformation = styled.div`
   & h2:first-of-type {
     margin: 0 0 16px 0;
   }
+  @media ${device.mobileL} {
+      order: 2;
+    }
 `;
 const LeftColumn = styled.section`
   display: flex;
