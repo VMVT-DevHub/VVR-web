@@ -297,10 +297,7 @@ export interface FilterPOST {
   desc: true,
   page: number;
   search: string;
-  species: number[];
-  legalCode: number[];
-  doseForm: number[];
-  reglCase: number[];
+  query?:string;
   filter: {
     id: number;
     groups?: number[];

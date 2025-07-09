@@ -1,3 +1,4 @@
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useTranslation } from "react-i18next";
 import { SearchSection } from "../components/SearchSection";
@@ -20,69 +21,26 @@ import { handleDateDifference, isSubset } from "../utils/functions";
 import rx from "../styles/images/Rx.svg";
 import rxplus from "../styles/images/Rxplus.svg";
 import otc from "../styles/images/Otc.svg";
-
 export const HomePage = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const paginationRef = useRef<null | HTMLDivElement>(null);
-
   const query = searchParams.get("q") || "";
   const page = searchParams.get("p") || 1; 
-  const species = searchParams.get("r")?.split('.').map(Number).filter(Number) || [];
-  const legalCode = searchParams.get("g")?.split('.').map(Number).filter(Number) || [];
-  const doseForm = searchParams.get("f")?.split('.').map(Number).filter(Number) || [];
-  const reglCase = searchParams.get("rc")?.split('.').map(Number).filter(Number) || [];
-
+  const queryID = searchParams.get("id") || ""; 
   const [isUPD, setIsUPD] = useState(
     localStorage.getItem("isUPD") === "true" || false
   );
-
-  // useEffect(() => {
-  //   if (paginationRef.current) {
-  //     paginationRef.current.scrollIntoView({
-  //       behavior: "smooth",
-  //       block: "start",
-  //       inline: "start",
-  //     });
-  //   }
-  // }, [page]);
-
-
   const [filterValues, setFilterValues] = useState<FilterPOST>({
     page: Number(page),
     limit: 10,
     desc: true,
     search: query,
-    species: species,
-    legalCode: legalCode,
-    doseForm: doseForm,
-    reglCase: reglCase,
-    filter:[]
+    filter:[],
+    ...(queryID && {query: queryID})
   });
-
-  useEffect(() => {
-    const filters = {
-      species: "r",
-      legalCode: "g",
-      doseForm: "f",
-      reglCase: "rc"
-    };
-
-    setSearchParams((searchParams) => {
-      Object.entries(filters).forEach(([filterKey, paramKey]) => {
-        const filterArray = filterValues[filterKey as keyof FilterPOST];
-
-        if (Array.isArray(filterArray) && filterArray?.length > 0) {
-          searchParams.set(paramKey, filterArray.join("."));
-        } else {
-          searchParams.delete(paramKey);
-        }
-      });
-      return searchParams;
-    });
-  }, [filterValues.species, filterValues.legalCode, filterValues.doseForm, filterValues.reglCase]);
 
   useEffect(() => {
     if (isNaN(Number(page)) || Number(page) < 0) {
@@ -96,10 +54,26 @@ export const HomePage = () => {
         }));
     }
   }, [page]);
-
+   
   const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
   const { filters, filterGroups } = useFilters(i18n.language, isUPD);
+  useEffect(() => {
+    if (medicine && medicine.query) {
+      setSearchParams((searchParams) => {
+        searchParams.set("id", medicine?.query.id);
+        return searchParams;
+      });
+      if(filterValues.query)
+      {
+         setFilterValues((prev) => ({
+          ...prev,
+          filter: medicine.query.filter
+          }));
+      }
+    }
+  }, [medicine]);
 
+  console.log(medicine?.query.id)
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
       if (!value || value.length > 2) {
@@ -111,7 +85,6 @@ export const HomePage = () => {
     }),
   });
   const formValues = { medicine: query };
-
   const handleSubmit = (
     values: typeof formValues,
     {
@@ -120,21 +93,17 @@ export const HomePage = () => {
       resetForm: (nextState?: Partial<FormikState<typeof formValues>>) => void;
     }
   ) => {
-
      setSearchParams(searchParams => {
       searchParams.set("q", values.medicine);
       searchParams.set("p", "1");
       return searchParams;
     });
-
     setFilterValues((prev) => ({
       ...prev,
       ["search"]: values.medicine,
     }));
-
     resetForm({ values: values, isSubmitting: false, isValidating: false });
   };
-
   const handleFilterChange = (
     rootID: number,
     groupID: number,
@@ -150,18 +119,15 @@ export const HomePage = () => {
       filterValues.filter.filter((item) => item.groups?.includes(groupID))
         .length > 0;
 
-
-    console.log("root", rootID, "group:", groupID,"main terms", filter, "group terms:", groupFilter, "nested groups:", groupArray)
+    // console.log("root", rootID, "group:", groupID,"main terms", filter, "group terms:", groupFilter, "nested groups:", groupArray)
     if (filter.length === 1 && !groupArray) {//one term
       
       const term = filter[0];
       setFilterValues((prev) => {
         if (rootExists !== -1 ) {//if object exists
-
           const updatedFilter = [...prev.filter];
           const existingTerms = updatedFilter[rootExists].terms || [];
           const existingGroups = updatedFilter[rootExists].groups || [];
-
           if (groupAlreadySelected && groupFilter) {// a term in group is unchecked
             //1. remove group
             updatedFilter[rootExists] = {
@@ -199,7 +165,6 @@ export const HomePage = () => {
               };
             }
           }
-
           return {
             ...prev,
             filter: updatedFilter,
@@ -224,7 +189,6 @@ export const HomePage = () => {
           const updatedFilter = [...prev.filter];
           const existingTerms = updatedFilter[rootExists].terms || [];
           let existingGroups = updatedFilter[rootExists].groups || [];
-
           const termsToRemove = filter.filter((term) =>
             existingTerms.includes(term)
           );
@@ -268,7 +232,6 @@ export const HomePage = () => {
                 : [...existingGroups, groupID],
             };
           }
-
           if (termsToRemove.length > 0) {// if there are stray terms from this group, remove them
             updatedFilter[rootExists] = {
               ...updatedFilter[rootExists],
@@ -299,26 +262,27 @@ export const HomePage = () => {
         }
       });
     }
-
     setSearchParams((searchParams) => {
       searchParams.set("p", "1");
       return searchParams;
     });
+    setFilterValues((prev) => {
+      const newFilterValues = { ...prev };
+      delete newFilterValues.query;
+      return newFilterValues;
+    });
   };
-
 
   const handlePageChange = (newPage: number) => {
     setSearchParams(searchParams => {
       searchParams.set("p", newPage.toString());
       return searchParams;
     });
-
     setFilterValues((prev) => ({
       ...prev,
       ["page"]: newPage,
     }));
   };
-
   return (
     <main ref={paginationRef}>
       <Formik
@@ -420,7 +384,6 @@ export const HomePage = () => {
                     legalCode={item.legalCode}
                   />
                 </a>
-
               );
             })
           ) : (
@@ -460,9 +423,7 @@ export const HomePage = () => {
         </>
     </main>
   );
-
 };
-
 const Paragraph = styled.p`
   color: ${({ theme }) => theme.colors.grey};
 `;
@@ -487,7 +448,6 @@ const Entry = styled.div`
   align-items: center;
   gap: 8px;
 `;
-
 const ErrorMessage = styled.div`
   width: 450px;
   margin: 0 auto;
@@ -508,7 +468,6 @@ const StyledLink = styled.a`
     text-decoration: dashed;
   }
 `;
-
 // const StyledButton = styled.button`
 //   border: 1px solid grey;
 //   border-radius: 8px;
@@ -530,7 +489,6 @@ const ShowFilters = styled.button`
   font-weight: 500;
   font-size: 1rem;
   margin-bottom: 16px;
-
   &:hover {
     background-color: ${({ theme }) => theme.colors.secondary};
   }
@@ -538,7 +496,6 @@ const ShowFilters = styled.button`
     display: flex;
   }
 `;
-
 const NotFound = styled.p`
   font-weight: 500;
   margin-top: 40px;
@@ -567,5 +524,3 @@ const RightColumn = styled.div`
     width: 100%;
   }
 `;
-
-

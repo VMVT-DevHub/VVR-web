@@ -33,7 +33,7 @@ export const Filters = ({
   const [isDisplayed, SetIsDisplayed] = useState<any>({
     "Vaisto grupė": true,
     "Registracijos procedūra": true,
-    "Gyvūno rūšys": true,
+    "Gyvūno rūšys": false,
     "Farmacinė forma": false,
     "Naudojimo būdas": false,
   });
@@ -166,7 +166,7 @@ const renderFilterGroups = (
               <Categories style={{ marginLeft: `${depth + 10}px` }}>
                 {element.terms.map((term) => {
 
-                     const isChecked = filterValues?.filter.some(item => 
+                     const isChecked = filterValues?.filter && filterValues?.filter.some(item => 
                     item.terms && item.terms.includes(term[0]) || item.groups && item.groups?.includes(element.id)
                   ) || false;
                   return (

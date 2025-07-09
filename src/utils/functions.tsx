@@ -76,7 +76,7 @@ export const isSubset = (array1:number[], array2:number[]) => {
   return true;
 }
 export const isFilterSelected = (rootID: number, groupID: number | null, terms: number[], filterValues:FilterPOST) => {
-  const rootFilter = filterValues.filter.find(item => item.id === rootID);
+  const rootFilter = filterValues.filter && filterValues.filter.find(item => item.id === rootID);
   if (!rootFilter) return false;
 
   if (groupID !== null) {
