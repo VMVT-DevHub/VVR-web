@@ -12,7 +12,10 @@ export const Footer = () => {
         <Paragraph>
           2025-{currentYear}
         </Paragraph>
-        <Paragraph>{t("footer.vmvt")}</Paragraph>
+        <Paragraph>
+          <p>{t("footer.vmvt")}</p>
+          <a href="https://vmvt.lrv.lt/lt/fb/">{t("footer.vigilance")}</a>
+        </Paragraph>
       </BottomFooter>
     </FooterContainer>
   );
@@ -26,12 +29,16 @@ const BottomFooter = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 20px 0;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   border-top: 1px solid ${({ theme }) => theme.colors.grey_light};
   @media ${device.mobileL} {
     flex-direction: column;
   }
 `;
-const Paragraph = styled.p`
+const Paragraph = styled.div`
   color: ${({ theme }) => theme.colors.grey};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
 `;

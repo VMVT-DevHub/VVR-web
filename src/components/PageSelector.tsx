@@ -3,18 +3,20 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 export interface PageSelectorProps {
+  pageAmount: number;
   total: number;
   currentPage: number;
   setCurrentPage: (page: number) => void;
 }
 export const PageSelector = ({
+  pageAmount,
   total,
   currentPage,
   setCurrentPage,
 }: PageSelectorProps) => {
   
   const [pageLayout, setPageLayout] = useState<number[]>([1, 2, 3, 4, 5]);
-  const totalPages = Math.ceil(total / 10);
+  const totalPages = Math.ceil(total / pageAmount);
   const { t } = useTranslation();
 
   useEffect(() => {

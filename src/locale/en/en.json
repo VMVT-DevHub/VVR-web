@@ -9,7 +9,8 @@
         "search": "Search",
         "searchLoading": "Searching..",
         "required": "Required field",
-        "showFilters": "Show filters"
+        "showFilters": "Show filters",
+        "shownAmount": "Show amount"
     },
      "medicineDetail": {
         "goBack": "Go back",
@@ -51,7 +52,8 @@
         "meaning": "Meanings of pictograms",
         "prescription": "Prescription medicine",
         "nonprescription": "Non-prescription medicine",
-        "vetPrescription": "Prescription medicine for veterinary use only"
+        "vetPrescription": "Prescription medicine for veterinary use only",
+        "vigilance": "Pharmacovigilance"
     },
     "medicines": {
         "previous": "Prev.",

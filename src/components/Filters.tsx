@@ -95,34 +95,6 @@ export const Filters = ({
     [filterGroups, data]
   );
 
-  // const selectAllChildTerms = (parent:ProcessedFilterGroup[], termArray:number[]) => {
-  //   parent.map((element) => {
-  //     if(element.terms && element.terms.length > 0)
-  //     {
-  //       termArray.push(...element.terms.map(item => item[0]))
-  //     }
-  //     if(element.groups)
-  //     {
-  //       selectAllChildTerms(element.groups, termArray)
-  //     }
-  //   })
-  //   return termArray;
-  // }
-
-  // const selectAllChildGroups = (parent:ProcessedFilterGroup[], groupArray:number[]) => {
-  //   parent.map((element) => {
-  //     if(element.terms && element.terms.length > 0)
-  //     {
-  //       groupArray.push(...element.terms.map(item => item[0]))
-  //     }
-  //     if(element.groups)
-  //     {
-  //       selectAllChildGroups(element.groups, groupArray)
-  //     }
-  //   })
-  //   return groupArray;
-  // }
-
   //Dinamically renders information from /filter/groups api.
   //It recurses over itself to infinite depth, made up from 3 levels:
   // 1. if(element.list), it's the master, has show more/less logic
@@ -141,14 +113,7 @@ const renderFilterGroups = (
   return filterGroups.map((element, i) => {
     const currentList = element.list || inheritedList;
     const rootID = element.list ? element.id : inheritedRootId;
-    // const termArray = [
-    //   ...element.terms.map((item) => item[0]),
-    //   ...(element && selectAllChildTerms(element.groups, [])),
-    // ];
-    const termArray = [
-      ...element.terms.map((item) => item[0])
-      
-    ];
+    const termArray = [...element.terms.map((item) => item[0])];
     const groupArray = [...element.groups.map(group => group.id)]
 
     const parentIsChecked = rootID ? isFilterSelected(rootID, element.id, termArray, filterValues) : false;
