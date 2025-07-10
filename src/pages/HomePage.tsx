@@ -27,20 +27,24 @@ export const HomePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
   const paginationRef = useRef<null | HTMLDivElement>(null);
+
+  const pageAmount = Number(searchParams.get("qnt")) || 5;
   const query = searchParams.get("q") || "";
   const page = searchParams.get("p") || 1; 
   const queryID = searchParams.get("id") || ""; 
+
   const [isUPD, setIsUPD] = useState(
     localStorage.getItem("isUPD") === "true" || false
   );
   const [filterValues, setFilterValues] = useState<FilterPOST>({
     page: Number(page),
-    limit: 10,
+    limit: pageAmount,
     desc: true,
+    filter: [],
     search: query,
-    filter:[],
     ...(queryID && {query: queryID})
   });
+
 
   useEffect(() => {
     if (isNaN(Number(page)) || Number(page) < 0) {
@@ -63,7 +67,7 @@ export const HomePage = () => {
         searchParams.set("id", medicine?.query.id);
         return searchParams;
       });
-      if(filterValues.query)
+      if(filterValues.query && medicine.query.filter)
       {
          setFilterValues((prev) => ({
           ...prev,
@@ -73,7 +77,6 @@ export const HomePage = () => {
     }
   }, [medicine]);
 
-  console.log(medicine?.query.id)
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
       if (!value || value.length > 2) {
@@ -112,6 +115,7 @@ export const HomePage = () => {
     groupArray?: number[],
     
   ) => {
+
     const rootExists = filterValues.filter.findIndex(
       (item) => item.id === rootID
     );
@@ -119,7 +123,6 @@ export const HomePage = () => {
       filterValues.filter.filter((item) => item.groups?.includes(groupID))
         .length > 0;
 
-    // console.log("root", rootID, "group:", groupID,"main terms", filter, "group terms:", groupFilter, "nested groups:", groupArray)
     if (filter.length === 1 && !groupArray) {//one term
       
       const term = filter[0];
@@ -308,7 +311,7 @@ export const HomePage = () => {
           );
         }}
       </Formik>
-      
+
       <ContentContainer>
         <LeftColumn>
           {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
@@ -321,7 +324,7 @@ export const HomePage = () => {
             />
             <ShowFilters onClick={() => setShowFilters((prev) => !prev)}>
               <Icon name={"filters"} />
-              {t('homePage.showFilters')}
+              {t("homePage.showFilters")}
             </ShowFilters>
             <PopUp
               visible={showFilters}
@@ -340,28 +343,63 @@ export const HomePage = () => {
           </>
           {/* )} */}
           <form>
-        <br></br>
-        <label htmlFor="upd">Ar naudoti UPD test?</label>
-        <input
-          id="upd"
-          name="upd"
-          type={"checkbox"}
-          checked={isUPD}
-          onChange={(e) => {
-            return (
-              setIsUPD(e.target.checked),
-              localStorage.setItem("isUPD", e.target.checked.toString())
-            );
-          }}
-        />
-      </form>
+            <br></br>
+            <label htmlFor="upd">Ar naudoti UPD test?</label>
+            <input
+              id="upd"
+              name="upd"
+              type={"checkbox"}
+              checked={isUPD}
+              onChange={(e) => {
+                return (
+                  setIsUPD(e.target.checked),
+                  localStorage.setItem("isUPD", e.target.checked.toString())
+                );
+              }}
+            />
+          </form>
         </LeftColumn>
         <RightColumn>
-          {isLoading ? <Loader /> : medicine === undefined && <ErrorMessage><p>{t('error.noMedicine')}</p></ErrorMessage>}
+          {isLoading ? (
+            <Loader />
+          ) : (
+            medicine === undefined && (
+              <ErrorMessage>
+                <p>{t("error.noMedicine")}</p>
+              </ErrorMessage>
+            )
+          )}
+          {medicine?.items !== 0 && (
+            <ItemAmountSelector>
+              <label htmlFor="kiekis">{t("homePage.shownAmount")}:</label>
+              <StyledSelect
+                id="kiekis"
+                name="kiekis"
+                value={pageAmount}
+                onChange={(e) => {
+                  setFilterValues((prev) => ({
+                    ...prev,
+                    page: 1,
+                    limit: Number(e.target.value),
+                  }));
+                  setSearchParams((searchParams) => {
+                    searchParams.set("qnt", e.target.value);
+                    searchParams.set("p", "1");
+                    return searchParams;
+                  });
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={30}>30</option>
+              </StyledSelect>
+            </ItemAmountSelector>
+          )}
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
               return (
-                  <a
+                <a
                   key={item.id}
                   href={slugs.medicineDetail(item.id)}
                   onClick={(e) => {
@@ -370,7 +408,7 @@ export const HomePage = () => {
                       state: { isUPD },
                     });
                   }}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <Medicine
                     key={item.id}
@@ -397,6 +435,7 @@ export const HomePage = () => {
           )}
           {medicine !== undefined && medicine?.items !== 0 && (
             <PageSelector
+              pageAmount={pageAmount}
               currentPage={Number(page)}
               total={medicine.total}
               setCurrentPage={handlePageChange}
@@ -406,24 +445,34 @@ export const HomePage = () => {
       </ContentContainer>
       <>
         <Explanation>{t("footer.meaning")}</Explanation>
-      <TopRow>
-        <Entry>
-          <StyledImg src={rx} alt="RX" />
-          <Paragraph>{t("footer.prescription")}</Paragraph>
-        </Entry>
-        <Entry>
-          <StyledImg src={otc} alt="OTC" />
-          <Paragraph>{t("footer.nonprescription")}</Paragraph>
-        </Entry>
-        <Entry>
-          <StyledImg src={rxplus} alt="RxPlus"/>
-          <Paragraph>{t("footer.vetPrescription")}</Paragraph>
-        </Entry>
-      </TopRow>
-        </>
+        <TopRow>
+          <Entry>
+            <StyledImg src={rx} alt="RX" />
+            <Paragraph>{t("footer.prescription")}</Paragraph>
+          </Entry>
+          <Entry>
+            <StyledImg src={otc} alt="OTC" />
+            <Paragraph>{t("footer.nonprescription")}</Paragraph>
+          </Entry>
+          <Entry>
+            <StyledImg src={rxplus} alt="RxPlus" />
+            <Paragraph>{t("footer.vetPrescription")}</Paragraph>
+          </Entry>
+        </TopRow>
+      </>
     </main>
   );
 };
+const StyledSelect = styled.select`
+  border-radius: 8px;
+  padding: 4px 0 2px 4px;
+`
+const ItemAmountSelector = styled.div`
+  display: flex;
+  align-self: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+`
 const Paragraph = styled.p`
   color: ${({ theme }) => theme.colors.grey};
 `;
@@ -520,6 +569,8 @@ const LeftColumn = styled.div`
 `;
 const RightColumn = styled.div`
   width: 70%;
+  display: flex;
+  flex-direction: column;
   @media ${device.mobileL} {
     width: 100%;
   }
