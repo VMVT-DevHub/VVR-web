@@ -10,7 +10,8 @@
         "searchLoading": "Searching..",
         "required": "Required field",
         "showFilters": "Show filters",
-        "shownAmount": "Show amount"
+        "shownAmount": "Show amount",
+        "removeFilter": "Remove filters"
     },
      "medicineDetail": {
         "goBack": "Go back",

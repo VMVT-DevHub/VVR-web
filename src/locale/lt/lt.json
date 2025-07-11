@@ -10,7 +10,8 @@
         "searchLoading": "Ieškoma..",
         "required": "Privalomas laukas",
         "showFilters": "Rodyti filtrus",
-        "shownAmount": "Rodomų vaistų kiekis"
+        "shownAmount": "Rodomų vaistų kiekis",
+        "removeFilter": "Pašalinti filtrus"
     },
     "medicineDetail": {
         "goBack": "Grįžti atgal",
