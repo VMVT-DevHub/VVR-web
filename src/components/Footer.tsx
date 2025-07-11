@@ -28,7 +28,6 @@ const FooterContainer = styled.footer`
 const BottomFooter = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 20px 0;
   padding-bottom: 20px;
   border-top: 1px solid ${({ theme }) => theme.colors.grey_light};
   @media ${device.mobileL} {
