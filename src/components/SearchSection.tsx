@@ -114,11 +114,11 @@ const TextInput = styled.input<{ disabled: boolean }>`
   }
   &::-webkit-search-cancel-button{
     position:relative;
-    /* right:148px;   
+    right:148px;   
     @media ${device.mobileL} {
           right:85px;   
 
-    }  */
+    } 
   }
   @media ${device.mobileL} {
       padding: 18px 30px;

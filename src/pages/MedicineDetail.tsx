@@ -132,8 +132,8 @@ export const MedicineDetail = () => {
       />
       <MedicineDetailContainer>
         <LeftColumn>
-          <Title>{t("medicineDetail.indication")}</Title>
-          {medicine.indications ? (
+          {medicine.indications && <Title>{t("medicineDetail.indication")}</Title>}
+          {medicine.indications && (
             medicine.indications
               ?.filter((item, index) =>
                 handleFiltering(item, index, showMoreIndications, 4)
@@ -154,8 +154,6 @@ export const MedicineDetail = () => {
                   </AnimalContainer>
                 );
               })
-          ) : (
-            <p>{t("error.noDescription")}</p>
           )}
           {medicine.indications && medicine.indications.length > 4 && (
             <button onClick={() => setShowMoreIndications((prev) => !prev)}>

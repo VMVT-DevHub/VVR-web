@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import styled from "styled-components";
 import Icon from "../styles/icons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FilterGroups,
   FilterPOST,
@@ -9,6 +9,10 @@ import {
   ProcessedFilterGroup,
 } from "../types";
 import { isFilterSelected } from "../utils/functions";
+
+interface DisplayState {
+  [key: number]: boolean;
+}
 
 export const Filters = ({
   className,
@@ -30,22 +34,41 @@ export const Filters = ({
     parentGroups?: number[],
   ) => void;
 }) => {
-  const [isDisplayed, SetIsDisplayed] = useState<any>({
-    "Vaisto grupė": true,
-    "Registracijos procedūra": true,
-    "Gyvūno rūšys": false,
-    "Farmacinė forma": false,
-    "Naudojimo būdas": false,
+  const [isDisplayed, SetIsDisplayed] = useState<DisplayState>({
+    69: true,
+    68: true,
+    1: false,
+    35: false,
+    20: false,
   });
-  const [isParentDisplayed, SetIsParentDisplayed] = useState<any>({});
+  const [isParentDisplayed, SetIsParentDisplayed] = useState<DisplayState>({});
 
-  const toggleDisplay = (item: string) => {
+  const openCheckedFilters = () => {
+    const parentUpdates:DisplayState = {}
+  
+    filterValues.filter.forEach(element => {
+      if(element.id) {
+        parentUpdates[element.id] = true;
+      }
+    });
+    
+    SetIsDisplayed((prevState) => ({
+      ...prevState,
+      ...parentUpdates
+    }));
+
+  }
+
+  useEffect(()=>{
+  openCheckedFilters()
+  },[filterValues.filter])
+  const toggleDisplay = (item: number) => {
     SetIsDisplayed({
       ...isDisplayed,
       [item]: !isDisplayed[item],
     });
   };
-  const toggleParentDisplay = (item: string) => {
+  const toggleParentDisplay = (item: number) => {
     SetIsParentDisplayed({
       ...isParentDisplayed,
       [item]: !isParentDisplayed[item],
@@ -122,12 +145,12 @@ const renderFilterGroups = (
       <Categories key={i}>
         {element.list ? (
           <>
-            <CategoryContainer onClick={() => toggleDisplay(element.name)} $isActive={isDisplayed[element.name]}>
+            <CategoryContainer onClick={() => toggleDisplay(element.id)} $isActive={isDisplayed[element.id]}>
               <CategoryTitle>{element.name}</CategoryTitle>
-              <StyledIcon $isActive={isDisplayed[element.name]} name="arrow" />
+              <StyledIcon $isActive={isDisplayed[element.id]} name="arrow" />
             </CategoryContainer>
             
-            {isDisplayed[element.name] && (
+            {isDisplayed[element.id] && (
               <Categories style={{ marginLeft: `${depth + 10}px` }}>
                 {element.terms.map((term) => {
 
@@ -173,17 +196,17 @@ const renderFilterGroups = (
               {(element.terms.length > 0 || element.groups.length > 0) && (
                 <button
                   type="button"
-                  onClick={() => toggleParentDisplay(element.name)}
+                  onClick={() => toggleParentDisplay(element.id)}
                 >
                   <StyledIcon
-                    $isActive={!isParentDisplayed[element.name]}
+                    $isActive={!isParentDisplayed[element.id]}
                     name="arrow"
                   />
                 </button>
               )}
             </CheckboxRow>
 
-            {isParentDisplayed[element.name] && (
+            {isParentDisplayed[element.id] && (
               <Categories style={{ marginLeft: `${depth + 10}px` }}>
                 {element.terms.map((term) => {
                   const isChecked = filterValues?.filter.some(item => 
