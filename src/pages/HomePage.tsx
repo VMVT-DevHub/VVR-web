@@ -534,6 +534,7 @@ const StyledImg = styled.img`
   width: 24px;
 `;
 const Explanation = styled.p`
+  margin-top: 70px;
   margin-bottom: 8px;
   font-weight: 500;
   color: ${({ theme }) => theme.colors.primary};
