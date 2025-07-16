@@ -1,4 +1,4 @@
-import { Documents, FilterPOST } from "../types";
+import { Documents, FilterPOST, Route, Species, WithdrawalPeriod } from "../types";
 import rx from "../styles/images/Rx.svg";
 import rxplus from "../styles/images/Rxplus.svg";
 import otc from "../styles/images/Otc.svg";
@@ -98,4 +98,30 @@ export const handlePrescription = (code: number | null | undefined) => {
       default:
         return rx;
     }
+  };
+
+  export const groupWithdrawalPeriods = (route: Route) => {
+    const grouped: {
+      [key: string]: { period: WithdrawalPeriod; animals: string[] };
+    } = {};
+
+    route.species?.forEach((species: Species) => {
+      if (!species.withdrawalPeriod) return;
+
+      species.withdrawalPeriod.forEach((period: WithdrawalPeriod) => {
+        const key = `${period.tissue?.code || "unknown"}-${period.num}-${
+          period.type
+        }`;
+
+        if (!grouped[key]) {
+          grouped[key] = {
+            period: period,
+            animals: [],
+          };
+        }
+
+        grouped[key].animals.push(species.alt || species.type);
+      });
+    });
+    return Object.values(grouped);
   };

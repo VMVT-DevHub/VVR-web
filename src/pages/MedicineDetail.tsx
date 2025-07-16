@@ -11,8 +11,8 @@ import { DownloadInfo } from "../components/others/DownloadInfo";
 import { Loader } from "../components/Loader";
 import { useTranslation } from "react-i18next";
 import { device } from "../styles";
-import { handleDateDifference, sortByLanguage } from "../utils/functions";
-import { Documents, Indication, Pack } from "../types";
+import { groupWithdrawalPeriods, handleDateDifference, sortByLanguage } from "../utils/functions";
+import { Documents, Indication, Pack} from "../types";
 
 export const MedicineDetail = () => {
   const { t, i18n } = useTranslation();
@@ -120,6 +120,9 @@ export const MedicineDetail = () => {
     })
     .filter((text) => text !== "") || undefined;
 
+    
+
+
   return (
     <>
       <DetailTitle
@@ -187,12 +190,14 @@ export const MedicineDetail = () => {
                         ? "Naudoti per burną"
                         : route.type}
                     </UsageType>
-                    <AnimalContainer key={`${prodIndex}-${routeIndex}`}>
+                    <AnimalContainer>
                       <p>{t("error.noWithdrawal")}</p>
                     </AnimalContainer>
                   </UsageTypeContainer>
                 );
               }
+
+              const groupedPeriods = groupWithdrawalPeriods(route);
               return (
                 <UsageTypeContainer key={`${prodIndex}-${routeIndex}`}>
                   <UsageType>
@@ -200,53 +205,48 @@ export const MedicineDetail = () => {
                       ? "Naudoti per burną"
                       : route.type}
                   </UsageType>
-                  {route.species
-                    .filter((species) => species.withdrawalPeriod)
-                    .map((species, speciesIndex) => (
-                      <AnimalContainer
-                        key={`${prodIndex}-${routeIndex}-${speciesIndex}-${species.type}`}
-                      >
+                  
+                  {groupedPeriods.map((group, groupIndex) => {
+                    const period = group.period;
+                    const animals = group.animals;
+                    const isMinPossibleValue = period.num == 0;
+                    const isMaxPossibleValue = period.num == 999;
+
+                    return (
+                      <AnimalContainer key={`${prodIndex}-${routeIndex}-${groupIndex}`}>
                         <Animal>
-                          {species.alt ? species.alt : species.type}
+                          {animals.join(", ")}
                         </Animal>
                         <ProduceContainer>
-                          {species.withdrawalPeriod.map(
-                            (period, periodIndex) => {
-                              const isMinPossibleValue = period.num == 0;
-                              const isMaxPossibleValue = period.num == 999;
-
-                              return (
-                                <Produce
-                                  key={`${prodIndex}-${routeIndex}-${speciesIndex}-${periodIndex}`}
-                                >
-                                  <div>
-                                    {period.tissue?.code == 100000125717
-                                      ? ""
-                                      : period.tissue?.alt
-                                      ? period.tissue?.type
-                                      : period.tissue?.type}
-                                    {period.descr && (
-                                      <Description> {period.descr}</Description>
-                                    )}
-                                  </div>
-                                  <p>
-                                    {isMinPossibleValue
-                                      ? t("error.noWaitingPeriod")
-                                      : isMaxPossibleValue
-                                      ? t("error.notUsed")
-                                      : `${period.num} ${period.type}`}
-                                  </p>
-                                </Produce>
-                              );
-                            }
-                          )}
+                          <Produce>
+                            <div>
+                              {period.tissue?.code == 100000125717
+                                ? ""
+                                : period.tissue?.alt
+                                ? period.tissue?.type
+                                : period.tissue?.type}
+                              {period.descr && (
+                                <Description> {period.descr}</Description>
+                              )}
+                            </div>
+                            <p>
+                              {isMinPossibleValue
+                                ? t("error.noWaitingPeriod")
+                                : isMaxPossibleValue
+                                ? t("error.notUsed")
+                                : `${period.num} ${period.type}`}
+                            </p>
+                          </Produce>
                         </ProduceContainer>
                       </AnimalContainer>
-                    ))}
+                    );
+                  })}
                 </UsageTypeContainer>
               );
             })
           )}
+
+          
 
           <Title>{t("medicineDetail.medicineInfo")}</Title>
           <MedicineContainer>

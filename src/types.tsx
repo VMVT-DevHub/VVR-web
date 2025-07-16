@@ -74,7 +74,7 @@ interface Tissue {
   alt?: string;
 }
 
-interface WithdrawalPeriod {
+export interface WithdrawalPeriod {
   num: number;
   tissue?: Tissue;
   code: number;
@@ -83,7 +83,7 @@ interface WithdrawalPeriod {
   descr?: string;
 }
 
-interface Species {
+export interface Species {
   withdrawalPeriod: WithdrawalPeriod[];
   code: number;
   type: string;
@@ -91,7 +91,7 @@ interface Species {
   alt?:string;
 }
 
-interface Route {
+export interface Route {
   species: Species[];
   code: number;
   type: string;
