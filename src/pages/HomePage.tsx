@@ -125,7 +125,6 @@ export const HomePage = () => {
     groupArray?: number[],
     
   ) => {
-
     const rootExists = filterValues.filter.findIndex(
       (item) => item.id === rootID
     );
@@ -133,6 +132,7 @@ export const HomePage = () => {
       filterValues.filter.filter((item) => item.groups?.includes(groupID))
         .length > 0;
 
+        
     if (filter.length === 1 && !groupArray) {//one term
       
       const term = filter[0];
@@ -195,7 +195,7 @@ export const HomePage = () => {
           };
         }
       });
-    } else {//groups
+    } else {//groups 
       setFilterValues((prev) => {
         if (rootExists !== -1) { //if object exists
          
@@ -352,7 +352,7 @@ export const HomePage = () => {
             </PopUp>
           </>
           {/* )} */}
-          <form>
+          {/* <form>
             <br></br>
             <label htmlFor="upd">Ar naudoti UPD test?</label>
             <input
@@ -367,7 +367,7 @@ export const HomePage = () => {
                 );
               }}
             />
-          </form>
+          </form> */}
         </LeftColumn>
         <RightColumn>
           {isLoading ? (
