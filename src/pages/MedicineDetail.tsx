@@ -135,8 +135,10 @@ export const MedicineDetail = () => {
       />
       <MedicineDetailContainer>
         <LeftColumn>
-          {medicine.indications && <Title>{t("medicineDetail.indication")}</Title>}
           {medicine.indications && (
+            <Title>{t("medicineDetail.indication")}</Title>
+          )}
+          {medicine.indications &&
             medicine.indications
               ?.filter((item, index) =>
                 handleFiltering(item, index, showMoreIndications, 4)
@@ -156,8 +158,7 @@ export const MedicineDetail = () => {
                     </ProduceContainer>
                   </AnimalContainer>
                 );
-              })
-          )}
+              })}
           {medicine.indications && medicine.indications.length > 4 && (
             <button onClick={() => setShowMoreIndications((prev) => !prev)}>
               {showMoreIndications
@@ -170,6 +171,27 @@ export const MedicineDetail = () => {
 
           {medicine.admProd?.map((prod, prodIndex) =>
             prod.routes?.map((route, routeIndex) => {
+              const hasAnyWithdrawalPeriods =
+                route.species &&
+                route.species.some((species) => species.withdrawalPeriod);
+              const hasZeroValues =
+                route.species &&
+                route.species.every(
+                  (species) =>
+                    (species.withdrawalPeriod &&
+                      species.withdrawalPeriod.every(
+                        (item) => item.num == 0
+                      )) ||
+                    !species.withdrawalPeriod
+                );
+
+              if (hasZeroValues) {
+                return (
+                  <p key={`${prodIndex}-${routeIndex}`}>
+                    {t("error.notForUsage")} {route.type}
+                  </p>
+                );
+              }
               if (!route.species) {
                 return (
                   <p key={`${prodIndex}-${routeIndex}`}>
@@ -177,10 +199,6 @@ export const MedicineDetail = () => {
                   </p>
                 );
               }
-
-              const hasAnyWithdrawalPeriods = route.species.some(
-                (species) => species.withdrawalPeriod
-              );
 
               if (!hasAnyWithdrawalPeriods) {
                 return (
@@ -205,48 +223,48 @@ export const MedicineDetail = () => {
                       ? "Naudoti per burną"
                       : route.type}
                   </UsageType>
-                  
+
                   {groupedPeriods.map((group, groupIndex) => {
                     const period = group.period;
                     const animals = group.animals;
                     const isMinPossibleValue = period.num == 0;
                     const isMaxPossibleValue = period.num == 999;
-
-                    return (
-                      <AnimalContainer key={`${prodIndex}-${routeIndex}-${groupIndex}`}>
-                        <Animal>
-                          {animals.join(", ")}
-                        </Animal>
-                        <ProduceContainer>
-                          <Produce>
-                            <div>
-                              {period.tissue?.code == 100000125717
-                                ? ""
-                                : period.tissue?.alt
-                                ? period.tissue?.type
-                                : period.tissue?.type}
-                              {period.descr && (
-                                <Description> {period.descr}</Description>
-                              )}
-                            </div>
-                            <p>
-                              {isMinPossibleValue
-                                ? t("error.noWaitingPeriod")
-                                : isMaxPossibleValue
-                                ? t("error.notUsed")
-                                : `${period.num} ${period.type}`}
-                            </p>
-                          </Produce>
-                        </ProduceContainer>
-                      </AnimalContainer>
-                    );
+                    if (isMinPossibleValue) {
+                      return <></>;
+                    } else
+                      return (
+                        <AnimalContainer
+                          key={`${prodIndex}-${routeIndex}-${groupIndex}`}
+                        >
+                          <Animal>{animals.join(", ")}</Animal>
+                          <ProduceContainer>
+                            <Produce>
+                              <div>
+                                {period.tissue?.code == 100000125717
+                                  ? ""
+                                  : period.tissue?.alt
+                                  ? period.tissue?.type
+                                  : period.tissue?.type}
+                                {period.descr && (
+                                  <Description> {period.descr}</Description>
+                                )}
+                              </div>
+                              <p>
+                                {isMinPossibleValue
+                                  ? t("error.noWaitingPeriod")
+                                  : isMaxPossibleValue
+                                  ? t("error.notUsed")
+                                  : `${period.num} ${period.type}`}
+                              </p>
+                            </Produce>
+                          </ProduceContainer>
+                        </AnimalContainer>
+                      );
                   })}
                 </UsageTypeContainer>
               );
             })
           )}
-
-          
 
           <Title>{t("medicineDetail.medicineInfo")}</Title>
           <MedicineContainer>
@@ -445,7 +463,9 @@ export const MedicineDetail = () => {
               <DownloadTitle>{t("error.noFiles")}</DownloadTitle>
             )}
             {medicine.documents && medicine.documents.length > 2 && (
-              <DownloadMoreButton onClick={() => setShowMoreDocuments((prev) => !prev)}>
+              <DownloadMoreButton
+                onClick={() => setShowMoreDocuments((prev) => !prev)}
+              >
                 {showMoreDocuments
                   ? t("medicineDetail.showLess")
                   : t("medicineDetail.showMore")}
