@@ -54,7 +54,7 @@ export const Packages = ({
         return(
           <Subtitle>
             {type}, {item.num} {item.name ? item.name : item.type} <Icon name="dot" />
-             {t('medicineDetail.pack')} {quantity} {t('medicineDetail.quantity')}
+             {quantity  !== 0 ? `${t('medicineDetail.pack')} ${quantity} ${t('medicineDetail.quantity')}` : '' }
           </Subtitle>
         )
       })}
