@@ -122,7 +122,7 @@ export const HomePage = () => {
     groupID: number,
     filter: number[],
     groupFilter?: number[],
-    groupArray?: number[],
+    parentGroupArray?: number[],
     
   ) => {
     const rootExists = filterValues.filter.findIndex(
@@ -133,7 +133,7 @@ export const HomePage = () => {
         .length > 0;
 
         
-    if (filter.length === 1 && !groupArray) {//one term
+    if (filter.length === 1 && !parentGroupArray) {//one term
       
       const term = filter[0];
       setFilterValues((prev) => {
@@ -205,12 +205,12 @@ export const HomePage = () => {
           const termsToRemove = filter.filter((term) =>
             existingTerms.includes(term)
           );
-          if(groupArray && groupArray.length > 0) //if group has subgroups
+          if(parentGroupArray && parentGroupArray.length > 0) //if group has subgroups
           {
            
             if(existingGroups.includes(groupID)) //if parent exists, untoggling
             {
-              groupArray.forEach((group)=> {//remove subgroups
+              parentGroupArray.forEach((group)=> {//remove subgroups
                 if(existingGroups.includes(group))
                 {
                     existingGroups= existingGroups.filter((g) => g !== group)
@@ -224,7 +224,7 @@ export const HomePage = () => {
             }
             else 
             {
-              groupArray.forEach((group)=> {
+              parentGroupArray.forEach((group)=> {
                 if(!existingGroups.includes(group))
                 {
                     existingGroups= [...existingGroups, group]
@@ -257,8 +257,8 @@ export const HomePage = () => {
           };
         } else {//object doesnt exist, create one
           let allGroups;
-          if (groupArray && groupArray.length > 0) { //if group has subgroups, add them
-            allGroups = [groupID, ...groupArray];
+          if (parentGroupArray && parentGroupArray.length > 0) { //if group has subgroups, add them
+            allGroups = [groupID, ...parentGroupArray];
           } else {
             allGroups = [groupID];
           }
