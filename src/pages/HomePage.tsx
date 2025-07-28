@@ -361,7 +361,7 @@ export const HomePage = () => {
             </PopUp>
           </>
           {/* )} */}
-          {/* <form>
+          <form>
             <br></br>
             <label htmlFor="upd">Ar naudoti UPD test?</label>
             <input
@@ -376,7 +376,7 @@ export const HomePage = () => {
                 );
               }}
             />
-          </form> */}
+          </form>
         </LeftColumn>
         <RightColumn>
           {isLoading ? (
