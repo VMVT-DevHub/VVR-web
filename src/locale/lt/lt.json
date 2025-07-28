@@ -38,7 +38,7 @@
         "ingredients": "Veikliosios medžiagos",
         "sideIngredient": "Kita medžiaga",
         "sideIngredients": "Kitos medžiagos",
-        "usageType": "Naudojimo būdas(-ai)",
+        "usageType": "Naudojimo būdas (-ai)",
         "type": "Vaisto forma",
         "animals": "Paskirties gyvūnų rūšys",
         "pack": "Pakuotėje ",
@@ -75,7 +75,7 @@
         "noPacks": "Informacijos apie pakuotes nėra.",
         "noDescription": "Šiuo metu aprašymo nėra.",
         "noWithdrawal": "Išlauka netaikoma",
-        "notForUsage": "Netaikoma naudojimo būdui(-ams): ",
+        "notForUsage": "Netaikoma naudojimo būdui: ",
         "noWaitingPeriod": "Laukti nereikia",
         "notUsed": "Nenaudojama"
     },

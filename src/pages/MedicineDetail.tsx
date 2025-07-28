@@ -573,7 +573,6 @@ const RegisteredInformation = styled.div`
     margin: 0 0 16px 0;
   }
   @media ${device.mobileL} {
-      order: 2;
     }
 `;
 const LeftColumn = styled.section`
@@ -585,7 +584,6 @@ const LeftColumn = styled.section`
   }
    @media ${device.mobileL} {
        width: 100%;
-      order: 2;
     }
 `;
 
@@ -595,7 +593,6 @@ const RightColumn = styled.section`
   width: 33%;
   @media ${device.mobileL} {
        width: 100%;
-      order: 1;
     }
 `;
 

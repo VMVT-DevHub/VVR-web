@@ -49,15 +49,15 @@ export const Packages = ({
         <Title>{name}</Title>
         {/* <Tag $statusColor={handleStatus(status_code)}>{status}</Tag> */}
       </TopRow>
-      <Subtitle>{info}</Subtitle>
       {weightType.map(item => {
         return(
           <Subtitle>
             {type}, {item.num} {item.name ? item.name : item.type} <Icon name="dot" />
-             {quantity  !== 0 ? `${t('medicineDetail.pack')} ${quantity} ${t('medicineDetail.quantity')}` : '' }
+            {quantity  !== 0 ? `${t('medicineDetail.pack')} ${quantity} ${t('medicineDetail.quantity')}` : '' }
           </Subtitle>
         )
       })}
+      <Subtitle>{info}</Subtitle>
     </PackageContainer>
   );
 };
@@ -70,7 +70,6 @@ const PackageContainer = styled.div`
 const TopRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 14px;
 `;
 const Title = styled.p`
   font-weight: 600;
