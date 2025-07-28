@@ -282,7 +282,7 @@ const CategoryContainer = styled.div<{ $isActive: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${({ $isActive }) => ($isActive ? "px" : "16px")};
+  margin-bottom: ${({ $isActive }) => ($isActive ? "0px" : "16px")};
   margin-top: 8px;
   cursor: pointer;
 `;
