@@ -55,6 +55,7 @@ const LanguageOption = styled.span<{ selected: boolean }>`
 const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background-color: ${({ theme }) => theme.colors.white};
   padding: 20px 0;
   font-weight: 500;
