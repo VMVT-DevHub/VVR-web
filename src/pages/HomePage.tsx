@@ -71,6 +71,7 @@ export const HomePage = () => {
    
   const { data: medicine, isLoading } = useMedicines(filterValues, isUPD, i18n.language);
   const { filters, filterGroups } = useFilters(i18n.language, isUPD);
+
   useEffect(() => {
     if (medicine && medicine.query) {
       setSearchParams((searchParams) => {
@@ -85,7 +86,7 @@ export const HomePage = () => {
           }));
       }
     }
-  }, [medicine]);
+  }, [medicine, filterValues.query]);
 
   const medicineSchema = Yup.object().shape({
     medicine: Yup.string().test(function (value) {
@@ -111,12 +112,20 @@ export const HomePage = () => {
       searchParams.set("p", "1");
       return searchParams;
     });
-    setFilterValues((prev) => ({
-      ...prev,
-      ["search"]: values.medicine,
-    }));
+    // setFilterValues((prev) => ({
+    //   ...prev,
+    //   ["search"]: values.medicine,
+    //    page: 1,
+    // }));
+
+    setFilterValues((prev) => {
+      const newFilterValues = { ...prev, search: values.medicine, page: 1 };
+      delete newFilterValues.query;
+      return newFilterValues;
+    });
     resetForm({ values: values, isSubmitting: false, isValidating: false });
   };
+
   const handleFilterChange = (
     rootID: number,
     groupID: number,
@@ -352,7 +361,7 @@ export const HomePage = () => {
             </PopUp>
           </>
           {/* )} */}
-          <form>
+          {/* <form>
             <br></br>
             <label htmlFor="upd">Ar naudoti UPD test?</label>
             <input
@@ -367,7 +376,7 @@ export const HomePage = () => {
                 );
               }}
             />
-          </form>
+          </form> */}
         </LeftColumn>
         <RightColumn>
           {isLoading ? (
@@ -380,54 +389,35 @@ export const HomePage = () => {
             )
           )}
           {medicine && medicine?.items !== 0 && (
-            <UpperRightContainer $filterSelected={medicine.query.filter && medicine.query.filter.length > 0}>
-              {medicine && medicine.query.filter && medicine.query.filter.length > 0 && (
-                <RemoveFilterContainer>
-                  <RemoveButton
-                    onClick={() => {
-                      setFilterValues((prev) => {
-                        const newFilterValues = {
-                          ...prev,
-                          ["page"]: 1,
-                          ["filter"]: [],
-                        };
-                        delete newFilterValues.query;
-                        return newFilterValues;
-                      });
-                    }}
-                  >
-                    <IconContainer>
-                      <Icon name="exit" />
-                    </IconContainer>
-                    {t("homePage.removeFilter")}
-                  </RemoveButton>
-                </RemoveFilterContainer>
-              )}
-              <ItemAmountSelector>
-                <label htmlFor="kiekis">{t("homePage.shownAmount")}:</label>
-                <StyledSelect
-                  id="kiekis"
-                  name="kiekis"
-                  value={pageAmount}
-                  onChange={(e) => {
-                    setFilterValues((prev) => ({
-                      ...prev,
-                      page: 1,
-                      limit: Number(e.target.value),
-                    }));
-                    setSearchParams((searchParams) => {
-                      searchParams.set("qnt", e.target.value);
-                      searchParams.set("p", "1");
-                      return searchParams;
-                    });
-                  }}
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={30}>30</option>
-                </StyledSelect>
-              </ItemAmountSelector>
+            <UpperRightContainer
+              $filterSelected={
+                medicine.query.filter && medicine.query.filter.length > 0
+              }
+            >
+              {medicine &&
+                medicine.query.filter &&
+                medicine.query.filter.length > 0 && (
+                  <RemoveFilterContainer>
+                    <RemoveButton
+                      onClick={() => {
+                        setFilterValues((prev) => {
+                          const newFilterValues = {
+                            ...prev,
+                            ["page"]: 1,
+                            ["filter"]: [],
+                          };
+                          delete newFilterValues.query;
+                          return newFilterValues;
+                        });
+                      }}
+                    >
+                      <IconContainer>
+                        <Icon name="exit" />
+                      </IconContainer>
+                      {t("homePage.removeFilter")}
+                    </RemoveButton>
+                  </RemoveFilterContainer>
+                )}
             </UpperRightContainer>
           )}
           {medicine?.items !== 0 ? (
@@ -467,13 +457,41 @@ export const HomePage = () => {
               </StyledLink>
             </NotFoundContainer>
           )}
+
           {medicine !== undefined && medicine?.items !== 0 && (
-            <PageSelector
-              pageAmount={pageAmount}
-              currentPage={Number(page)}
-              total={medicine.total}
-              setCurrentPage={handlePageChange}
-            />
+            <BottomDisplayInfoContainer>
+              <ItemAmountSelector>
+                <label htmlFor="kiekis">{t("homePage.shownAmount")}:</label>
+                <StyledSelect
+                  id="kiekis"
+                  name="kiekis"
+                  value={pageAmount}
+                  onChange={(e) => {
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      page: 1,
+                      limit: Number(e.target.value),
+                    }));
+                    setSearchParams((searchParams) => {
+                      searchParams.set("qnt", e.target.value);
+                      searchParams.set("p", "1");
+                      return searchParams;
+                    });
+                  }}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={30}>30</option>
+                </StyledSelect>
+              </ItemAmountSelector>
+              <PageSelector
+                pageAmount={pageAmount}
+                currentPage={Number(page)}
+                total={medicine.total}
+                setCurrentPage={handlePageChange}
+              />
+            </BottomDisplayInfoContainer>
           )}
         </RightColumn>
       </ContentContainer>
@@ -497,7 +515,8 @@ export const HomePage = () => {
     </main>
   );
 };
-
+const BottomDisplayInfoContainer = styled.div`
+`
 const IconContainer = styled.div`
   margin-top: 3px;
 `
@@ -524,6 +543,7 @@ const StyledSelect = styled.select`
 `
 const ItemAmountSelector = styled.div`
   display: flex;
+justify-content: end;
   gap: 8px;
   margin-bottom: 8px;
 `

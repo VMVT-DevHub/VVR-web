@@ -142,7 +142,7 @@ const renderFilterGroups = (
     const parentIsChecked = rootID ? isFilterSelected(rootID, element.id, termArray, filterValues) : false;
 
     return (
-      <Categories key={i}>
+      <Categories key={i} $isActive={!isParentDisplayed[element.id]}>
         {element.list ? (
           <>
             <CategoryContainer onClick={() => toggleDisplay(element.id)} $isActive={isDisplayed[element.id]}>
@@ -271,17 +271,18 @@ const CheckboxRow = styled.div`
   }
 `;
 
-const Categories = styled.div`
+const Categories = styled.div<{ $isActive?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-bottom: ${({ $isActive }) => ($isActive ? "px" : "8px")};
 `;
 
 const CategoryContainer = styled.div<{ $isActive: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${({ $isActive }) => ($isActive ? "0px" : "16px")};
+  margin-bottom: ${({ $isActive }) => ($isActive ? "px" : "16px")};
   margin-top: 8px;
   cursor: pointer;
 `;
