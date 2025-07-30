@@ -14,7 +14,7 @@ export const Footer = () => {
         </Paragraph>
         <Paragraph>
           <p>{t("footer.vmvt")}</p>
-          <a href="https://vmvt.lrv.lt/lt/fb/">{t("footer.vigilance")}</a>
+          <a href="https://vmvt.lrv.lt/lt/fb/" target="_blank" >{t("footer.vigilance")}</a>
         </Paragraph>
       </BottomFooter>
     </FooterContainer>

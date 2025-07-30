@@ -125,11 +125,11 @@ const ImageContainer = styled.div`
   height: 40px;
   border-radius: 8px;
 `;
-const Title = styled.div`
+const Title = styled.p`
   font-weight: 600;
   font-size: 1.2rem;
 `;
-const Subtitle = styled.div`
+const Subtitle = styled.p`
   font-weight: 400;
   font-size: 0.875rem;
   font-style: italic;
