@@ -3,13 +3,15 @@ import stamp from "../styles/images/patvirtintaLietuvojeStampas.svg";
 import texture from "../styles/images/FonoRastas.svg";
 import { useTranslation } from "react-i18next";
 import { device } from "../styles";
+import Icon from "../styles/icons";
 
 export interface SearchSectionProps {
   title: string;
   subtitle?: string; 
   disabled?: boolean;
   value?: string | number;
-  onChange?: (option?: unknown) => void;
+  onChange: (option?: unknown) => void;
+  onClear: (option?: unknown) => void;
   name?: string;
   error?: string;
   showError?:boolean;
@@ -22,6 +24,7 @@ export const SearchSection = ({
   disabled = false,
   value = '',
   onChange,
+  onClear,
   name,
   error,
   showError = false
@@ -36,19 +39,31 @@ export const SearchSection = ({
           <Title>{title}</Title>
           <Subtitle>{subtitle && subtitle}</Subtitle>
         </TextContainer>
-        <Image >{subtitle && <img src={stamp} alt="Kokybės antspaudas" />}</Image>
+        <Image>
+          {subtitle && <img src={stamp} alt="Kokybės antspaudas" />}
+        </Image>
       </TopRow>
       <BottomRow>
         <SearchBar $subtitle={!!subtitle}>
           <TextInput
-            type="search"
             placeholder={t("homePage.inputPlaceholder")}
             disabled={disabled}
             value={value}
             name={name}
-            onChange={(e) => onChange && onChange(e?.target?.value || '')}
+            onChange={(e) => onChange && onChange(e?.target?.value || "")}
           />
-          <Button type="submit" disabled={disabled}>
+          {value !== "" && (
+            <DeleteButton
+              onClick={() => {
+                onChange("");
+                onClear();
+              }}
+              type="button"
+            >
+              <Icon name="remove" />
+            </DeleteButton>
+          )}
+          <Button name="mainButton" type="submit" disabled={disabled}>
             {disabled ? t("homePage.searchLoading") : t("homePage.search")}
           </Button>
         </SearchBar>
@@ -58,6 +73,14 @@ export const SearchSection = ({
     </SearchBarContainer>
   );
 };
+const DeleteButton = styled.button`
+  position: absolute;
+  right: 168px;
+  top: 15px;
+  @media ${device.mobileL} {
+    right: 110px;
+  }
+`;
 
 const Image = styled.div`
   @media ${device.mobileL} {
@@ -111,14 +134,6 @@ const TextInput = styled.input<{ disabled: boolean }>`
     outline: none;
     border: 3px solid ${({ theme }) => theme.colors.primary_light};
     box-shadow: 5px 5px 5px 7px ${({ theme }) => `${theme.colors.primary}33`};
-  }
-  &::-webkit-search-cancel-button{
-    position:relative;
-    right:148px;   
-    @media ${device.mobileL} {
-          right:85px;   
-
-    } 
   }
   @media ${device.mobileL} {
       padding: 18px 30px;

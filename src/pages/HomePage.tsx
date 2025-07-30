@@ -126,6 +126,21 @@ export const HomePage = () => {
     resetForm({ values: values, isSubmitting: false, isValidating: false });
   };
 
+  const handleClear = () => {
+  
+  setSearchParams(searchParams => {
+    searchParams.set("q", "");
+    searchParams.set("p", "1");
+    return searchParams;
+  });
+
+  setFilterValues((prev) => {
+    const newFilterValues = { ...prev, search: "", page: 1 };
+    delete newFilterValues.query;
+    return newFilterValues;
+  });
+};
+
   const handleFilterChange = (
     rootID: number,
     groupID: number,
@@ -323,6 +338,7 @@ export const HomePage = () => {
                 value={values.medicine}
                 name="medicine"
                 onChange={(el) => setFieldValue("medicine", el)}
+                onClear={handleClear}
                 error={errors.medicine}
                 showError={true}
               />
@@ -330,7 +346,6 @@ export const HomePage = () => {
           );
         }}
       </Formik>
-
       <ContentContainer>
         <LeftColumn>
           {/* {medicine !== undefined && medicine?.items !== 0 && ( */}
@@ -362,21 +377,21 @@ export const HomePage = () => {
           </>
           {/* )} */}
           {/* <form>
-            <br></br>
-            <label htmlFor="upd">Ar naudoti UPD test?</label>
-            <input
-              id="upd"
-              name="upd"
-              type={"checkbox"}
-              checked={isUPD}
-              onChange={(e) => {
-                return (
-                  setIsUPD(e.target.checked),
-                  localStorage.setItem("isUPD", e.target.checked.toString())
-                );
-              }}
-            />
-          </form> */}
+              <br></br>
+              <label htmlFor="upd">Ar naudoti UPD test?</label>
+              <input
+                id="upd"
+                name="upd"
+                type={"checkbox"}
+                checked={isUPD}
+                onChange={(e) => {
+                  return (
+                    setIsUPD(e.target.checked),
+                    localStorage.setItem("isUPD", e.target.checked.toString())
+                  );
+                }}
+              />
+            </form> */}
         </LeftColumn>
         <RightColumn>
           {isLoading ? (
@@ -388,38 +403,36 @@ export const HomePage = () => {
               </ErrorMessage>
             )
           )}
-          {medicine && medicine?.items !== 0 && (
-            <UpperRightContainer
-              $filterSelected={
-                medicine.query.filter && medicine.query.filter.length > 0
-              }
-            >
-              {medicine &&
-                medicine.query.filter &&
-                medicine.query.filter.length > 0 && (
-                  <RemoveFilterContainer>
-                    <RemoveButton
-                      onClick={() => {
-                        setFilterValues((prev) => {
-                          const newFilterValues = {
-                            ...prev,
-                            ["page"]: 1,
-                            ["filter"]: [],
-                          };
-                          delete newFilterValues.query;
-                          return newFilterValues;
-                        });
-                      }}
-                    >
-                      <IconContainer>
-                        <Icon name="exit" />
-                      </IconContainer>
-                      {t("homePage.removeFilter")}
-                    </RemoveButton>
-                  </RemoveFilterContainer>
-                )}
-            </UpperRightContainer>
-          )}
+          {medicine &&
+            medicine.query.filter &&
+            medicine.query.filter.length > 0 && (
+              <UpperRightContainer
+                $filterSelected={
+                  medicine.query.filter && medicine.query.filter.length > 0
+                }
+              >
+                <RemoveFilterContainer>
+                  <RemoveButton
+                    onClick={() => {
+                      setFilterValues((prev) => {
+                        const newFilterValues = {
+                          ...prev,
+                          ["page"]: 1,
+                          ["filter"]: [],
+                        };
+                        delete newFilterValues.query;
+                        return newFilterValues;
+                      });
+                    }}
+                  >
+                    <IconContainer>
+                      <Icon name="remove" />
+                    </IconContainer>
+                    {t("homePage.removeFilter")}
+                  </RemoveButton>
+                </RemoveFilterContainer>
+              </UpperRightContainer>
+            )}
           {medicine?.items !== 0 ? (
             medicine?.data?.map((item) => {
               return (
@@ -495,23 +508,25 @@ export const HomePage = () => {
           )}
         </RightColumn>
       </ContentContainer>
-      <>
-        <Explanation>{t("footer.meaning")}</Explanation>
-        <TopRow>
-          <Entry>
-            <StyledImg src={rx} alt="RX" />
-            <Paragraph>{t("footer.prescription")}</Paragraph>
-          </Entry>
-          <Entry>
-            <StyledImg src={otc} alt="OTC" />
-            <Paragraph>{t("footer.nonprescription")}</Paragraph>
-          </Entry>
-          <Entry>
-            <StyledImg src={rxplus} alt="RxPlus" />
-            <Paragraph>{t("footer.vetPrescription")}</Paragraph>
-          </Entry>
-        </TopRow>
-      </>
+      {medicine && medicine?.items !== 0 && (
+        <BottomDisplayInfoContainer>
+          <Explanation>{t("footer.meaning")}</Explanation>
+          <TopRow>
+            <Entry>
+              <StyledImg src={rx} alt="RX" />
+              <Paragraph>{t("footer.prescription")}</Paragraph>
+            </Entry>
+            <Entry>
+              <StyledImg src={otc} alt="OTC" />
+              <Paragraph>{t("footer.nonprescription")}</Paragraph>
+            </Entry>
+            <Entry>
+              <StyledImg src={rxplus} alt="RxPlus" />
+              <Paragraph>{t("footer.vetPrescription")}</Paragraph>
+            </Entry>
+          </TopRow>
+        </BottomDisplayInfoContainer>
+      )}
     </main>
   );
 };
@@ -626,7 +641,7 @@ const NotFound = styled.p`
 `;
 const ContentContainer = styled.div`
   display: flex;
-  padding-top: 40px;
+  padding: 40px 0;
   gap: 40px;
   @media ${device.mobileL} {
     gap: 0;

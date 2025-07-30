@@ -31,6 +31,10 @@ export const MedicineDetail = () => {
   }, [location]);
   const { data: medicine, isLoading } = useMedicine(id!, i18n.language, isUPD);
 
+   useEffect(() => {
+    document.title = medicine?.name || 'Veterinarinių vaistų registras'
+  },[medicine])
+
   if (isLoading) return <Loader />;
 
   if (!medicine) return <p>{t('error.noMedicineDetail')}</p>;
